@@ -27,3 +27,7 @@ Content-Type: application/json
   "password": "{{password}}"
 }
 ###
+
+# @name list_users
+GET  {{usersUrl}}
+###
