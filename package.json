@@ -36,7 +36,8 @@
     "unplugin-swc": "^1.4.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^0.34.6",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "zod-validation-error": "^2.1.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

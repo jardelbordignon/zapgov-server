@@ -1,13 +1,21 @@
 import { Injectable } from '@nestjs/common'
 
-import type { AuthUserData } from 'src/contracts/account'
+import type { AuthUserData, AuthUserResponse } from 'src/contracts/account'
 import { Encrypter } from 'src/infra/cryptography/encrypter/encrypter'
 import { Hasher } from 'src/infra/cryptography/hasher/hasher'
+import {
+  FailureOrSuccess,
+  failure,
+  success,
+} from 'src/infra/utils/failure-or-success-service-execute'
 
 import { UserRepository } from '../../repositories/user.repository'
+import { WrongCredentialsError } from '../errors'
 
-type AuthUserServiceResponse = any // FailureOrSuccess<UserAlreadyExistsError, void>
-
+type AuthUserServiceResponse = FailureOrSuccess<
+  WrongCredentialsError,
+  AuthUserResponse
+>
 @Injectable()
 export class AuthUserService {
   constructor(
@@ -20,17 +28,17 @@ export class AuthUserService {
     const user = await this.userRepository.findByEmail(data.email)
 
     if (!user) {
-      return
+      return failure(new WrongCredentialsError())
     }
 
     const matchPassword = await this.hasher.compare(data.password, user.password)
 
     if (!matchPassword) {
-      return 'password mismatch'
+      return failure(new WrongCredentialsError())
     }
 
     const accessToken = await this.encrypter.encrypt({ sub: user.id })
 
-    return { accessToken }
+    return success({ accessToken })
   }
 }
