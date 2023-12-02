@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 
+import { CryptographyModule } from 'src/infra/cryptography/cryptography.module'
 import { PrismaService } from 'src/infra/prisma.service'
 
 import { PrismaUserRepository } from './repositories/prisma.user.repository'
@@ -12,6 +13,7 @@ import { CreateUserService } from './use-cases/create-user/create-user.service'
 @Module({
   controllers: [AuthUserController, CreateUserController],
   exports: [PrismaService],
+  imports: [CryptographyModule],
   providers: [
     PrismaService,
     AuthUserService,
