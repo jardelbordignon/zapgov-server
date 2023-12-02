@@ -13,4 +13,15 @@
     "infra": "Tools",
     "repositories": "Database"
   },
+  "rest-client.environmentVariables": {
+    "development": {
+      "serverUrl": "http://localhost:4000"
+    },
+    "homolog": {
+      "serverUrl": "https://your-hml-server.com"
+    },
+    // "production": {
+    //   "serverUrl": "https://your-server.com"
+    // }
+  }
 }

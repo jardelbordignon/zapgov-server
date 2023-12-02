@@ -1,6 +1,7 @@
 {
 	"recommendations": [
 		"pkief.material-icon-theme",
-		"prisma.prisma"
+		"prisma.prisma",
+		"humao.rest-client",
 	]
 }
