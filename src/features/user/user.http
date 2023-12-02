@@ -1,15 +1,28 @@
-@USERS_URL = {{serverUrl}}/users
+@authUrl = {{serverUrl}}/auth
+@usersUrl = {{serverUrl}}/users
+
+@accessToken = {{authenticate_user.response.body.accessToken}}
 
 @name = John Doe
 @email = johndoe@email.com
 @password = Pwd@123
 
 # @name create_user
-POST  {{USERS_URL}}
+POST  {{usersUrl}}
 Content-Type: application/json
 
 {
   "name": "{{name}}",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+###
+
+# @name authenticate_user
+POST  {{authUrl}}
+Content-Type: application/json
+
+{
   "email": "{{email}}",
   "password": "{{password}}"
 }
