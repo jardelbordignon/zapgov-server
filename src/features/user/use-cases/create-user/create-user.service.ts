@@ -2,10 +2,16 @@ import { Injectable } from '@nestjs/common'
 
 import type { CreateUserData } from 'src/contracts/account'
 import { Hasher } from 'src/infra/cryptography/hasher/hasher'
+import {
+  FailureOrSuccess,
+  failure,
+  success,
+} from 'src/infra/utils/failure-or-success-service-execute'
 
 import { UserRepository } from '../../repositories/user.repository'
+import { UserAlreadyExistsError } from '../errors'
 
-type CreateUserServiceResponse = any // FailureOrSuccess<UserAlreadyExistsError, void>
+type CreateUserServiceResponse = FailureOrSuccess<UserAlreadyExistsError, void>
 
 @Injectable()
 export class CreateUserService {
@@ -18,11 +24,15 @@ export class CreateUserService {
     const userWithSameEmail = await this.userRepository.findByEmail(data.email)
 
     if (userWithSameEmail) {
-      return `User with email address ${data.email} already exists.`
+      return failure(
+        new UserAlreadyExistsError(
+          `User with email address ${data.email} already exists.`
+        )
+      )
     }
 
     data.password = await this.hasher.hash(data.password)
 
-    return this.userRepository.create(data)
+    return success(await this.userRepository.create(data))
   }
 }
