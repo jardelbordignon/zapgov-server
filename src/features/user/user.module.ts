@@ -11,9 +11,16 @@ import { CreateUserController } from './use-cases/create-user/create-user.contro
 import { CreateUserService } from './use-cases/create-user/create-user.service'
 import { ListUsersController } from './use-cases/list-users/list-users.controller'
 import { ListUsersService } from './use-cases/list-users/list-users.service'
+import { ShowUserController } from './use-cases/show-user/show-user.controller'
+import { ShowUserService } from './use-cases/show-user/show-user.service'
 
 @Module({
-  controllers: [AuthUserController, CreateUserController, ListUsersController],
+  controllers: [
+    AuthUserController,
+    CreateUserController,
+    ListUsersController,
+    ShowUserController,
+  ],
   exports: [PrismaService],
   imports: [CryptographyModule],
   providers: [
@@ -25,6 +32,7 @@ import { ListUsersService } from './use-cases/list-users/list-users.service'
     AuthUserService,
     CreateUserService,
     ListUsersService,
+    ShowUserService,
   ],
 })
 export class UserModule {}

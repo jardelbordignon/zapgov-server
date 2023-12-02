@@ -2,6 +2,7 @@
 @usersUrl = {{serverUrl}}/users
 
 @accessToken = {{authenticate_user.response.body.accessToken}}
+@firstUserId = {{list_users.response.body.$.[0].id}}
 
 @name = John Doe
 @email = johndoe@email.com
@@ -30,4 +31,8 @@ Content-Type: application/json
 
 # @name list_users
 GET  {{usersUrl}}
+###
+
+# @name show_user
+GET  {{usersUrl}}/{{firstUserId}}
 ###
