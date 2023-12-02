@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 
 import { FeaturesModule } from './features/features.module'
-import { EnvModule } from './infra/env/env.module'
+import { InfraModule } from './infra/infra.module'
 
 @Module({
-  imports: [EnvModule, FeaturesModule],
+  imports: [InfraModule, FeaturesModule],
 })
 export class AppModule {}
