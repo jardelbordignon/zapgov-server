@@ -13,6 +13,8 @@ import { ListUsersController } from './use-cases/list-users/list-users.controlle
 import { ListUsersService } from './use-cases/list-users/list-users.service'
 import { ShowUserController } from './use-cases/show-user/show-user.controller'
 import { ShowUserService } from './use-cases/show-user/show-user.service'
+import { UpdateUserController } from './use-cases/update-user/update-user.controller'
+import { UpdateUserService } from './use-cases/update-user/update-user.service'
 
 @Module({
   controllers: [
@@ -20,6 +22,7 @@ import { ShowUserService } from './use-cases/show-user/show-user.service'
     CreateUserController,
     ListUsersController,
     ShowUserController,
+    UpdateUserController,
   ],
   exports: [PrismaService],
   imports: [CryptographyModule],
@@ -33,6 +36,7 @@ import { ShowUserService } from './use-cases/show-user/show-user.service'
     CreateUserService,
     ListUsersService,
     ShowUserService,
+    UpdateUserService,
   ],
 })
 export class UserModule {}

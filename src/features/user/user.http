@@ -36,3 +36,31 @@ GET  {{usersUrl}}
 # @name show_user
 GET  {{usersUrl}}/{{firstUserId}}
 ###
+
+# @name update_user
+PUT  {{usersUrl}}
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "{{name}}",
+  "email": "{{email}}",
+  "password": "{{password}}",
+  "currentPassword": "{{password}}",
+  "roles": [],
+  "permissions": []
+}
+###
+
+# @name update_user_creadentials
+PUT  {{usersUrl}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Updated {{name}}",
+  "email": "updated-{{email}}",
+  "password": "updated-{{password}}",
+  "currentPassword": "{{password}}"
+}
+###
