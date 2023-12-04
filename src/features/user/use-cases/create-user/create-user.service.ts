@@ -26,7 +26,7 @@ export class CreateUserService {
     if (userWithSameEmail) {
       return failure(
         new UserAlreadyExistsError(
-          `User with email address ${data.email} already exists.`
+          `User with ${data.email} email address already exists.`
         )
       )
     }

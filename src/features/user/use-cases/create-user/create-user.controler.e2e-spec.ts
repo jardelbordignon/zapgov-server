@@ -39,7 +39,7 @@ describe('Create user (E2E)', () => {
     expect(response.statusCode).toBe(401)
     expect(response.body).toEqual({
       error: 'Unauthorized',
-      message: `User with email address ${email} already exists.`,
+      message: `User with ${email} email address already exists.`,
       statusCode: 401,
     })
   })

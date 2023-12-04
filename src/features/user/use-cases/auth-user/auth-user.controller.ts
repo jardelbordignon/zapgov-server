@@ -9,6 +9,7 @@ import {
 import { ZodObject, z } from 'zod'
 
 import type { AuthUserData, AuthUserResponse } from 'src/contracts/account'
+import { AllowUnauthenticated } from 'src/infra/auth/authentication.guard'
 import { ZodObj, ZodValidationPipe } from 'src/infra/pipes/zod-validation.pipe'
 
 import { AUTH_URL } from '../constants'
@@ -26,6 +27,7 @@ const authUserValidationPipe = new ZodValidationPipe(
 )
 
 @Controller(AUTH_URL)
+@AllowUnauthenticated()
 @UsePipes(authUserValidationPipe)
 export class AuthUserController {
   constructor(private authUserService: AuthUserService) {}
