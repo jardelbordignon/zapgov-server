@@ -40,8 +40,25 @@ describe('Update user (E2E)', () => {
   })
 
   test(`[PUT] ${USERS_URL} - success`, async () => {
+    const updatedName = `Updated ${name}`
+    const updateUserData: UpdateUserData = { name: updatedName }
+
+    const response = await api
+      .put(USERS_URL)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(updateUserData)
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body).toEqual(expect.objectContaining({ name: updatedName }))
+  })
+
+  test(`[PUT] ${USERS_URL} - success (credentials)`, async () => {
+    const updatedEmail = `updated-${email}`
+    const updatedPassword = `updated-${password}`
     const updateUserData: UpdateUserData = {
-      name: 'updated name',
+      currentPassword: password,
+      email: updatedEmail,
+      password: updatedPassword,
     }
 
     const response = await api
@@ -50,5 +67,22 @@ describe('Update user (E2E)', () => {
       .send(updateUserData)
 
     expect(response.statusCode).toBe(200)
+    expect(response.body).toEqual(expect.objectContaining({ email: updatedEmail }))
+  })
+
+  test(`[PUT] ${USERS_URL} - failure (credentials without current password)`, async () => {
+    const updateUserData: UpdateUserData = { email: 'new-address@email.com' }
+
+    const response = await api
+      .put(USERS_URL)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(updateUserData)
+
+    expect(response.statusCode).toBe(401)
+    expect(response.body).toEqual({
+      error: 'Unauthorized',
+      message: 'Property currentPassword is required to change email or password.',
+      statusCode: 401,
+    })
   })
 })
