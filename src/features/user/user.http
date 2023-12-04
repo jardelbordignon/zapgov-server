@@ -31,13 +31,16 @@ Content-Type: application/json
 
 # @name list_users
 GET  {{usersUrl}}
+Authorization: Bearer {{accessToken}}
 ###
 
 # @name show_user
 GET  {{usersUrl}}/{{firstUserId}}
+Authorization: Bearer {{accessToken}}
 ###
 
 # @name update_user
+# update logged user record
 PUT  {{usersUrl}}
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
@@ -46,13 +49,12 @@ Authorization: Bearer {{accessToken}}
   "name": "{{name}}",
   "email": "{{email}}",
   "password": "{{password}}",
-  "currentPassword": "{{password}}",
-  "roles": [],
-  "permissions": []
+  "currentPassword": "{{password}}"
 }
 ###
 
 # @name update_user_creadentials
+# update logged user record
 PUT  {{usersUrl}}
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
