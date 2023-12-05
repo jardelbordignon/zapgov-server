@@ -37,8 +37,11 @@ export class AuthUserService {
       return failure(new WrongCredentialsError())
     }
 
-    const accessToken = await this.encrypter.encrypt({ sub: user.id })
+    const accessToken = await this.encrypter.encrypt({
+      roles: user.roles,
+      sub: user.id,
+    })
 
-    return success({ accessToken })
+    return success({ accessToken, isAdmin: user.roles.includes('ADMIN') })
   }
 }

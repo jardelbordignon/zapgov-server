@@ -16,7 +16,7 @@ import {
   UserNotFoundError,
 } from '../errors'
 
-type UpdateUserServiceResponse = FailureOrSuccess<
+export type UpdateUserServiceResponse = FailureOrSuccess<
   UserNotFoundError | UnauthorizedToUpdateUserError | UserAlreadyExistsError,
   User
 >

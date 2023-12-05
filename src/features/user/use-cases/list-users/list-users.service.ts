@@ -14,8 +14,10 @@ type ListUsersServiceResponse = FailureOrSuccess<null, User[]>
 export class ListUsersService {
   constructor(private userRepository: UserRepository) {}
 
-  async execute(): Promise<ListUsersServiceResponse> {
-    const users = await this.userRepository.findAll()
+  async execute(deleted?: boolean): Promise<ListUsersServiceResponse> {
+    const users = deleted
+      ? await this.userRepository.findAllDeleted()
+      : await this.userRepository.findAll()
 
     return success(users)
   }

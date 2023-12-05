@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
+import { Role } from '@prisma/client'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { z } from 'zod'
 
 const tokenPayloadSchema = z.object({
+  roles: z.array(z.nativeEnum(Role)).optional(),
   sub: z.string().uuid(),
 })
 

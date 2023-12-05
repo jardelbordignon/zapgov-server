@@ -2,10 +2,11 @@ import type { User } from '@prisma/client'
 
 /** POST - /auth */
 export type AuthUserData = Pick<User, 'email' | 'password'>
-export type AuthUserResponse = { accessToken: string }
+export type AuthUserResponse = { accessToken: string; isAdmin: boolean }
 
 /** POST - /users  */
-export type CreateUserData = Pick<User, 'name' | 'email' | 'password'>
+export type CreateUserData = Pick<User, 'name' | 'email' | 'password'> &
+  Partial<Pick<User, 'roles'>>
 
 export type UserOmittedPassword = Omit<User, 'password'>
 

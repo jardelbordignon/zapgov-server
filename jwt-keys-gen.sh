@@ -1,4 +1,4 @@
-# para gerar as chaves execute no terminal -> src/infra/auth/keys-gen.sh
+# para gerar as chaves execute no terminal -> ./jwt-keys-gen.sh
 
 # Gerar o arquivo private_key.pem com a chave privada 
 openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048

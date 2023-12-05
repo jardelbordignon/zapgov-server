@@ -15,9 +15,9 @@ export class InMemoryUserRepository implements UserRepository {
     const user: User = {
       ...data,
       created_at: date,
+      deleted_at: null,
       id: randomUUID(),
-      permissions: [],
-      roles: [],
+      roles: data.roles || [],
       updated_at: date,
     }
 
@@ -29,7 +29,11 @@ export class InMemoryUserRepository implements UserRepository {
   }
 
   async findAll(): Promise<User[]> {
-    return this.users
+    return this.users.filter(user => user.deleted_at === null)
+  }
+
+  async findAllDeleted(): Promise<User[]> {
+    return this.users.filter(user => user.deleted_at !== null)
   }
 
   async findByEmail(email: string): Promise<User | null> {

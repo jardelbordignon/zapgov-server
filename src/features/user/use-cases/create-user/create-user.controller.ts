@@ -6,6 +6,7 @@ import {
   UnauthorizedException,
   UsePipes,
 } from '@nestjs/common'
+import { Role } from '@prisma/client'
 import { ZodObject, z } from 'zod'
 
 import type { CreateUserData } from 'src/contracts/account'
@@ -24,6 +25,7 @@ const createUserValidationPipe = new ZodValidationPipe(
     email: z.string().email(),
     name: z.string(),
     password: z.string(),
+    roles: z.array(z.nativeEnum(Role)).optional(),
   }) as CreateUserBodySchema
 )
 

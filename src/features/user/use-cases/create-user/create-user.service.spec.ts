@@ -49,6 +49,23 @@ describe('Create user', () => {
     expect(users.length).toBe(2)
   })
 
+  it('should be able to create a new admin user', async () => {
+    const email = 'joesmith@email.com'
+    const name = 'Joe Smith'
+
+    const result = await createUserService.execute({
+      email,
+      name,
+      password,
+      roles: ['ADMIN'],
+    })
+    expect(result.isSuccess()).toBe(true)
+    const createdUser = await userRepository.findByEmail(email)
+    expect(createdUser).toEqual(
+      expect.objectContaining({ name: 'Joe Smith', roles: ['ADMIN'] })
+    )
+  })
+
   it('should not be able to create a new user with an email already in use', async () => {
     const result = await createUserService.execute({ email, name: 'John', password })
     expect(result.isFailure()).toBe(true)

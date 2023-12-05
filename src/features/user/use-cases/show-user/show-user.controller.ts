@@ -18,9 +18,9 @@ import { ShowUserService } from './show-user.service'
 export class ShowUserController {
   constructor(private showUserService: ShowUserService) {}
 
-  @Get('/:id')
-  async handle(@Param('id') id: string): Promise<UserOmittedPassword> {
-    const result = await this.showUserService.execute(id)
+  @Get('/:userId')
+  async handle(@Param('userId') userId: string): Promise<UserOmittedPassword> {
+    const result = await this.showUserService.execute(userId)
 
     if (result.isFailure()) {
       const error = result.value

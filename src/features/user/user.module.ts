@@ -9,6 +9,8 @@ import { AuthUserController } from './use-cases/auth-user/auth-user.controller'
 import { AuthUserService } from './use-cases/auth-user/auth-user.service'
 import { CreateUserController } from './use-cases/create-user/create-user.controller'
 import { CreateUserService } from './use-cases/create-user/create-user.service'
+import { DeleteUserController } from './use-cases/delete-user/delete-user.controller'
+import { DeleteUserService } from './use-cases/delete-user/delete-user.service'
 import { ListUsersController } from './use-cases/list-users/list-users.controller'
 import { ListUsersService } from './use-cases/list-users/list-users.service'
 import { ShowUserController } from './use-cases/show-user/show-user.controller'
@@ -20,6 +22,7 @@ import { UpdateUserService } from './use-cases/update-user/update-user.service'
   controllers: [
     AuthUserController,
     CreateUserController,
+    DeleteUserController,
     ListUsersController,
     ShowUserController,
     UpdateUserController,
@@ -34,6 +37,7 @@ import { UpdateUserService } from './use-cases/update-user/update-user.service'
     },
     AuthUserService,
     CreateUserService,
+    DeleteUserService,
     ListUsersService,
     ShowUserService,
     UpdateUserService,

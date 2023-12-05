@@ -15,7 +15,11 @@ export class PrismaUserRepository extends PrismaService implements UserRepositor
   }
 
   async findAll(): Promise<User[]> {
-    return this.user.findMany()
+    return this.user.findMany({ where: { deleted_at: null } })
+  }
+
+  async findAllDeleted(): Promise<User[]> {
+    return this.user.findMany({ where: { NOT: { deleted_at: null } } })
   }
 
   async findByEmail(email: string): Promise<User | null> {

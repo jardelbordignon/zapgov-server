@@ -14,19 +14,15 @@ enum Role {
   ADMIN
 }
 
-enum Permission {
-  DELETE_USER
-}
-
 model User {
-  id          String       @id @default(uuid())
-  name        String
-  email       String       @unique
-  password    String
-  roles       Role[]
-  permissions Permission[]
-  created_at  DateTime     @default(now())
-  updated_at  DateTime     @updatedAt
+  id         String    @id @default(uuid())
+  name       String
+  email      String    @unique
+  password   String
+  roles      Role[]
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
 
   @@map("users")
 }

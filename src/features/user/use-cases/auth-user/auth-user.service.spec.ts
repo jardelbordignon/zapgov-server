@@ -44,7 +44,10 @@ describe('Authenticate user', () => {
   it('should be able to authenticate an user', async () => {
     const result = await authUserService.execute({ email, password })
     expect(result.isSuccess()).toBe(true)
-    expect(result.value).toEqual({ accessToken: expect.any(String) })
+    expect(result.value).toEqual({
+      accessToken: expect.any(String),
+      isAdmin: expect.any(Boolean),
+    })
   })
 
   it('should not be able to authenticate an user with a invalid email', async () => {
