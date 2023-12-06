@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Param,
 } from '@nestjs/common'
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger'
 
 import type { UserOmittedPassword } from 'src/contracts/account'
 import { omitObjectProperties } from 'src/infra/utils/omit-object-properties'
@@ -18,6 +19,8 @@ import { ShowUserService } from './show-user.service'
 export class ShowUserController {
   constructor(private showUserService: ShowUserService) {}
 
+  @ApiBearerAuth()
+  @ApiResponse({ description: 'A user with omitted password', status: 200 })
   @Get('/:userId')
   async handle(@Param('userId') userId: string): Promise<UserOmittedPassword> {
     const result = await this.showUserService.execute(userId)
