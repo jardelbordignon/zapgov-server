@@ -1,11 +1,14 @@
+import { extendZodWithOpenApi, generateSchema } from '@anatine/zod-openapi'
 import {
   BadRequestException,
   Body,
   Controller,
+  HttpCode,
   Post,
   UnauthorizedException,
   UsePipes,
 } from '@nestjs/common'
+import { ApiBody, ApiResponse } from '@nestjs/swagger'
 import { ZodObject, z } from 'zod'
 
 import type { AuthUserData, AuthUserResponse } from 'src/contracts/account'
@@ -19,19 +22,25 @@ import { AuthUserService } from './auth-user.service'
 
 type AuthUserBodySchema = ZodObject<ZodObj<AuthUserData>>
 
-const authUserValidationPipe = new ZodValidationPipe(
-  z.object({
-    email: z.string().email(),
-    password: z.string(),
-  }) as AuthUserBodySchema
-)
+extendZodWithOpenApi(z)
+
+const authUserZodObject = z.object({
+  email: z.string().email().openapi({ example: 'johndoe@email.com' }),
+  password: z.string().openapi({ example: 'Pwd@123' }),
+}) as AuthUserBodySchema
+
+const authUserOpenApiSchema = generateSchema(authUserZodObject)
 
 @Controller(AUTH_URL)
 @AllowUnauthenticated()
-@UsePipes(authUserValidationPipe)
+@UsePipes(new ZodValidationPipe(authUserZodObject))
 export class AuthUserController {
   constructor(private authUserService: AuthUserService) {}
 
+  @HttpCode(200)
+  @ApiBody({ schema: authUserOpenApiSchema as any })
+  @ApiResponse({ description: 'Authentication successful', status: 200 })
+  @ApiResponse({ description: 'When wrong email and/or password', status: 401 })
   @Post()
   async handle(@Body() body: AuthUserData): Promise<AuthUserResponse> {
     const result = await this.authUserService.execute(body)

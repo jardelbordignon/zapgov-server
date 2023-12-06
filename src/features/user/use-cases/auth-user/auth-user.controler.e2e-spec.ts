@@ -34,7 +34,7 @@ describe('Auth user (E2E)', () => {
     const authUserData: AuthUserData = { email, password }
     const authRes = await api.post(AUTH_URL).send(authUserData)
 
-    expect(authRes.statusCode).toBe(201)
+    expect(authRes.statusCode).toBe(200)
     expect(authRes.body).toEqual({
       accessToken: expect.any(String),
       isAdmin: expect.any(Boolean),
