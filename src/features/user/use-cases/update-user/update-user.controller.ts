@@ -7,8 +7,10 @@ import {
   Param,
   Put,
   UnauthorizedException,
+  applyDecorators,
   //  UsePipes,
 } from '@nestjs/common'
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger'
 import { Role } from '@prisma/client'
 // import { ZodObject, z } from 'zod'
 
@@ -48,6 +50,22 @@ import { UpdateUserService, UpdateUserServiceResponse } from './update-user.serv
 //   })
 // )
 
+function UpdateUserApiResponse() {
+  return applyDecorators(
+    ApiBearerAuth(),
+    ApiResponse({ description: 'User updated successful', status: 200 }),
+    ApiResponse({
+      description: `When an user with same email address already exists <br/>
+        When trying to edit email and/or password without correctly entering currentPassword`,
+      status: 401,
+    }),
+    ApiResponse({
+      description: 'When user not found',
+      status: 404,
+    })
+  )
+}
+
 @Controller(USERS_URL)
 //@UsePipes(updateUserValidationPipe)
 export class UpdateUserController {
@@ -72,6 +90,7 @@ export class UpdateUserController {
     return omitObjectProperties(result.value, ['password'])
   }
 
+  @UpdateUserApiResponse()
   @Put()
   async handle(
     @CurrentUser('sub') userId: string,
@@ -81,6 +100,7 @@ export class UpdateUserController {
     return this.handleResult(result)
   }
 
+  @UpdateUserApiResponse()
   @Put('/:userId')
   async handleUpdateByUserId(
     @CurrentUser('roles') loggedUserRoles: Role[],
