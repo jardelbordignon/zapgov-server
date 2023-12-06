@@ -5,34 +5,47 @@ import {
   NotFoundException,
   Param,
   Query,
+  UnauthorizedException,
+  applyDecorators,
 } from '@nestjs/common'
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger'
 
 import { CurrentUser } from 'src/infra/auth/current-user.decorator'
 import { UserPayload } from 'src/infra/auth/jwt-strategy'
 
 import { USERS_URL } from '../constants'
-import { UserNotFoundError } from '../errors'
+import { UnauthorizedToDeleteAnAdminUserError, UserNotFoundError } from '../errors'
 
-import { DeleteUserService } from './delete-user.service'
+import { DeleteUserService, DeleteUserServiceResponse } from './delete-user.service'
+
+function DeleteUserApiResponse() {
+  return applyDecorators(
+    ApiBearerAuth(),
+    ApiResponse({ description: 'User deleted successful', status: 200 }),
+    ApiResponse({
+      description: 'When user not found',
+      status: 404,
+    }),
+    ApiResponse({
+      description: 'When trying to delete an admin user',
+      status: 401,
+    })
+  )
+}
 
 @Controller(USERS_URL)
 export class DeleteUserController {
   constructor(private deleteUserService: DeleteUserService) {}
 
-  @Delete()
-  async handle(@CurrentUser() loggedUser: UserPayload): Promise<void> {
-    const result = await this.deleteUserService.execute(
-      loggedUser,
-      loggedUser.sub,
-      true
-    )
-
+  private handleResult(result: DeleteUserServiceResponse) {
     if (result.isFailure()) {
       const error = result.value
 
       switch (error.constructor) {
         case UserNotFoundError:
           throw new NotFoundException(error.message)
+        case UnauthorizedToDeleteAnAdminUserError:
+          throw new UnauthorizedException(error.message)
         default:
           throw new BadRequestException(error.message)
       }
@@ -41,6 +54,19 @@ export class DeleteUserController {
     return result.value
   }
 
+  @DeleteUserApiResponse()
+  @Delete()
+  async handle(@CurrentUser() loggedUser: UserPayload): Promise<void> {
+    const result = await this.deleteUserService.execute(
+      loggedUser,
+      loggedUser.sub,
+      true
+    )
+
+    return this.handleResult(result)
+  }
+
+  @DeleteUserApiResponse()
   @Delete('/:userId')
   async handleDeleteById(
     @CurrentUser() loggedUser: UserPayload,
@@ -49,17 +75,6 @@ export class DeleteUserController {
   ): Promise<void> {
     const result = await this.deleteUserService.execute(loggedUser, userId, soft)
 
-    if (result.isFailure()) {
-      const error = result.value
-
-      switch (error.constructor) {
-        case UserNotFoundError:
-          throw new NotFoundException(error.message)
-        default:
-          throw new BadRequestException(error.message)
-      }
-    }
-
-    return result.value
+    return this.handleResult(result)
   }
 }

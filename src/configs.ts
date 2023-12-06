@@ -13,6 +13,7 @@ export function configs(app: INestApplication) {
       .setTitle('ZapGov')
       .setDescription('The ZapGov api documentation')
       .setVersion('0.1')
+      .addBearerAuth()
       .build()
 
     const document = SwaggerModule.createDocument(app, config)

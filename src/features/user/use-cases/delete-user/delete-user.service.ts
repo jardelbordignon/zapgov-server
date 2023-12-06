@@ -10,7 +10,7 @@ import {
 import { UserRepository } from '../../repositories/user.repository'
 import { UnauthorizedToDeleteAnAdminUserError, UserNotFoundError } from '../errors'
 
-type DeleteUserServiceResponse = FailureOrSuccess<
+export type DeleteUserServiceResponse = FailureOrSuccess<
   UnauthorizedToDeleteAnAdminUserError | UserNotFoundError,
   void
 >
