@@ -1,3 +1,4 @@
+import { extendZodWithOpenApi, generateSchema } from '@anatine/zod-openapi'
 import {
   BadRequestException,
   Body,
@@ -8,15 +9,14 @@ import {
   Put,
   UnauthorizedException,
   applyDecorators,
-  //  UsePipes,
 } from '@nestjs/common'
-import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger'
 import { Role } from '@prisma/client'
-// import { ZodObject, z } from 'zod'
+import { ZodObject, z } from 'zod'
 
 import type { UpdateUserData, UserOmittedPassword } from 'src/contracts/account'
 import { CurrentUser } from 'src/infra/auth/current-user.decorator'
-// import { ZodObj, ZodValidationPipe } from 'src/infra/pipes/zod-validation.pipe'
+import { ZodObj } from 'src/infra/pipes/zod-validation.pipe'
 import { omitObjectProperties } from 'src/infra/utils/omit-object-properties'
 
 import { USERS_URL } from '../constants'
@@ -28,15 +28,17 @@ import {
 
 import { UpdateUserService, UpdateUserServiceResponse } from './update-user.service'
 
-// type UpdateUserBodySchema = ZodObject<ZodObj<UpdateUserData>>
+type UpdateUserBodySchema = ZodObject<ZodObj<UpdateUserData>>
 
-// const updateUserZodObject = z.object({
-//   currentPassword: z.string().optional(),
-//   email: z.string().email().optional(),
-//   name: z.string().optional(),
-//   password: z.string().optional(),
-//   roles: z.array(z.nativeEnum(Role)).optional(),
-// }) as UpdateUserBodySchema
+extendZodWithOpenApi(z)
+
+const updateUserZodObject = z.object({
+  currentPassword: z.string().optional().openapi({ example: 'Pwd@123' }),
+  email: z.string().email().optional().openapi({ example: 'johndoe@email.com' }),
+  name: z.string().optional().openapi({ example: 'Updated John Doe' }),
+  password: z.string().optional().openapi({ example: 'UpdatedPwd@123' }),
+  roles: z.array(z.nativeEnum(Role)).optional(),
+}) as UpdateUserBodySchema
 
 // const updateUserValidationPipe = new ZodValidationPipe(
 //   updateUserZodObject.superRefine(({ currentPassword, email, password }, ctx) => {
@@ -50,9 +52,12 @@ import { UpdateUserService, UpdateUserServiceResponse } from './update-user.serv
 //   })
 // )
 
-function UpdateUserApiResponse() {
+const createUserOpenApiSchema = generateSchema(updateUserZodObject)
+
+function UpdateUserApiDecorators() {
   return applyDecorators(
     ApiBearerAuth(),
+    ApiBody({ schema: createUserOpenApiSchema as any }),
     ApiResponse({ description: 'User updated successful', status: 200 }),
     ApiResponse({
       description: `When an user with same email address already exists <br/>
@@ -90,7 +95,7 @@ export class UpdateUserController {
     return omitObjectProperties(result.value, ['password'])
   }
 
-  @UpdateUserApiResponse()
+  @UpdateUserApiDecorators()
   @Put()
   async handle(
     @CurrentUser('sub') userId: string,
@@ -100,7 +105,7 @@ export class UpdateUserController {
     return this.handleResult(result)
   }
 
-  @UpdateUserApiResponse()
+  @UpdateUserApiDecorators()
   @Put('/:userId')
   async handleUpdateByUserId(
     @CurrentUser('roles') loggedUserRoles: Role[],
