@@ -1,3 +1,4 @@
+import { extendZodWithOpenApi, generateSchema } from '@anatine/zod-openapi'
 import {
   BadRequestException,
   Body,
@@ -6,6 +7,7 @@ import {
   UnauthorizedException,
   UsePipes,
 } from '@nestjs/common'
+import { ApiBody, ApiResponse } from '@nestjs/swagger'
 import { Role } from '@prisma/client'
 import { ZodObject, z } from 'zod'
 
@@ -20,21 +22,29 @@ import { CreateUserService } from './create-user.service'
 
 type CreateUserBodySchema = ZodObject<ZodObj<CreateUserData>>
 
-const createUserValidationPipe = new ZodValidationPipe(
-  z.object({
-    email: z.string().email(),
-    name: z.string(),
-    password: z.string(),
-    roles: z.array(z.nativeEnum(Role)).optional(),
-  }) as CreateUserBodySchema
-)
+extendZodWithOpenApi(z)
+
+const createUserZodObject = z.object({
+  email: z.string().email().openapi({ example: 'johndoe@email.com' }),
+  name: z.string().openapi({ example: 'John Doe' }),
+  password: z.string().openapi({ example: 'Pwd@123' }),
+  roles: z.array(z.nativeEnum(Role)).optional(),
+}) as CreateUserBodySchema
+
+const createUserOpenApiSchema = generateSchema(createUserZodObject)
 
 @Controller(USERS_URL)
 @AllowUnauthenticated()
-@UsePipes(createUserValidationPipe)
+@UsePipes(new ZodValidationPipe(createUserZodObject))
 export class CreateUserController {
   constructor(private createUserService: CreateUserService) {}
 
+  @ApiBody({ schema: createUserOpenApiSchema as any })
+  @ApiResponse({ description: 'User created successful', status: 201 })
+  @ApiResponse({
+    description: 'When an user with same email address already exists',
+    status: 401,
+  })
   @Post()
   async handle(@Body() body: CreateUserData): Promise<void> {
     const result = await this.createUserService.execute(body)
