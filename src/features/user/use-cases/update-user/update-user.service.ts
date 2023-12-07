@@ -30,7 +30,8 @@ export class UpdateUserService {
 
   async execute(
     userId: string,
-    data: UpdateUserData
+    data: UpdateUserData,
+    isAdmin = false
   ): Promise<UpdateUserServiceResponse> {
     const user = await this.userRepository.findById(userId)
 
@@ -41,20 +42,25 @@ export class UpdateUserService {
     const { currentPassword, email, password } = data
 
     if (email || password) {
-      if (!currentPassword) {
-        return failure(
-          new UnauthorizedToUpdateUserError(
-            'Property currentPassword is required to change email or password.'
+      if (!isAdmin) {
+        if (!currentPassword) {
+          return failure(
+            new UnauthorizedToUpdateUserError(
+              'Property currentPassword is required to change email or password.'
+            )
           )
-        )
-      }
+        }
 
-      const matchPassword = await this.hasher.compare(currentPassword, user.password)
-
-      if (!matchPassword) {
-        return failure(
-          new UnauthorizedToUpdateUserError('Incorrect current password')
+        const matchPassword = await this.hasher.compare(
+          currentPassword,
+          user.password
         )
+
+        if (!matchPassword) {
+          return failure(
+            new UnauthorizedToUpdateUserError('Incorrect current password')
+          )
+        }
       }
 
       if (email) {

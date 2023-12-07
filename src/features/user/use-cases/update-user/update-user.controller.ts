@@ -115,7 +115,8 @@ export class UpdateUserController {
     if (!loggedUserRoles?.includes('ADMIN')) {
       throw new UnauthorizedException('only admin users can edit other users')
     }
-    const result = await this.updateUserService.execute(userId, body)
+    const isAdmin = true
+    const result = await this.updateUserService.execute(userId, body, isAdmin)
     return this.handleResult(result)
   }
 }

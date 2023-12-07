@@ -4,9 +4,9 @@
 @accessToken = {{authenticate_user.response.body.accessToken}}
 @firstUserId = {{list_users.response.body.$.[0].id}}
 
-@adminUserName = Ana Admin
-@adminUserEmail = ana.admin@email.com
-@adminUserPassword = AdminPwd@123
+@adminUserName = Admin
+@adminUserEmail = user-admin@email.com
+@adminUserPassword = Pwd@123
 
 @commonUserName = John
 @commonUserEmail = john@email.com
@@ -113,15 +113,14 @@ Content-Type: application/json
 # editar a conta de um usuário pelo id
 # necessário estar logado como um usuário ADMIN
 # @name update_other_user
-PUT  {{usersUrl}}/cf951cf3-8995-4d58-9968-7d69cf505485
+PUT  {{usersUrl}}/ecc5ee10-51b7-46ea-aaf3-71ee68669b8f
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
   "name": "Updated {{commonUserName}}",
   "email": "updated-{{commonUserEmail}}",
-  //"password": "updated-{{commonUserPassword}}",
-  "currentPassword": "{{commonUserPassword}}"
+  "password": "updated-{{commonUserPassword}}",
 }
 ###
 
