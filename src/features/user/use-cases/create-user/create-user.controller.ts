@@ -7,7 +7,7 @@ import {
   UnauthorizedException,
   UsePipes,
 } from '@nestjs/common'
-import { ApiBody, ApiResponse } from '@nestjs/swagger'
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Role } from '@prisma/client'
 import { ZodObject, z } from 'zod'
 
@@ -39,6 +39,7 @@ const createUserOpenApiSchema = generateSchema(createUserZodObject)
 export class CreateUserController {
   constructor(private createUserService: CreateUserService) {}
 
+  @ApiTags('User')
   @ApiBody({ schema: createUserOpenApiSchema as any })
   @ApiResponse({ description: 'User created successful', status: 201 })
   @ApiResponse({

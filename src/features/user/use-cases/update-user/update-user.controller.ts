@@ -10,7 +10,7 @@ import {
   UnauthorizedException,
   applyDecorators,
 } from '@nestjs/common'
-import { ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Role } from '@prisma/client'
 import { ZodObject, z } from 'zod'
 
@@ -71,6 +71,7 @@ function UpdateUserApiDecorators() {
   )
 }
 
+@ApiTags('User')
 @Controller(USERS_URL)
 //@UsePipes(updateUserValidationPipe)
 export class UpdateUserController {

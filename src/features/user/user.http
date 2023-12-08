@@ -1,7 +1,8 @@
 @authUrl = {{serverUrl}}/auth
 @usersUrl = {{serverUrl}}/users
 
-@accessToken = {{authenticate_user.response.body.accessToken}}
+# @name setToken
+@authorization = Bearer {{login.response.body.accessToken}}
 @firstUserId = {{list_users.response.body.$.[0].id}}
 
 @adminUserName = Admin 1
@@ -13,7 +14,7 @@
 @commonUserPassword = Pwd@123
 
 
-# @name create_admin_user
+# @name register_ADMIN_user
 POST  {{usersUrl}}
 Content-Type: application/json
 
@@ -26,7 +27,7 @@ Content-Type: application/json
 ###
 
 
-# @name create_common_user
+# @name register_user
 POST  {{usersUrl}}
 Content-Type: application/json
 
@@ -39,7 +40,7 @@ Content-Type: application/json
 
 
 # autenticado com o usuário ADMIN
-# @name authenticate_user
+# @name login
 POST  {{authUrl}}
 Content-Type: application/json
 
@@ -51,7 +52,7 @@ Content-Type: application/json
 
 
 # autenticado com o usuário comum
-# @name authenticate_user
+# @name login
 POST  {{authUrl}}
 Content-Type: application/json
 
@@ -65,21 +66,21 @@ Content-Type: application/json
 # buscando os usuário ativos
 # @name list_users
 GET  {{usersUrl}}?page=1&perPage=20
-Authorization: Bearer {{accessToken}}
+Authorization: {{authorization}}
 ###
 
 
 # buscando os usuário deletados (query param deleted=true)
 # @name list_deleted_users
 GET  {{usersUrl}}?deleted=true&page=1&perPage=20
-Authorization: Bearer {{accessToken}}
+Authorization: {{authorization}}
 ###
 
 
 # buscando um usuário pelo id
 # @name show_user
 GET  {{usersUrl}}/{{firstUserId}}
-Authorization: Bearer {{accessToken}}
+Authorization: {{authorization}}
 ###
 
 
@@ -87,7 +88,7 @@ Authorization: Bearer {{accessToken}}
 # @name update_user
 PUT  {{usersUrl}}
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
+Authorization: {{authorization}}
 
 {
   "name": "Updated {{commonUserName}}"
@@ -98,7 +99,7 @@ Authorization: Bearer {{accessToken}}
 # editar a própria conta alterando email ou senha (necessário currentPassword)
 # @name update_user_including_creadentials
 PUT  {{usersUrl}}
-Authorization: Bearer {{accessToken}}
+Authorization: {{authorization}}
 Content-Type: application/json
 
 {
@@ -114,7 +115,7 @@ Content-Type: application/json
 # necessário estar logado como um usuário ADMIN
 # @name update_other_user
 PUT  {{usersUrl}}/246b6476-a867-4e5e-92d4-ac1c3e4f7799
-Authorization: Bearer {{accessToken}}
+Authorization: {{authorization}}
 Content-Type: application/json
 
 {
@@ -127,7 +128,7 @@ Content-Type: application/json
 # necessário estar logado como um usuário ADMIN
 # @name update_other_user
 PUT  {{usersUrl}}/049b03dc-dfff-44c1-bd64-b1b2c381a425
-Authorization: Bearer {{accessToken}}
+Authorization: {{authorization}}
 Content-Type: application/json
 
 {
@@ -140,7 +141,7 @@ Content-Type: application/json
 # deletar a própria consta
 # @name delete_user
 DELETE  {{usersUrl}}
-Authorization: Bearer {{accessToken}}
+Authorization: {{authorization}}
 ###
 
 
@@ -151,5 +152,5 @@ Authorization: Bearer {{accessToken}}
 # para solf delete passar a query param soft=true, sem ela o registro é deletado mesmo do banco
 # @name delete_user
 DELETE  {{usersUrl}}/d3550cba-dcc9-4ad7-9e50-7240fd79b737?soft=true
-Authorization: Bearer {{accessToken}}
+Authorization: {{authorization}}
 ###

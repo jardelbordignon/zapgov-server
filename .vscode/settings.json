@@ -9,7 +9,8 @@
   "files.autoSave": "onFocusChange",
   "material-icon-theme.activeIconPack": "nest",
   "material-icon-theme.files.associations": {
-    "vitest.config.e2e.ts": "Vitest"
+    "vitest.config.e2e.ts": "Vitest",
+    "*.error.ts": "Nest-filter"
   },
   "material-icon-theme.folders.associations": {
     "cryptography": "Keys",

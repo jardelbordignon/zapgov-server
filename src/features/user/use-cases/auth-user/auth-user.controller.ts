@@ -8,7 +8,7 @@ import {
   UnauthorizedException,
   UsePipes,
 } from '@nestjs/common'
-import { ApiBody, ApiResponse } from '@nestjs/swagger'
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ZodObject, z } from 'zod'
 
 import type { AuthUserData, AuthUserResponse } from 'src/contracts/account'
@@ -37,10 +37,11 @@ const authUserOpenApiSchema = generateSchema(authUserZodObject)
 export class AuthUserController {
   constructor(private authUserService: AuthUserService) {}
 
-  @HttpCode(200)
+  @ApiTags('User')
   @ApiBody({ schema: authUserOpenApiSchema as any })
   @ApiResponse({ description: 'Authentication successful', status: 200 })
   @ApiResponse({ description: 'When wrong email and/or password', status: 401 })
+  @HttpCode(200)
   @Post()
   async handle(@Body() body: AuthUserData): Promise<AuthUserResponse> {
     const result = await this.authUserService.execute(body)

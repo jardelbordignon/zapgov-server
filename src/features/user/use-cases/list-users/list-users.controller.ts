@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common'
-import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { UserOmittedPassword } from 'src/contracts/account'
 import { PaginatedResponse } from 'src/infra/types/pagination'
@@ -13,6 +13,7 @@ import { ListUsersService } from './list-users.service'
 export class ListUsersController {
   constructor(private listUsersService: ListUsersService) {}
 
+  @ApiTags('User')
   @ApiBearerAuth()
   @ApiResponse({
     description: 'A list of users (active or deleted) with omitted password',

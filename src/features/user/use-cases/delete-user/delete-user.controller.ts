@@ -8,7 +8,7 @@ import {
   UnauthorizedException,
   applyDecorators,
 } from '@nestjs/common'
-import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CurrentUser } from 'src/infra/auth/current-user.decorator'
 import { UserPayload } from 'src/infra/auth/jwt-strategy'
@@ -33,6 +33,7 @@ function DeleteUserApiResponse() {
   )
 }
 
+@ApiTags('User')
 @Controller(USERS_URL)
 export class DeleteUserController {
   constructor(private deleteUserService: DeleteUserService) {}
