@@ -51,7 +51,7 @@ describe('Delete user (E2E)', () => {
       .set('Authorization', `Bearer ${accessToken}`)
       .send()
 
-    const joe = getUsers.body.find(user => user.email === joeEmail)
+    const joe = getUsers.body.data.find(user => user.email === joeEmail)
 
     const response = await api
       .delete(`${USERS_URL}/${joe.id}`)

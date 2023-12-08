@@ -22,11 +22,15 @@ describe('List users', () => {
   })
 
   it('should be able to list the users', async () => {
-    const result = await listUsersService.execute()
+    const result = await listUsersService.execute({
+      deleted: false,
+      page: 1,
+      perPage: 10,
+    })
 
     expect(result.isSuccess()).toBe(true)
-    expect(result.value?.length).toBe(names.length)
-    expect(result.value).toEqual(
+    expect(result.value?.data.length).toBe(names.length)
+    expect(result.value.data).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ name: 'John' }),
         expect.objectContaining({ name: 'Joe' }),

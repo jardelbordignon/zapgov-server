@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import type { User } from '@prisma/client'
 
+import { PaginatedResponse } from 'src/infra/types/pagination'
 import {
   FailureOrSuccess,
   success,
@@ -8,17 +9,27 @@ import {
 
 import { UserRepository } from '../../repositories/user.repository'
 
-type ListUsersServiceResponse = FailureOrSuccess<null, User[]>
+type ListUsersServiceResponse = FailureOrSuccess<null, PaginatedResponse<User>>
+
+type Props = {
+  deleted: boolean
+  page: number
+  perPage: number
+}
 
 @Injectable()
 export class ListUsersService {
   constructor(private userRepository: UserRepository) {}
 
-  async execute(deleted?: boolean): Promise<ListUsersServiceResponse> {
-    const users = deleted
-      ? await this.userRepository.findAllDeleted()
-      : await this.userRepository.findAll()
+  async execute({
+    deleted,
+    page,
+    perPage,
+  }: Props): Promise<ListUsersServiceResponse> {
+    const result = deleted
+      ? await this.userRepository.findAllDeleted({ page, perPage })
+      : await this.userRepository.findAll({ page, perPage })
 
-    return success(users)
+    return success(result)
   }
 }

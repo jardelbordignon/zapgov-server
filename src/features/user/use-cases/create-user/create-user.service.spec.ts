@@ -31,8 +31,8 @@ describe('Create user', () => {
   })
 
   afterEach(async () => {
-    const users = await userRepository.findAll()
-    for (const user of users) {
+    const getUsers = await userRepository.findAll({ page: 1, perPage: 10 })
+    for (const user of getUsers.data) {
       await userRepository.delete(user.id)
     }
   })
@@ -45,8 +45,8 @@ describe('Create user', () => {
     expect(result.isSuccess()).toBe(true)
     const createdUser = await userRepository.findByEmail(email)
     expect(createdUser?.name).toBe(name)
-    const users = await userRepository.findAll()
-    expect(users.length).toBe(2)
+    const getUsers = await userRepository.findAll({ page: 1, perPage: 10 })
+    expect(getUsers.data.length).toBe(2)
   })
 
   it('should be able to create a new admin user', async () => {

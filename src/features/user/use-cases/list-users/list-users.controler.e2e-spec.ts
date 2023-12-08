@@ -45,22 +45,29 @@ describe('List users (E2E)', () => {
 
   test(`[GET] ${USERS_URL}`, async () => {
     const getUsers = await api
-      .get(USERS_URL)
+      .get(`${USERS_URL}?page=1&perPage=10`)
       .set('Authorization', `Bearer ${accessToken}`)
       .send()
 
     expect(getUsers.statusCode).toBe(200)
-    expect(getUsers.body.length).toBe(3)
+    expect(getUsers.body.data.length).toBe(3)
     expect(getUsers.body).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          email: 'john@email.com',
-          id: expect.any(String),
-          name: 'John',
-        }),
-        expect.objectContaining({ email: 'joe@email.com', name: 'Joe' }),
-        expect.objectContaining({ email: 'james@email.com', name: 'James' }),
-      ])
+      expect.objectContaining({
+        data: expect.arrayContaining([
+          expect.objectContaining({
+            email: 'john@email.com',
+            id: expect.any(String),
+            name: 'John',
+          }),
+          expect.objectContaining({ email: 'joe@email.com', name: 'Joe' }),
+          expect.objectContaining({ email: 'james@email.com', name: 'James' }),
+        ]),
+        hasNext: false,
+        hasPrevious: false,
+        page: 1,
+        perPage: 10,
+        total: 3,
+      })
     )
   })
 })

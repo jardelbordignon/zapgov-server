@@ -35,8 +35,8 @@ describe('Authenticate user', () => {
   })
 
   afterEach(async () => {
-    const users = await userRepository.findAll()
-    for (const user of users) {
+    const getUsers = await userRepository.findAll({ page: 1, perPage: 100 })
+    for (const user of getUsers.data) {
       await userRepository.delete(user.id)
     }
   })

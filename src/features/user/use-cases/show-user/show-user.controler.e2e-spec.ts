@@ -41,7 +41,7 @@ describe('Show user (E2E)', () => {
       .set('Authorization', `Bearer ${accessToken}`)
       .send()
 
-    const firstUserId = getUsers.body[0].id
+    const firstUserId = getUsers.body.data[0].id
 
     const getUser = await api
       .get(`${USERS_URL}/${firstUserId}`)

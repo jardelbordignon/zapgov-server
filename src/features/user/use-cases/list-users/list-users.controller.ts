@@ -2,6 +2,7 @@ import { Controller, Get, Query } from '@nestjs/common'
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger'
 
 import { UserOmittedPassword } from 'src/contracts/account'
+import { PaginatedResponse } from 'src/infra/types/pagination'
 import { omitObjectProperties } from 'src/infra/utils/omit-object-properties'
 
 import { USERS_URL } from '../constants'
@@ -18,11 +19,21 @@ export class ListUsersController {
     status: 200,
   })
   @Get()
-  async handle(@Query('deleted') deleted: boolean): Promise<UserOmittedPassword[]> {
-    const result = await this.listUsersService.execute(deleted)
+  async handle(
+    @Query('deleted') deleted: boolean,
+    @Query('page') page,
+    @Query('perPage') perPage,
+    @Query('limit') limit
+  ): Promise<PaginatedResponse<UserOmittedPassword>> {
+    page = +page || 1
+    perPage = +perPage || +limit || 20
+    const result = await this.listUsersService.execute({ deleted, page, perPage })
 
-    return result.value
-      ? result.value.map(user => omitObjectProperties(user, ['password']))
-      : []
+    const formattedResultValue = {
+      ...result.value,
+      data: result.value.data.map(user => omitObjectProperties(user, ['password'])),
+    }
+
+    return formattedResultValue
   }
 }

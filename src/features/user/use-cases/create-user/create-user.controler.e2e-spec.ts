@@ -48,7 +48,7 @@ describe('Create user (E2E)', () => {
       .get(USERS_URL)
       .set('Authorization', `Bearer ${authRes.body.accessToken}`)
       .send()
-    expect(getUsers.body).toEqual(
+    expect(getUsers.body.data).toEqual(
       expect.arrayContaining([expect.objectContaining({ name, roles: ['ADMIN'] })])
     )
   })

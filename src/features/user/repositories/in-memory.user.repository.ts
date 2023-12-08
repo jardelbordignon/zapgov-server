@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto'
 import type { User } from '@prisma/client'
 
 import type { CreateUserData, UpdateUserData } from 'src/contracts/account'
+import { PaginatedResponse, PaginationParams } from 'src/infra/types/pagination'
 
 import { UserRepository } from './user.repository'
 
@@ -28,12 +29,49 @@ export class InMemoryUserRepository implements UserRepository {
     this.users = this.users.filter(user => user.id !== id)
   }
 
-  async findAll(): Promise<User[]> {
-    return this.users.filter(user => user.deleted_at === null)
+  // async findAll({ page: 1, perPage: 100 }): Promise<User[]> {
+  //   return this.users.filter(user => user.deleted_at === null)
+  // }
+
+  private async findUsers(
+    page: number,
+    perPage: number,
+    deleted: boolean
+  ): Promise<PaginatedResponse<User>> {
+    const start = (page - 1) * perPage
+    const end = start + perPage
+
+    const users = deleted
+      ? this.users.filter(user => user.deleted_at)
+      : this.users.filter(user => !user.deleted_at)
+
+    const data = users.slice(start, end)
+    const total = this.users.length
+    const hasPrevious = start > 0
+    const hasNext = end < total
+
+    return {
+      data,
+      hasNext,
+      hasPrevious,
+      page,
+      perPage,
+      total,
+    }
   }
 
-  async findAllDeleted(): Promise<User[]> {
-    return this.users.filter(user => user.deleted_at !== null)
+  async findAll({
+    page,
+    perPage,
+  }: PaginationParams): Promise<PaginatedResponse<User>> {
+    return this.findUsers(page, perPage, false)
+  }
+
+  async findAllDeleted({
+    page,
+    perPage,
+  }: PaginationParams): Promise<PaginatedResponse<User>> {
+    return this.findUsers(page, perPage, true)
   }
 
   async findByEmail(email: string): Promise<User | null> {

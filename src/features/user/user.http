@@ -120,7 +120,7 @@ Content-Type: application/json
 {
   "name": "Updated {{commonUserName}}",
   "email": "updated-{{commonUserEmail}}",
-  "password": "updated-{{commonUserPassword}}",
+  "password": "updated-{{commonUserPassword}}"
 }
 ###
 

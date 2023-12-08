@@ -38,8 +38,8 @@ describe('Update user', () => {
   })
 
   afterEach(async () => {
-    const users = await userRepository.findAll()
-    for (const user of users) {
+    const getUsers = await userRepository.findAll({ page: 1, perPage: 100 })
+    for (const user of getUsers.data) {
       await userRepository.delete(user.id)
     }
   })
@@ -50,8 +50,8 @@ describe('Update user', () => {
     const result = await deleteUserService.execute(loggedJohnAdminData, joe.id, soft)
 
     expect(result.isSuccess()).toBe(true)
-    const users = await userRepository.findAll()
-    expect(users.length).toBe(1)
+    const getUsers = await userRepository.findAll({ page: 1, perPage: 100 })
+    expect(getUsers.data.length).toBe(1)
   })
 
   it('should be able to soft delete an user', async () => {
@@ -60,11 +60,14 @@ describe('Update user', () => {
     const result = await deleteUserService.execute(loggedJohnAdminData, joe.id, soft)
 
     expect(result.isSuccess()).toBe(true)
-    const users = await userRepository.findAll()
-    expect(users.length).toBe(1)
-    const deletedUsers = await userRepository.findAllDeleted()
-    expect(deletedUsers.length).toBe(1)
-    expect(deletedUsers).toEqual(
+    const getUsers = await userRepository.findAll({ page: 1, perPage: 100 })
+    expect(getUsers.data.length).toBe(1)
+    const getDeletedUsers = await userRepository.findAllDeleted({
+      page: 1,
+      perPage: 100,
+    })
+    expect(getDeletedUsers.data.length).toBe(1)
+    expect(getDeletedUsers.data).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ deleted_at: expect.any(Date), name: 'Joe Smith' }),
       ])
@@ -81,7 +84,7 @@ describe('Update user', () => {
     expect(result.value).toBeInstanceOf(UserNotFoundError)
   })
 
-  it('it should not be able to delete my account from being an admin', async () => {
+  it('should not be able to delete my account from being an admin', async () => {
     const john = await userRepository.findByEmail(johnEmail)
 
     const result = await deleteUserService.execute(
