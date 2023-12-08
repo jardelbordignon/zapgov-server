@@ -26,3 +26,19 @@ model User {
 
   @@map("users")
 }
+
+model CityHall {
+  id         String    @id @default(uuid())
+  name       String
+  phone      String?
+  email      String?   @unique
+  slug       String    @unique
+  title      String
+  txt_color  String
+  bg_image   String?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  @@map("city_halls")
+}

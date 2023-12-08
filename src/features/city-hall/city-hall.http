@@ -1,0 +1,33 @@
+@usersUrl = {{serverUrl}}/users
+@cityHallsUrl = {{serverUrl}}/city-halls
+@authorization = Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6W10sInN1YiI6IjJkNTM4YTQ2LTAzNzQtNGEwYi04Mzc3LTJhYmExMmYxNzU3OSIsImlhdCI6MTcwMjA0NTEyNywiZXhwIjoxNzA0NjM3MTI3fQ.BnALvu1EK0EutZNOBWjjsEPNNDIxJHWIp7DlF5Z7a9Tyr0YgQxBfWZgea-XmJ5ZiRqe3mZgACVBNfoNDsdYrkr1m_Z0EryPf0NKgCpGco2eswGVh0QitmpFV7ZUZWdMNHcG_LrFak3L64oPFXHnYayzgsKXrRvxSaLfwG63Y1srR4K1v2a1VBEP8AcVziHnrH0xb0o0uhAwsfG-434ajsCkomOjKxuaEl7vh-TaFFdRSTeJCvm7VhGZSx3Ht62ymkQR4cvyN07uXWtgPaYXD4p7mvR_7iSJHpc2NyiRAPA-RGJb_5sedQ3dEYJI88c-mglg1KQoroY4iWgOwpDECZw
+
+# buscando os usuário ativos
+# @name list_users
+GET  {{usersUrl}}?page=1&perPage=20
+Authorization: {{authorization}}
+###
+
+@bg_image = #f2f2f2
+@email = tangamandapio.ayuntamiento@email.com
+@name = Ayuntamiento de Tangamandapio
+@phone = 01 (383) 518 32 57
+@slug = tangamandapio
+@title = Ayuntamiento de Tangamandapio
+@txt_color = #222222
+
+# @name register_city_hall
+POST  {{cityHallsUrl}}
+Content-Type: application/json
+Authorization: {{authorization}}
+
+{
+  "bg_image": "{{bg_image}}", 
+  "email": "{{email}}", 
+  "name": "{{name}}", 
+  "phone": "{{phone}}", 
+  "slug": "{{slug}}", 
+  "title": "{{title}}", 
+  "txt_color": "{{txt_color}}"
+}
+###
