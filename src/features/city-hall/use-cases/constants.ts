@@ -8,6 +8,5 @@ export const createCityHallData: CreateCityHallData = {
   name: 'Ayuntamiento de Tangamandapio',
   phone: '01 (383) 518 32 57',
   slug: 'tangamandapio',
-  title: 'Ayuntamiento de Tangamandapio',
   txt_color: '#222222',
 }
