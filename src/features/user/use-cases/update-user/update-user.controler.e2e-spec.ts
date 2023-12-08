@@ -12,9 +12,32 @@ describe('Update user (E2E)', () => {
   let app: INestApplication
 
   let accessToken: string
+  const adminEmail = 'admin@email.com'
+  const adminName = 'Admin User'
   const email = 'johndoe@email.com'
   const name = 'John Doe'
   const password = 'Pwd@123'
+
+  const register = async (data: CreateUserData) => {
+    await api.post(USERS_URL).send(data)
+  }
+
+  const authenticate = async (data: AuthUserData) => {
+    const authRes = await api.post('/auth').send(data)
+    accessToken = authRes.body.accessToken
+  }
+
+  const update = async (data: UpdateUserData) => {
+    return api.put(USERS_URL).set('Authorization', `Bearer ${accessToken}`).send(data)
+  }
+
+  const getUsers = async () => {
+    const response = await api
+      .get(USERS_URL)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send()
+    return response.body.data
+  }
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -25,28 +48,28 @@ describe('Update user (E2E)', () => {
     api = supertest(app.getHttpServer())
 
     await app.init()
+  })
 
-    const createUserData: CreateUserData = {
-      email,
-      name,
-      password,
+  beforeEach(async () => {
+    await register({ email: adminEmail, name: adminName, password, roles: ['ADMIN'] })
+    await register({ email, name, password })
+    await authenticate({ email, password })
+  })
+
+  afterEach(async () => {
+    await authenticate({ email: adminEmail, password })
+    const users = await getUsers()
+    for (const user of users) {
+      await api
+        .delete(`${USERS_URL}/${user.id}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send()
     }
-
-    await api.post(USERS_URL).send(createUserData)
-
-    const authUserData: AuthUserData = { email, password }
-    const authRes = await api.post('/auth').send(authUserData)
-    accessToken = authRes.body.accessToken
   })
 
   test(`[PUT] ${USERS_URL} - success`, async () => {
     const updatedName = `Updated ${name}`
-    const updateUserData: UpdateUserData = { name: updatedName }
-
-    const response = await api
-      .put(USERS_URL)
-      .set('Authorization', `Bearer ${accessToken}`)
-      .send(updateUserData)
+    const response = await update({ name: updatedName })
 
     expect(response.statusCode).toBe(200)
     expect(response.body).toEqual(expect.objectContaining({ name: updatedName }))
@@ -55,16 +78,12 @@ describe('Update user (E2E)', () => {
   test(`[PUT] ${USERS_URL} - success (credentials)`, async () => {
     const updatedEmail = `updated-${email}`
     const updatedPassword = `updated-${password}`
-    const updateUserData: UpdateUserData = {
+
+    const response = await update({
       currentPassword: password,
       email: updatedEmail,
       password: updatedPassword,
-    }
-
-    const response = await api
-      .put(USERS_URL)
-      .set('Authorization', `Bearer ${accessToken}`)
-      .send(updateUserData)
+    })
 
     expect(response.statusCode).toBe(200)
     expect(response.body).toEqual(expect.objectContaining({ email: updatedEmail }))
@@ -84,5 +103,43 @@ describe('Update user (E2E)', () => {
       message: 'Property currentPassword is required to change email or password.',
       statusCode: 401,
     })
+  })
+
+  test(`[PUT] ${USERS_URL}/:userId - success (ADMIN)`, async () => {
+    await authenticate({ email: adminEmail, password })
+
+    const users = await getUsers()
+
+    const john = users.find(user => user.email === email)
+
+    const updatedName = `Updated ${john.name}`
+    const updateUserData: UpdateUserData = { name: updatedName }
+
+    const response = await api
+      .put(`${USERS_URL}/${john.id}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(updateUserData)
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body).toEqual(expect.objectContaining({ name: updatedName }))
+  })
+
+  test(`[PUT] ${USERS_URL}/:userId - success - credentials (ADMIN)`, async () => {
+    await authenticate({ email: adminEmail, password })
+
+    const users = await getUsers()
+
+    const john = users.find(user => user.email === email)
+
+    const updatedEmail = `updated-${john.email}`
+    const updateUserData: UpdateUserData = { email: updatedEmail }
+
+    const response = await api
+      .put(`${USERS_URL}/${john.id}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(updateUserData)
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body).toEqual(expect.objectContaining({ email: updatedEmail }))
   })
 })
