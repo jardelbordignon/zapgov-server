@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Controller,
   Delete,
+  HttpCode,
   NotFoundException,
   Param,
   Query,
@@ -20,8 +21,9 @@ import { DeleteUserService, DeleteUserServiceResponse } from './delete-user.serv
 
 function DeleteUserApiResponse() {
   return applyDecorators(
+    HttpCode(204),
     ApiBearerAuth(),
-    ApiResponse({ description: 'User deleted successful', status: 200 }),
+    ApiResponse({ description: 'User deleted successful', status: 204 }),
     ApiResponse({
       description: 'When user not found',
       status: 404,

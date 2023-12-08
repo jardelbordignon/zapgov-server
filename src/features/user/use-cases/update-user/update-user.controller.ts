@@ -14,11 +14,12 @@ import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Role } from '@prisma/client'
 import { ZodObject, z } from 'zod'
 
-import type { UpdateUserData, UserOmittedPassword } from 'src/contracts/account'
+import type { UpdateUserData } from 'src/contracts/account'
 import { CurrentUser } from 'src/infra/auth/current-user.decorator'
 import { ZodObj } from 'src/infra/pipes/zod-validation.pipe'
 import { omitObjectProperties } from 'src/infra/utils/omit-object-properties'
 
+import { UserEntity } from '../../user.entity'
 import { USERS_URL } from '../constants'
 import {
   UnauthorizedToUpdateUserError,
@@ -58,7 +59,11 @@ function UpdateUserApiDecorators() {
   return applyDecorators(
     ApiBearerAuth(),
     ApiBody({ schema: createUserOpenApiSchema as any }),
-    ApiResponse({ description: 'User updated successful', status: 200 }),
+    ApiResponse({
+      description: 'User updated successful',
+      status: 200,
+      type: UserEntity,
+    }),
     ApiResponse({
       description: `When an user with same email address already exists <br/>
         When trying to edit email and/or password without correctly entering currentPassword`,
@@ -101,7 +106,7 @@ export class UpdateUserController {
   async handle(
     @CurrentUser('sub') userId: string,
     @Body() body: UpdateUserData
-  ): Promise<UserOmittedPassword> {
+  ): Promise<UserEntity> {
     const result = await this.updateUserService.execute(userId, body)
     return this.handleResult(result)
   }
@@ -112,7 +117,7 @@ export class UpdateUserController {
     @CurrentUser('roles') loggedUserRoles: Role[],
     @Param('userId') userId: string,
     @Body() body: UpdateUserData
-  ): Promise<UserOmittedPassword> {
+  ): Promise<UserEntity> {
     if (!loggedUserRoles?.includes('ADMIN')) {
       throw new UnauthorizedException('only admin users can edit other users')
     }

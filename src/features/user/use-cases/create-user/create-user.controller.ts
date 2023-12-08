@@ -45,6 +45,7 @@ export class CreateUserController {
   @ApiResponse({
     description: 'When an user with same email address already exists',
     status: 401,
+    type: UserAlreadyExistsError,
   })
   @Post()
   async handle(@Body() body: CreateUserData): Promise<void> {

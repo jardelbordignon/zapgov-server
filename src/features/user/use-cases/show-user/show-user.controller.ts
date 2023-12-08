@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
 
-import type { UserOmittedPassword } from 'src/contracts/account'
 import { omitObjectProperties } from 'src/infra/utils/omit-object-properties'
 
+import { UserEntity } from '../../user.entity'
 import { USERS_URL } from '../constants'
 import { UserNotFoundError } from '../errors'
 
@@ -21,9 +21,13 @@ export class ShowUserController {
 
   @ApiTags('User')
   @ApiBearerAuth()
-  @ApiResponse({ description: 'A user with omitted password', status: 200 })
+  @ApiResponse({
+    description: 'A user with omitted password',
+    status: 200,
+    type: UserEntity,
+  })
   @Get('/:userId')
-  async handle(@Param('userId') userId: string): Promise<UserOmittedPassword> {
+  async handle(@Param('userId') userId: string): Promise<UserEntity> {
     const result = await this.showUserService.execute(userId)
 
     if (result.isFailure()) {

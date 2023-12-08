@@ -2,7 +2,7 @@ import type { User } from '@prisma/client'
 
 import { CreateUserData, UpdateUserData } from 'src/contracts/account'
 import { PrismaService } from 'src/infra/prisma.service'
-import { PaginatedResponse, PaginationParams } from 'src/infra/types/pagination'
+import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
 
 import { UserRepository } from './user.repository'
 
@@ -32,21 +32,25 @@ export class PrismaUserRepository extends PrismaService implements UserRepositor
 
     const where = deleted ? { NOT: { deleted_at: null } } : { deleted_at: null }
 
-    const [data, total] = await this.$transaction([
+    const [data, totalItems] = await this.$transaction([
       this.user.findMany({ skip, take: perPage, where }),
       this.user.count({ where }),
     ])
 
     const hasPrevious = skip > 0
-    const hasNext = skip + perPage < total
+    const hasNext = skip + perPage < totalItems
+    const totalPages = Math.ceil(totalItems / perPage)
 
     return {
       data,
-      hasNext,
-      hasPrevious,
-      page,
-      perPage,
-      total,
+      meta: {
+        hasNext,
+        hasPrevious,
+        page,
+        perPage,
+        totalItems,
+        totalPages,
+      },
     }
   }
 

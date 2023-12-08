@@ -1,10 +1,12 @@
 import { Controller, Get, Query } from '@nestjs/common'
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
-import { UserOmittedPassword } from 'src/contracts/account'
-import { PaginatedResponse } from 'src/infra/types/pagination'
-import { omitObjectProperties } from 'src/infra/utils/omit-object-properties'
+import {
+  ApiPaginatedResponse,
+  PaginatedResponse,
+} from 'src/infra/providers/pagination/pagination.decorator'
 
+import { UserEntity } from '../../user.entity'
 import { USERS_URL } from '../constants'
 
 import { ListUsersService } from './list-users.service'
@@ -15,24 +17,26 @@ export class ListUsersController {
 
   @ApiTags('User')
   @ApiBearerAuth()
-  @ApiResponse({
+  @ApiPaginatedResponse(UserEntity, {
     description: 'A list of users (active or deleted) with omitted password',
-    status: 200,
   })
   @Get()
   async handle(
     @Query('deleted') deleted: boolean,
-    @Query('page') page,
-    @Query('perPage') perPage,
-    @Query('limit') limit
-  ): Promise<PaginatedResponse<UserOmittedPassword>> {
+    @Query('page') page?: number,
+    @Query('perPage') perPage?: number,
+    @Query('limit') limit?: number
+  ): Promise<PaginatedResponse<UserEntity>> {
     page = +page || 1
     perPage = +perPage || +limit || 20
     const result = await this.listUsersService.execute({ deleted, page, perPage })
 
     const formattedResultValue = {
       ...result.value,
-      data: result.value.data.map(user => omitObjectProperties(user, ['password'])),
+      data: result.value.data.map(user => {
+        delete user.password
+        return user
+      }),
     }
 
     return formattedResultValue

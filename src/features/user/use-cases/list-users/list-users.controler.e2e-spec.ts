@@ -45,7 +45,7 @@ describe('List users (E2E)', () => {
 
   test(`[GET] ${USERS_URL}`, async () => {
     const getUsers = await api
-      .get(`${USERS_URL}?page=1&perPage=10`)
+      .get(`${USERS_URL}?page=1&perPage=3`)
       .set('Authorization', `Bearer ${accessToken}`)
       .send()
 
@@ -62,11 +62,14 @@ describe('List users (E2E)', () => {
           expect.objectContaining({ email: 'joe@email.com', name: 'Joe' }),
           expect.objectContaining({ email: 'james@email.com', name: 'James' }),
         ]),
-        hasNext: false,
-        hasPrevious: false,
-        page: 1,
-        perPage: 10,
-        total: 3,
+        meta: {
+          hasNext: false,
+          hasPrevious: false,
+          page: 1,
+          perPage: 3,
+          totalItems: 3,
+          totalPages: 1,
+        },
       })
     )
   })

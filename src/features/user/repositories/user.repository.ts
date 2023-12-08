@@ -1,7 +1,7 @@
 import { User } from '@prisma/client'
 
 import { CreateUserData, UpdateUserData } from 'src/contracts/account'
-import { PaginatedResponse, PaginationParams } from 'src/infra/types/pagination'
+import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
 
 export abstract class UserRepository {
   abstract create(data: CreateUserData): Promise<void>

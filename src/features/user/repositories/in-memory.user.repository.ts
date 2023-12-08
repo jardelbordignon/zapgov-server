@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto'
 import type { User } from '@prisma/client'
 
 import type { CreateUserData, UpdateUserData } from 'src/contracts/account'
-import { PaginatedResponse, PaginationParams } from 'src/infra/types/pagination'
+import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
 
 import { UserRepository } from './user.repository'
 
@@ -46,17 +46,21 @@ export class InMemoryUserRepository implements UserRepository {
       : this.users.filter(user => !user.deleted_at)
 
     const data = users.slice(start, end)
-    const total = users.length
+    const totalItems = users.length
+    const totalPages = Math.ceil(totalItems / perPage)
     const hasPrevious = start > 0
-    const hasNext = end < total
+    const hasNext = end < totalItems
 
     return {
       data,
-      hasNext,
-      hasPrevious,
-      page,
-      perPage,
-      total,
+      meta: {
+        hasNext,
+        hasPrevious,
+        page,
+        perPage,
+        totalItems,
+        totalPages,
+      },
     }
   }
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import type { User } from '@prisma/client'
 
-import { PaginatedResponse } from 'src/infra/types/pagination'
+import { PaginatedResponse } from 'src/infra/providers/pagination'
 import {
   FailureOrSuccess,
   success,
