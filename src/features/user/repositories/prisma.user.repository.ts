@@ -34,7 +34,7 @@ export class PrismaUserRepository extends PrismaService implements UserRepositor
 
     const [data, total] = await this.$transaction([
       this.user.findMany({ skip, take: perPage, where }),
-      this.user.count(),
+      this.user.count({ where }),
     ])
 
     const hasPrevious = skip > 0
@@ -51,15 +51,15 @@ export class PrismaUserRepository extends PrismaService implements UserRepositor
   }
 
   async findAll({
-    page = 1,
-    perPage = 100000,
+    page,
+    perPage,
   }: PaginationParams): Promise<PaginatedResponse<User>> {
     return this.findUsers(page, perPage, false)
   }
 
   async findAllDeleted({
-    page = 1,
-    perPage = 100000,
+    page,
+    perPage,
   }: PaginationParams): Promise<PaginatedResponse<User>> {
     return this.findUsers(page, perPage, true)
   }

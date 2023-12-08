@@ -46,7 +46,7 @@ export class InMemoryUserRepository implements UserRepository {
       : this.users.filter(user => !user.deleted_at)
 
     const data = users.slice(start, end)
-    const total = this.users.length
+    const total = users.length
     const hasPrevious = start > 0
     const hasNext = end < total
 

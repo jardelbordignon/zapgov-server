@@ -4,8 +4,8 @@
 @accessToken = {{authenticate_user.response.body.accessToken}}
 @firstUserId = {{list_users.response.body.$.[0].id}}
 
-@adminUserName = Admin
-@adminUserEmail = user-admin@email.com
+@adminUserName = Admin 1
+@adminUserEmail = admin1@email.com
 @adminUserPassword = Pwd@123
 
 @commonUserName = John
@@ -64,14 +64,14 @@ Content-Type: application/json
 
 # buscando os usuário ativos
 # @name list_users
-GET  {{usersUrl}}
+GET  {{usersUrl}}?page=1&perPage=20
 Authorization: Bearer {{accessToken}}
 ###
 
 
 # buscando os usuário deletados (query param deleted=true)
 # @name list_deleted_users
-GET  {{usersUrl}}?deleted=true
+GET  {{usersUrl}}?deleted=true&page=1&perPage=20
 Authorization: Bearer {{accessToken}}
 ###
 
@@ -113,14 +113,12 @@ Content-Type: application/json
 # editar a conta de um usuário pelo id
 # necessário estar logado como um usuário ADMIN
 # @name update_other_user
-PUT  {{usersUrl}}/ecc5ee10-51b7-46ea-aaf3-71ee68669b8f
+PUT  {{usersUrl}}/246b6476-a867-4e5e-92d4-ac1c3e4f7799
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "name": "Updated {{commonUserName}}",
-  "email": "updated-{{commonUserEmail}}",
-  "password": "updated-{{commonUserPassword}}"
+  "roles": []
 }
 ###
 
@@ -128,12 +126,13 @@ Content-Type: application/json
 # editar a conta de um usuário pelo id
 # necessário estar logado como um usuário ADMIN
 # @name update_other_user
-PUT  {{usersUrl}}/cf951cf3-8995-4d58-9968-7d69cf505485
+PUT  {{usersUrl}}/049b03dc-dfff-44c1-bd64-b1b2c381a425
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "deleted_at": null
+  "name": "Admin 1",
+  "email": "admin1@email.com"
 }
 ###
 
@@ -151,6 +150,6 @@ Authorization: Bearer {{accessToken}}
 # o usuário a ser deletado não pode ser um admin (necessário fazer um udpate antes removendo a role ADMIN)
 # para solf delete passar a query param soft=true, sem ela o registro é deletado mesmo do banco
 # @name delete_user
-DELETE  {{usersUrl}}/cf951cf3-8995-4d58-9968-7d69cf505485
+DELETE  {{usersUrl}}/d3550cba-dcc9-4ad7-9e50-7240fd79b737?soft=true
 Authorization: Bearer {{accessToken}}
 ###
