@@ -26,13 +26,10 @@ describe('Create city-hall (E2E)', () => {
     authorization = `Bearer ${authRes.body.accessToken}`
   }
 
-  // const getCityHalls = async () => {
-  //   const response = await api
-  //     .get(CITY_HALLS_URL)
-  //     .set('Authorization', authorization)
-  //     .send()
-  //   return response.body.data
-  // }
+  const getCityHalls = async () => {
+    const response = await api.get(CITY_HALLS_URL).send()
+    return response.body.data
+  }
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -48,10 +45,10 @@ describe('Create city-hall (E2E)', () => {
     await authenticate({ email, password })
   })
 
-  // afterEach(async () => {
-  //   const cityHalls = await getCityHalls()
-  //   console.log('cityHalls: ', cityHalls)
-  // })
+  afterEach(async () => {
+    const cityHalls = await getCityHalls()
+    console.log('cityHalls: ', cityHalls)
+  })
 
   test(`[POST] ${CITY_HALLS_URL} - success`, async () => {
     const response = await api

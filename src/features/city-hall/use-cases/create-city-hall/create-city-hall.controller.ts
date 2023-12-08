@@ -7,7 +7,7 @@ import {
   UnauthorizedException,
   UsePipes,
 } from '@nestjs/common'
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ZodObject, z } from 'zod'
 
 import type { CreateCityHallData } from 'src/contracts/city-halls'
@@ -44,6 +44,7 @@ export class CreateCityHallController {
   constructor(private createCityHallService: CreateCityHallService) {}
 
   @ApiTags('CityHall')
+  @ApiBearerAuth()
   @ApiBody({ schema: createCityHallOpenApiSchema as any })
   @ApiResponse({ description: 'City hall registered successful', status: 201 })
   @ApiResponse({

@@ -1,19 +1,21 @@
 @authUrl = {{serverUrl}}/auth
 @cityHallsUrl = {{serverUrl}}/city-halls
-@authorization = Bearer {{login.response.body.accessToken}}
 
-@email = john@email.com
-@password = Pwd@123
 
-# @name login
+@authorization = Bearer {{auth.response.body.accessToken}}
+@userEmail = john@email.com
+@userPassword = Pwd@123
+
+# @name auth
 POST  {{authUrl}}
 Content-Type: application/json
 
 {
-  "email": "{{email}}",
-  "password": "{{password}}"
+  "email": "{{userEmail}}",
+  "password": "{{userPassword}}"
 }
 ###
+
 
 @bg_image = #f2f2f2
 @email = tangamandapio.ayuntamiento@email.com
@@ -35,4 +37,15 @@ Authorization: {{authorization}}
   "slug": "{{slug}}", 
   "txt_color": "{{txt_color}}"
 }
+###
+
+# buscando as prefeituras ativas
+# @name list_city_halls
+GET  {{cityHallsUrl}}?page=1&perPage=20
+###
+
+
+# buscando as prefeituras deletadas (query param deleted=true)
+# @name list_deleted_users
+GET  {{cityHallsUrl}}?deleted=true&page=1&perPage=20
 ###
