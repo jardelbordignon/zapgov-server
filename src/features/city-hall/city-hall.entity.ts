@@ -18,9 +18,6 @@ export class CityHallEntity implements CityHall {
   slug: string
 
   @ApiProperty()
-  title: string
-
-  @ApiProperty()
   txt_color: string
 
   @ApiProperty()

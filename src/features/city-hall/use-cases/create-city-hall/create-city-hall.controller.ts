@@ -11,7 +11,6 @@ import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ZodObject, z } from 'zod'
 
 import type { CreateCityHallData } from 'src/contracts/city-halls'
-import { AllowUnauthenticated } from 'src/infra/auth/authentication.guard'
 import { ZodObj, ZodValidationPipe } from 'src/infra/pipes/zod-validation.pipe'
 
 import { CITY_HALLS_URL } from '../constants'
@@ -34,14 +33,12 @@ const createCityHallZodObject = z.object({
   name: z.string().openapi({ example: 'Ayuntamiento de Tangamandapio' }),
   phone: z.string().openapi({ example: '01 (383) 518 32 57' }),
   slug: z.string().openapi({ example: 'tangamandapio' }),
-  title: z.string().openapi({ example: 'Ayuntamiento de Tangamandapio' }),
   txt_color: z.string().regex(hexColorRegex).openapi({ example: '#222222' }),
 }) as CreateCityHallBodySchema
 
 const createCityHallOpenApiSchema = generateSchema(createCityHallZodObject)
 
 @Controller(CITY_HALLS_URL)
-@AllowUnauthenticated()
 @UsePipes(new ZodValidationPipe(createCityHallZodObject))
 export class CreateCityHallController {
   constructor(private createCityHallService: CreateCityHallService) {}
