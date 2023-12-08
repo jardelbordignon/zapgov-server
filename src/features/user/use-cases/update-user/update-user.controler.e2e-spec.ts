@@ -5,13 +5,13 @@ import supertest from 'supertest'
 import { AppModule } from 'src/app.module'
 import { AuthUserData, CreateUserData, UpdateUserData } from 'src/contracts/account'
 
-import { USERS_URL } from '../constants'
+import { AUTH_URL, USERS_URL } from '../constants'
 
 describe('Update user (E2E)', () => {
   let api: supertest.SuperTest<supertest.Test>
   let app: INestApplication
 
-  let accessToken: string
+  let authorization: string
   const adminEmail = 'admin@email.com'
   const adminName = 'Admin User'
   const email = 'johndoe@email.com'
@@ -23,18 +23,18 @@ describe('Update user (E2E)', () => {
   }
 
   const authenticate = async (data: AuthUserData) => {
-    const authRes = await api.post('/auth').send(data)
-    accessToken = authRes.body.accessToken
+    const authRes = await api.post(AUTH_URL).send(data)
+    authorization = `Bearer ${authRes.body.accessToken}`
   }
 
   const update = async (data: UpdateUserData) => {
-    return api.put(USERS_URL).set('Authorization', `Bearer ${accessToken}`).send(data)
+    return api.put(USERS_URL).set('Authorization', authorization).send(data)
   }
 
   const getUsers = async () => {
     const response = await api
       .get(USERS_URL)
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', authorization)
       .send()
     return response.body.data
   }
@@ -62,7 +62,7 @@ describe('Update user (E2E)', () => {
     for (const user of users) {
       await api
         .delete(`${USERS_URL}/${user.id}`)
-        .set('Authorization', `Bearer ${accessToken}`)
+        .set('Authorization', authorization)
         .send()
     }
   })
@@ -94,7 +94,7 @@ describe('Update user (E2E)', () => {
 
     const response = await api
       .put(USERS_URL)
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', authorization)
       .send(updateUserData)
 
     expect(response.statusCode).toBe(401)
@@ -117,7 +117,7 @@ describe('Update user (E2E)', () => {
 
     const response = await api
       .put(`${USERS_URL}/${john.id}`)
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', authorization)
       .send(updateUserData)
 
     expect(response.statusCode).toBe(200)
@@ -136,7 +136,7 @@ describe('Update user (E2E)', () => {
 
     const response = await api
       .put(`${USERS_URL}/${john.id}`)
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', authorization)
       .send(updateUserData)
 
     expect(response.statusCode).toBe(200)

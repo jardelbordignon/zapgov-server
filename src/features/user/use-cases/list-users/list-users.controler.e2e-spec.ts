@@ -11,7 +11,7 @@ describe('List users (E2E)', () => {
   let api: supertest.SuperTest<supertest.Test>
   let app: INestApplication
 
-  let accessToken: string
+  let authorization: string
   const password = 'Pwd@123'
   const names = ['John', 'Joe', 'James']
 
@@ -40,13 +40,13 @@ describe('List users (E2E)', () => {
       password,
     }
     const authRes = await api.post('/auth').send(authUserData)
-    accessToken = authRes.body.accessToken
+    authorization = `Bearer ${authRes.body.accessToken}`
   })
 
   test(`[GET] ${USERS_URL}`, async () => {
     const getUsers = await api
       .get(`${USERS_URL}?page=1&perPage=3`)
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', authorization)
       .send()
 
     expect(getUsers.statusCode).toBe(200)

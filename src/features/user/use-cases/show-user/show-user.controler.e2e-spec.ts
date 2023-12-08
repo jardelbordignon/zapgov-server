@@ -11,7 +11,7 @@ describe('Show user (E2E)', () => {
   let api: supertest.SuperTest<supertest.Test>
   let app: INestApplication
 
-  let accessToken: string
+  let authorization: string
   const email = 'johndoe@email.com'
   const name = 'John Doe'
   const password = 'Pwd@123'
@@ -32,20 +32,20 @@ describe('Show user (E2E)', () => {
 
     const authUserData: AuthUserData = { email, password }
     const authRes = await api.post('/auth').send(authUserData)
-    accessToken = authRes.body.accessToken
+    authorization = `Bearer ${authRes.body.accessToken}`
   })
 
   test(`[GET] ${USERS_URL} - success`, async () => {
     const getUsers = await api
       .get(USERS_URL)
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', authorization)
       .send()
 
     const firstUserId = getUsers.body.data[0].id
 
     const getUser = await api
       .get(`${USERS_URL}/${firstUserId}`)
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', authorization)
       .send()
 
     expect(getUser.statusCode).toBe(200)
@@ -55,7 +55,7 @@ describe('Show user (E2E)', () => {
   test(`[GET] ${USERS_URL}/:id - failure`, async () => {
     const getUser = await api
       .get(`${USERS_URL}/invalid-user-id`)
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', authorization)
       .send()
 
     expect(getUser.statusCode).toBe(404)

@@ -11,7 +11,7 @@ describe('Delete user (E2E)', () => {
   let api: supertest.SuperTest<supertest.Test>
   let app: INestApplication
 
-  let accessToken: string
+  let authorization: string
   const johnEmail = 'johndoe@email.com'
   const joeEmail = 'joesmith@email.com'
   const password = 'Pwd@123'
@@ -42,22 +42,22 @@ describe('Delete user (E2E)', () => {
 
     const johnCredentials: AuthUserData = { email: johnEmail, password }
     const authRes = await api.post('/auth').send(johnCredentials)
-    accessToken = authRes.body.accessToken
+    authorization = `Bearer ${authRes.body.accessToken}`
   })
 
   test(`[DELETE] ${USERS_URL} - success`, async () => {
     const getUsers = await api
       .get(USERS_URL)
-      .set('Authorization', `Bearer ${accessToken}`)
+      .set('Authorization', authorization)
       .send()
 
     const joe = getUsers.body.data.find(user => user.email === joeEmail)
 
     const response = await api
       .delete(`${USERS_URL}/${joe.id}`)
-      .set('Authorization', `bearer ${accessToken}`)
+      .set('Authorization', authorization)
       .send()
 
-    expect(response.statusCode).toBe(200)
+    expect(response.statusCode).toBe(204)
   })
 })
