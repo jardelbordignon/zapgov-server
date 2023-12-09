@@ -56,11 +56,12 @@ export class InMemoryCityHallRepository implements CityHallRepository {
     )
 
     if (searchTerm) {
+      const term = searchTerm.toLowerCase()
       cityHalls = cityHalls.filter(
         ({ email, name, slug }) =>
-          email.includes(searchTerm) ||
-          name.includes(searchTerm) ||
-          slug.includes(searchTerm)
+          email.toLowerCase().includes(term) ||
+          name.toLowerCase().includes(term) ||
+          slug.toLowerCase().includes(term)
       )
     }
 

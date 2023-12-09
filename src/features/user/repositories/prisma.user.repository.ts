@@ -38,9 +38,12 @@ export class PrismaUserRepository extends PrismaService implements UserRepositor
     const where = {
       ...deletedCondition,
       OR: searchTerm
-        ? [{ name: { contains: searchTerm } }, { email: { contains: searchTerm } }]
+        ? [
+            { name: { contains: searchTerm, mode: 'insensitive' } },
+            { email: { contains: searchTerm, mode: 'insensitive' } },
+          ]
         : undefined,
-    }
+    } as any
 
     const [data, totalItems] = await this.$transaction([
       this.user.findMany({ skip, take: perPage, where }),

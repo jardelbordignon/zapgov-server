@@ -47,8 +47,10 @@ export class InMemoryUserRepository implements UserRepository {
     )
 
     if (searchTerm) {
+      const term = searchTerm.toLowerCase()
       users = users.filter(
-        ({ email, name }) => email.includes(searchTerm) || name.includes(searchTerm)
+        ({ email, name }) =>
+          email.toLowerCase().includes(term) || name.toLowerCase().includes(term)
       )
     }
 

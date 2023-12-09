@@ -65,7 +65,7 @@ Content-Type: application/json
 
 # buscando os usuário ativos
 # @name list_users
-GET  {{usersUrl}}?page=1&perPage=20
+GET  {{usersUrl}}?page=1&perPage=20&search=admin
 Authorization: {{authorization}}
 ###
 

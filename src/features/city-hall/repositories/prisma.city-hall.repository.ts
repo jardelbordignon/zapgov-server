@@ -42,12 +42,12 @@ export class PrismaCityHallRepository
       ...deletedCondition,
       OR: searchTerm
         ? [
-            { name: { contains: searchTerm } },
-            { email: { contains: searchTerm } },
-            { slug: { contains: searchTerm } },
+            { name: { contains: searchTerm, mode: 'insensitive' } },
+            { email: { contains: searchTerm, mode: 'insensitive' } },
+            { slug: { contains: searchTerm, mode: 'insensitive' } },
           ]
         : undefined,
-    }
+    } as any
 
     const [data, totalItems] = await this.$transaction([
       this.cityHall.findMany({ skip, take: perPage, where }),
