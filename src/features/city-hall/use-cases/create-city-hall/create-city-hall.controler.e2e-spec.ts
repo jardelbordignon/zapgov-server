@@ -6,7 +6,7 @@ import { AppModule } from 'src/app.module'
 import { AuthUserData, CreateUserData } from 'src/contracts/account'
 import { AUTH_URL, USERS_URL } from 'src/features/user/use-cases/constants'
 
-import { CITY_HALLS_URL, createCityHallData } from '../constants'
+import { CITY_HALLS_URL, CREATE_CITY_HALL_DATA } from '../constants'
 
 describe('Create city-hall (E2E)', () => {
   let api: supertest.SuperTest<supertest.Test>
@@ -26,11 +26,6 @@ describe('Create city-hall (E2E)', () => {
     authorization = `Bearer ${authRes.body.accessToken}`
   }
 
-  const getCityHalls = async () => {
-    const response = await api.get(CITY_HALLS_URL).send()
-    return response.body.data
-  }
-
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
@@ -45,16 +40,11 @@ describe('Create city-hall (E2E)', () => {
     await authenticate({ email, password })
   })
 
-  afterEach(async () => {
-    const cityHalls = await getCityHalls()
-    console.log('cityHalls: ', cityHalls)
-  })
-
   test(`[POST] ${CITY_HALLS_URL} - success`, async () => {
     const response = await api
       .post(CITY_HALLS_URL)
       .set('Authorization', authorization)
-      .send(createCityHallData)
+      .send(CREATE_CITY_HALL_DATA)
     expect(response.statusCode).toBe(201)
   })
 
@@ -62,20 +52,20 @@ describe('Create city-hall (E2E)', () => {
     await api
       .post(CITY_HALLS_URL)
       .set('Authorization', authorization)
-      .send(createCityHallData)
+      .send(CREATE_CITY_HALL_DATA)
 
     const response = await api
       .post(CITY_HALLS_URL)
       .set('Authorization', authorization)
       .send({
-        ...createCityHallData,
+        ...CREATE_CITY_HALL_DATA,
         slug: 'slug-not-in-use',
       })
 
     expect(response.statusCode).toBe(401)
     expect(response.body).toEqual({
       error: 'Unauthorized',
-      message: `CityHall with ${createCityHallData.email} email address already exists.`,
+      message: `CityHall with ${CREATE_CITY_HALL_DATA.email} email address already exists.`,
       statusCode: 401,
     })
   })
@@ -84,20 +74,20 @@ describe('Create city-hall (E2E)', () => {
     await api
       .post(CITY_HALLS_URL)
       .set('Authorization', authorization)
-      .send(createCityHallData)
+      .send(CREATE_CITY_HALL_DATA)
 
     const response = await api
       .post(CITY_HALLS_URL)
       .set('Authorization', authorization)
       .send({
-        ...createCityHallData,
+        ...CREATE_CITY_HALL_DATA,
         email: 'email-not-in-use@email.com',
       })
 
     expect(response.statusCode).toBe(401)
     expect(response.body).toEqual({
       error: 'Unauthorized',
-      message: `CityHall with ${createCityHallData.slug} slug already exists.`,
+      message: `CityHall with ${CREATE_CITY_HALL_DATA.slug} slug already exists.`,
       statusCode: 401,
     })
   })

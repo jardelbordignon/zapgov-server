@@ -2,7 +2,7 @@ import { CreateCityHallData } from 'src/contracts/city-halls'
 
 export const CITY_HALLS_URL = '/city-halls'
 
-export const createCityHallData: CreateCityHallData = {
+export const CREATE_CITY_HALL_DATA: CreateCityHallData = {
   bg_image: '#f2f2f2',
   email: 'tangamandapio.ayuntamiento@email.com',
   name: 'Ayuntamiento de Tangamandapio',

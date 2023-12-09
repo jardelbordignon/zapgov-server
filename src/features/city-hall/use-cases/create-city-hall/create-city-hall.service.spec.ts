@@ -1,7 +1,7 @@
 import { CreateCityHallData } from 'src/contracts/city-halls'
 
 import { InMemoryCityHallRepository } from '../../repositories/in-memory.city-hall.repository'
-import { createCityHallData } from '../constants'
+import { CREATE_CITY_HALL_DATA } from '../constants'
 import { CityHallAlreadyExistsError } from '../errors'
 
 import { CreateCityHallService } from './create-city-hall.service'
@@ -16,7 +16,7 @@ describe('Create user', () => {
   })
 
   beforeEach(async () => {
-    await repository.create(createCityHallData)
+    await repository.create(CREATE_CITY_HALL_DATA)
   })
 
   afterEach(async () => {})
@@ -55,19 +55,19 @@ describe('Create user', () => {
 
   it('should not be able to register a new city hall with an email already in use', async () => {
     const result = await service.execute({
-      ...createCityHallData,
+      ...CREATE_CITY_HALL_DATA,
       slug: 'valid-new-slug',
     })
     expect(result.isFailure()).toBe(true)
     expect(result.value).toBeInstanceOf(CityHallAlreadyExistsError)
     // expect(result.value).toEqual(
-    //   `[Error: CityHall with ${createCityHallData.email} email address already exists.]`
+    //   `[Error: CityHall with ${CREATE_CITY_HALL_DATA.email} email address already exists.]`
     // )
   })
 
   it('should not be able to register a new city hall with a slug already in use', async () => {
     const result = await service.execute({
-      ...createCityHallData,
+      ...CREATE_CITY_HALL_DATA,
       email: 'valid-new-email@example.com',
     })
     expect(result.isFailure()).toBe(true)

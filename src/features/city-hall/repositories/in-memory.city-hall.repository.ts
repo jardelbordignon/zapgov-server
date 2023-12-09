@@ -2,13 +2,13 @@ import { randomUUID } from 'node:crypto'
 
 import type { CityHall } from '@prisma/client'
 
-import type { CreateCityHallData } from 'src/contracts/city-halls'
+import type { CreateCityHallData, UpdateCityHallData } from 'src/contracts/city-halls'
 import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
 
 import { CityHallRepository } from './city-hall.repository'
 
 export class InMemoryCityHallRepository implements CityHallRepository {
-  cityHalls: CityHall[] = []
+  items: CityHall[] = []
 
   async create(data: CreateCityHallData): Promise<void> {
     const date = new Date()
@@ -21,23 +21,23 @@ export class InMemoryCityHallRepository implements CityHallRepository {
       updated_at: date,
     }
 
-    this.cityHalls.push(cityHall)
+    this.items.push(cityHall)
   }
 
   async findByEmail(email: string): Promise<CityHall | null> {
-    const cityHall = this.cityHalls.find(cityHall => cityHall.email === email)
+    const cityHall = this.items.find(cityHall => cityHall.email === email)
     if (!cityHall) return null
     return cityHall
   }
 
   async findById(id: string): Promise<CityHall | null> {
-    const cityHall = this.cityHalls.find(cityHall => cityHall.id === id)
+    const cityHall = this.items.find(cityHall => cityHall.id === id)
     if (!cityHall) return null
     return cityHall
   }
 
   async findBySlug(slug: string): Promise<CityHall | null> {
-    const cityHall = this.cityHalls.find(cityHall => cityHall.slug === slug)
+    const cityHall = this.items.find(cityHall => cityHall.slug === slug)
     if (!cityHall) return null
     return cityHall
   }
@@ -51,13 +51,13 @@ export class InMemoryCityHallRepository implements CityHallRepository {
     const start = (page - 1) * perPage
     const end = start + perPage
 
-    let cityHalls = this.cityHalls.filter(({ deleted_at }) =>
+    let items = this.items.filter(({ deleted_at }) =>
       deleted ? deleted_at : !deleted_at
     )
 
     if (searchTerm) {
       const term = searchTerm.toLowerCase()
-      cityHalls = cityHalls.filter(
+      items = items.filter(
         ({ email, name, slug }) =>
           email.toLowerCase().includes(term) ||
           name.toLowerCase().includes(term) ||
@@ -65,8 +65,8 @@ export class InMemoryCityHallRepository implements CityHallRepository {
       )
     }
 
-    const data = cityHalls.slice(start, end)
-    const totalItems = cityHalls.length
+    const data = items.slice(start, end)
+    const totalItems = items.length
     const totalPages = Math.ceil(totalItems / perPage)
     const hasPrevious = start > 0
     const hasNext = end < totalItems
@@ -98,5 +98,11 @@ export class InMemoryCityHallRepository implements CityHallRepository {
     searchTerm,
   }: PaginationParams): Promise<PaginatedResponse<CityHall>> {
     return this.findCityHalls(page, perPage, true, searchTerm)
+  }
+
+  async update(id: string, data: UpdateCityHallData): Promise<CityHall> {
+    const index = this.items.findIndex(item => item.id === id)
+    this.items[index] = Object.assign(this.items[index], data)
+    return this.items[index]
   }
 }

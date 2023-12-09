@@ -8,9 +8,15 @@ import { CreateCityHallController } from './use-cases/create-city-hall/create-ci
 import { CreateCityHallService } from './use-cases/create-city-hall/create-city-hall.service'
 import { ListCityHallsController } from './use-cases/list-city-halls/list-city-halls.controller'
 import { ListCityHallsService } from './use-cases/list-city-halls/list-city-halls.service'
+import { UpdateCityHallController } from './use-cases/update-city-hall/update-city-hall.controller'
+import { UpdateCityHallService } from './use-cases/update-city-hall/update-city-hall.service'
 
 @Module({
-  controllers: [CreateCityHallController, ListCityHallsController],
+  controllers: [
+    CreateCityHallController,
+    ListCityHallsController,
+    UpdateCityHallController,
+  ],
   exports: [PrismaService],
   providers: [
     PrismaService,
@@ -20,6 +26,7 @@ import { ListCityHallsService } from './use-cases/list-city-halls/list-city-hall
     },
     CreateCityHallService,
     ListCityHallsService,
+    UpdateCityHallService,
   ],
 })
 export class CityHallModule {}
