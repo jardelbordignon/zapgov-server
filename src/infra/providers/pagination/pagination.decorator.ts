@@ -30,6 +30,7 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(
             },
           },
         ],
+        title: `PaginatedResponse of ${model.name}`,
       },
     })
   )

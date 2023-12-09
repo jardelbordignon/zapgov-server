@@ -72,8 +72,8 @@ describe('List city halls (E2E)', () => {
             id: expect.any(String),
             name: 'Ciudad de México',
           }),
-          // expect.objectContaining({ email: 'joe@email.com', name: 'Joe' }),
-          // expect.objectContaining({ email: 'james@email.com', name: 'James' }),
+          expect.objectContaining({ email: 'tangamandapio@email.com' }),
+          expect.objectContaining({ email: 'acapulco@email.com', name: 'Acapulco' }),
         ]),
         meta: {
           hasNext: false,
@@ -81,6 +81,32 @@ describe('List city halls (E2E)', () => {
           page: 1,
           perPage: 3,
           totalItems: 3,
+          totalPages: 1,
+        },
+      })
+    )
+  })
+
+  test(`[GET] ${CITY_HALLS_URL} search term`, async () => {
+    const getCityHalls = await api
+      .get(`${CITY_HALLS_URL}?page=1&perPage=3&search=u`)
+      .send()
+
+    expect(getCityHalls.statusCode).toBe(200)
+    expect(getCityHalls.body.data.length).toBe(2)
+    expect(getCityHalls.body).toEqual(
+      expect.objectContaining({
+        data: expect.arrayContaining([
+          expect.objectContaining({ name: 'Ciudad de México' }),
+          //expect.objectContaining({ email: 'tangamandapio@email.com' }),
+          expect.objectContaining({ email: 'acapulco@email.com', name: 'Acapulco' }),
+        ]),
+        meta: {
+          hasNext: false,
+          hasPrevious: false,
+          page: 1,
+          perPage: 3,
+          totalItems: 2,
           totalPages: 1,
         },
       })

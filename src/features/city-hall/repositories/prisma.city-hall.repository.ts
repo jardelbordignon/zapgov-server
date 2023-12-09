@@ -29,11 +29,25 @@ export class PrismaCityHallRepository
   private async findCityHalls(
     page: number,
     perPage: number,
-    deleted: boolean
+    deleted: boolean,
+    searchTerm: string
   ): Promise<PaginatedResponse<CityHall>> {
     const skip = (page - 1) * perPage
 
-    const where = deleted ? { NOT: { deleted_at: null } } : { deleted_at: null }
+    const deletedCondition = deleted
+      ? { NOT: { deleted_at: null } }
+      : { deleted_at: null }
+
+    const where = {
+      ...deletedCondition,
+      OR: searchTerm
+        ? [
+            { name: { contains: searchTerm } },
+            { email: { contains: searchTerm } },
+            { slug: { contains: searchTerm } },
+          ]
+        : undefined,
+    }
 
     const [data, totalItems] = await this.$transaction([
       this.cityHall.findMany({ skip, take: perPage, where }),
@@ -60,14 +74,16 @@ export class PrismaCityHallRepository
   async findAll({
     page,
     perPage,
+    searchTerm,
   }: PaginationParams): Promise<PaginatedResponse<CityHall>> {
-    return this.findCityHalls(page, perPage, false)
+    return this.findCityHalls(page, perPage, false, searchTerm)
   }
 
   async findAllDeleted({
     page,
     perPage,
+    searchTerm,
   }: PaginationParams): Promise<PaginatedResponse<CityHall>> {
-    return this.findCityHalls(page, perPage, true)
+    return this.findCityHalls(page, perPage, true, searchTerm)
   }
 }

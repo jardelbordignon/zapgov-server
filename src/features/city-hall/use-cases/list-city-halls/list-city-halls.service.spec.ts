@@ -46,4 +46,22 @@ describe('List city-halls', () => {
       ])
     )
   })
+
+  it('should be able to list the searched city-halls', async () => {
+    const result = await service.execute({
+      page: 1,
+      perPage: 10,
+      searchTerm: 'u',
+    })
+
+    expect(result.isSuccess()).toBe(true)
+    expect(result.value.data.length).toBe(2)
+    expect(result.value.data).toEqual(
+      expect.arrayContaining([
+        //expect.objectContaining({ name: 'Tangamandapio' }),
+        expect.objectContaining({ name: 'Acapulco' }),
+        expect.objectContaining({ name: 'Ciudad de México' }),
+      ])
+    )
+  })
 })

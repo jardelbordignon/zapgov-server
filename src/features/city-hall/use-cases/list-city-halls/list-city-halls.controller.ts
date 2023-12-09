@@ -26,11 +26,16 @@ export class ListCityHallsController {
     @Query('deleted') deleted: boolean,
     @Query('page') page?: number,
     @Query('perPage') perPage?: number,
-    @Query('limit') limit?: number
+    @Query('search') searchTerm?: string
   ): Promise<PaginatedResponse<CityHallEntity>> {
     page = +page || 1
-    perPage = +perPage || +limit || 20
-    const result = await this.listCityHallsService.execute({ deleted, page, perPage })
+    perPage = +perPage || 20
+    const result = await this.listCityHallsService.execute({
+      deleted,
+      page,
+      perPage,
+      searchTerm,
+    })
 
     return result.value
   }

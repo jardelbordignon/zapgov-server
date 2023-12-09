@@ -15,9 +15,10 @@ type ListCityHallsServiceResponse = FailureOrSuccess<
 >
 
 type Props = {
-  deleted: boolean
+  deleted?: boolean
   page: number
   perPage: number
+  searchTerm?: string
 }
 
 @Injectable()
@@ -28,10 +29,10 @@ export class ListCityHallsService {
     deleted,
     page,
     perPage,
+    searchTerm,
   }: Props): Promise<ListCityHallsServiceResponse> {
-    const result = deleted
-      ? await this.repository.findAllDeleted({ page, perPage })
-      : await this.repository.findAll({ page, perPage })
+    const method = deleted ? 'findAllDeleted' : 'findAll'
+    const result = await this.repository[method]({ page, perPage, searchTerm })
 
     return success(result)
   }

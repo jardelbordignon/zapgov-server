@@ -45,17 +45,27 @@ export class InMemoryCityHallRepository implements CityHallRepository {
   private async findCityHalls(
     page: number,
     perPage: number,
-    deleted: boolean
+    deleted: boolean,
+    searchTerm: string
   ): Promise<PaginatedResponse<CityHall>> {
     const start = (page - 1) * perPage
     const end = start + perPage
 
-    const users = deleted
-      ? this.cityHalls.filter(user => user.deleted_at)
-      : this.cityHalls.filter(user => !user.deleted_at)
+    let cityHalls = this.cityHalls.filter(({ deleted_at }) =>
+      deleted ? deleted_at : !deleted_at
+    )
 
-    const data = users.slice(start, end)
-    const totalItems = users.length
+    if (searchTerm) {
+      cityHalls = cityHalls.filter(
+        ({ email, name, slug }) =>
+          email.includes(searchTerm) ||
+          name.includes(searchTerm) ||
+          slug.includes(searchTerm)
+      )
+    }
+
+    const data = cityHalls.slice(start, end)
+    const totalItems = cityHalls.length
     const totalPages = Math.ceil(totalItems / perPage)
     const hasPrevious = start > 0
     const hasNext = end < totalItems
@@ -76,14 +86,16 @@ export class InMemoryCityHallRepository implements CityHallRepository {
   async findAll({
     page,
     perPage,
+    searchTerm,
   }: PaginationParams): Promise<PaginatedResponse<CityHall>> {
-    return this.findCityHalls(page, perPage, false)
+    return this.findCityHalls(page, perPage, false, searchTerm)
   }
 
   async findAllDeleted({
     page,
     perPage,
+    searchTerm,
   }: PaginationParams): Promise<PaginatedResponse<CityHall>> {
-    return this.findCityHalls(page, perPage, true)
+    return this.findCityHalls(page, perPage, true, searchTerm)
   }
 }
