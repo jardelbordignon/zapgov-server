@@ -26,11 +26,21 @@ export class PrismaUserRepository extends PrismaService implements UserRepositor
   private async findUsers(
     page: number,
     perPage: number,
-    deleted: boolean
+    deleted: boolean,
+    searchTerm: string
   ): Promise<PaginatedResponse<User>> {
     const skip = (page - 1) * perPage
 
-    const where = deleted ? { NOT: { deleted_at: null } } : { deleted_at: null }
+    const deletedCondition = deleted
+      ? { NOT: { deleted_at: null } }
+      : { deleted_at: null }
+
+    const where = {
+      ...deletedCondition,
+      OR: searchTerm
+        ? [{ name: { contains: searchTerm } }, { email: { contains: searchTerm } }]
+        : undefined,
+    }
 
     const [data, totalItems] = await this.$transaction([
       this.user.findMany({ skip, take: perPage, where }),
@@ -57,15 +67,17 @@ export class PrismaUserRepository extends PrismaService implements UserRepositor
   async findAll({
     page,
     perPage,
+    searchTerm,
   }: PaginationParams): Promise<PaginatedResponse<User>> {
-    return this.findUsers(page, perPage, false)
+    return this.findUsers(page, perPage, false, searchTerm)
   }
 
   async findAllDeleted({
     page,
     perPage,
+    searchTerm,
   }: PaginationParams): Promise<PaginatedResponse<User>> {
-    return this.findUsers(page, perPage, true)
+    return this.findUsers(page, perPage, true, searchTerm)
   }
 
   async findByEmail(email: string): Promise<User | null> {

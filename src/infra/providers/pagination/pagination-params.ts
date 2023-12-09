@@ -6,4 +6,7 @@ export class PaginationParams {
 
   @ApiProperty({ example: 10 })
   perPage: number
+
+  @ApiProperty({ example: 'john' })
+  searchTerm?: string
 }

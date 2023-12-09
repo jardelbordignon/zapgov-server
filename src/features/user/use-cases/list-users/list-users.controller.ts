@@ -25,11 +25,16 @@ export class ListUsersController {
     @Query('deleted') deleted: boolean,
     @Query('page') page?: number,
     @Query('perPage') perPage?: number,
-    @Query('limit') limit?: number
+    @Query('search') searchTerm?: string
   ): Promise<PaginatedResponse<UserEntity>> {
     page = +page || 1
-    perPage = +perPage || +limit || 20
-    const result = await this.listUsersService.execute({ deleted, page, perPage })
+    perPage = +perPage || 20
+    const result = await this.listUsersService.execute({
+      deleted,
+      page,
+      perPage,
+      searchTerm,
+    })
 
     const formattedResultValue = {
       ...result.value,

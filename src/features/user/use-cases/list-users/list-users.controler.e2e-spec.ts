@@ -73,4 +73,30 @@ describe('List users (E2E)', () => {
       })
     )
   })
+
+  test(`[GET] ${USERS_URL} (searchTerm)`, async () => {
+    const getUsers = await api
+      .get(`${USERS_URL}?page=1&perPage=3&search=jo`)
+      .set('Authorization', authorization)
+      .send()
+
+    expect(getUsers.statusCode).toBe(200)
+    expect(getUsers.body.data.length).toBe(2)
+    expect(getUsers.body).toEqual(
+      expect.objectContaining({
+        data: expect.arrayContaining([
+          expect.objectContaining({ email: 'john@email.com', name: 'John' }),
+          expect.objectContaining({ email: 'joe@email.com', name: 'Joe' }),
+        ]),
+        meta: {
+          hasNext: false,
+          hasPrevious: false,
+          page: 1,
+          perPage: 3,
+          totalItems: 2,
+          totalPages: 1,
+        },
+      })
+    )
+  })
 })

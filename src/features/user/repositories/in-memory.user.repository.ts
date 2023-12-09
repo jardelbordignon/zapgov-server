@@ -36,14 +36,21 @@ export class InMemoryUserRepository implements UserRepository {
   private async findUsers(
     page: number,
     perPage: number,
-    deleted: boolean
+    deleted: boolean,
+    searchTerm: string
   ): Promise<PaginatedResponse<User>> {
     const start = (page - 1) * perPage
     const end = start + perPage
 
-    const users = deleted
-      ? this.users.filter(user => user.deleted_at)
-      : this.users.filter(user => !user.deleted_at)
+    let users = this.users.filter(({ deleted_at }) =>
+      deleted ? deleted_at : !deleted_at
+    )
+
+    if (searchTerm) {
+      users = users.filter(
+        ({ email, name }) => email.includes(searchTerm) || name.includes(searchTerm)
+      )
+    }
 
     const data = users.slice(start, end)
     const totalItems = users.length
@@ -67,15 +74,17 @@ export class InMemoryUserRepository implements UserRepository {
   async findAll({
     page,
     perPage,
+    searchTerm,
   }: PaginationParams): Promise<PaginatedResponse<User>> {
-    return this.findUsers(page, perPage, false)
+    return this.findUsers(page, perPage, false, searchTerm)
   }
 
   async findAllDeleted({
     page,
     perPage,
+    searchTerm,
   }: PaginationParams): Promise<PaginatedResponse<User>> {
-    return this.findUsers(page, perPage, true)
+    return this.findUsers(page, perPage, true, searchTerm)
   }
 
   async findByEmail(email: string): Promise<User | null> {

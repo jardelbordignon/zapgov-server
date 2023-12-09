@@ -69,6 +69,12 @@ GET  {{usersUrl}}?page=1&perPage=20
 Authorization: {{authorization}}
 ###
 
+# buscando e filtrando os usuário ativos
+# @name list_users
+GET  {{usersUrl}}?page=1&perPage=20&search=jo
+Authorization: {{authorization}}
+###
+
 
 # buscando os usuário deletados (query param deleted=true)
 # @name list_deleted_users

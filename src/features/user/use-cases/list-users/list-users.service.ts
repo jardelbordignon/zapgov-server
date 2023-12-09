@@ -12,9 +12,10 @@ import { UserRepository } from '../../repositories/user.repository'
 type ListUsersServiceResponse = FailureOrSuccess<null, PaginatedResponse<User>>
 
 type Props = {
-  deleted: boolean
+  deleted?: boolean
   page: number
   perPage: number
+  searchTerm?: string
 }
 
 @Injectable()
@@ -25,10 +26,10 @@ export class ListUsersService {
     deleted,
     page,
     perPage,
+    searchTerm,
   }: Props): Promise<ListUsersServiceResponse> {
-    const result = deleted
-      ? await this.userRepository.findAllDeleted({ page, perPage })
-      : await this.userRepository.findAll({ page, perPage })
+    const method = deleted ? 'findAllDeleted' : 'findAll'
+    const result = await this.userRepository[method]({ page, perPage, searchTerm })
 
     return success(result)
   }

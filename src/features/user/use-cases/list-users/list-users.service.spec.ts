@@ -38,4 +38,21 @@ describe('List users', () => {
       ])
     )
   })
+
+  it('should be able to list the searched users', async () => {
+    const result = await listUsersService.execute({
+      page: 1,
+      perPage: 10,
+      searchTerm: 'jo',
+    })
+
+    expect(result.isSuccess()).toBe(true)
+    expect(result.value?.data.length).toBe(2)
+    expect(result.value.data).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: 'John' }),
+        expect.objectContaining({ name: 'Joe' }),
+      ])
+    )
+  })
 })
