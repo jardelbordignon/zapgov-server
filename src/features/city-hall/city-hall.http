@@ -49,3 +49,15 @@ GET  {{cityHallsUrl}}?page=1&perPage=20
 # @name list_deleted_users
 GET  {{cityHallsUrl}}?deleted=true&page=1&perPage=20
 ###
+
+# buscando uma prefeitura pelo id
+# @name list_city_halls
+GET  {{cityHallsUrl}}/afac3fa2-6cda-4151-91a5-0a2ea1ec71e2
+Authorization: {{authorization}}
+###
+
+# buscando uma prefeitura pelo slug
+# @name list_city_halls
+GET  {{cityHallsUrl}}/slug/tangamandapio
+Authorization: {{authorization}}
+###

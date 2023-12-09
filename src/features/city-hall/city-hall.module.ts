@@ -8,6 +8,8 @@ import { CreateCityHallController } from './use-cases/create-city-hall/create-ci
 import { CreateCityHallService } from './use-cases/create-city-hall/create-city-hall.service'
 import { ListCityHallsController } from './use-cases/list-city-halls/list-city-halls.controller'
 import { ListCityHallsService } from './use-cases/list-city-halls/list-city-halls.service'
+import { ShowCityHallController } from './use-cases/show-city-hall/show-city-hall.controller'
+import { ShowCityHallService } from './use-cases/show-city-hall/show-city-hall.service'
 import { UpdateCityHallController } from './use-cases/update-city-hall/update-city-hall.controller'
 import { UpdateCityHallService } from './use-cases/update-city-hall/update-city-hall.service'
 
@@ -15,6 +17,7 @@ import { UpdateCityHallService } from './use-cases/update-city-hall/update-city-
   controllers: [
     CreateCityHallController,
     ListCityHallsController,
+    ShowCityHallController,
     UpdateCityHallController,
   ],
   exports: [PrismaService],
@@ -26,6 +29,7 @@ import { UpdateCityHallService } from './use-cases/update-city-hall/update-city-
     },
     CreateCityHallService,
     ListCityHallsService,
+    ShowCityHallService,
     UpdateCityHallService,
   ],
 })
