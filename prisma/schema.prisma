@@ -28,16 +28,32 @@ model User {
 }
 
 model CityHall {
-  id         String    @id @default(uuid())
-  name       String
-  phone      String?
-  email      String?   @unique
-  slug       String    @unique
-  txt_color  String
-  bg_image   String?
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  id             String        @id @default(uuid())
+  name           String
+  phone          String?
+  email          String?       @unique
+  slug           String        @unique
+  txt_color      String
+  bg_image       String?
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @updatedAt
+  deleted_at     DateTime?
+  sub_city_halls SubCityHall[]
 
   @@map("city_halls")
+}
+
+model SubCityHall {
+  id           String    @id @default(uuid())
+  city_hall_id String
+  city_hall    CityHall  @relation(fields: [city_hall_id], references: [id])
+  name         String
+  phone        String?
+  email        String?   @unique
+  observation  String
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  deleted_at   DateTime?
+
+  @@map("sub_city_halls")
 }
