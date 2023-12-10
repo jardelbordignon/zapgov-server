@@ -9,7 +9,7 @@ import { CreateCityHallService } from './create-city-hall.service'
 let repository: InMemoryCityHallRepository
 let service: CreateCityHallService
 
-describe('Create user', () => {
+describe('Create city hall', () => {
   beforeAll(async () => {
     repository = new InMemoryCityHallRepository()
     service = new CreateCityHallService(repository)
@@ -61,7 +61,7 @@ describe('Create user', () => {
     expect(result.isFailure()).toBe(true)
     expect(result.value).toBeInstanceOf(CityHallAlreadyExistsError)
     // expect(result.value).toEqual(
-    //   `[Error: CityHall with ${CREATE_CITY_HALL_DATA.email} email address already exists.]`
+    //   `[Error: City hall with ${CREATE_CITY_HALL_DATA.email} email address already exists.]`
     // )
   })
 

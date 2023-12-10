@@ -24,6 +24,7 @@ export class DeleteCityHallController {
   @ApiResponse({ description: 'CityHall deleted successful', status: 204 })
   @ApiResponse({
     description: 'When city hall not found',
+    schema: { example: new CityHallNotFoundError() },
     status: 404,
   })
   @Delete('/:id')

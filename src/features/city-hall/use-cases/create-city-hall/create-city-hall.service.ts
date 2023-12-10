@@ -25,7 +25,7 @@ export class CreateCityHallService {
     if (cityHallWithSameEmail) {
       return failure(
         new CityHallAlreadyExistsError(
-          `CityHall with ${data.email} email address already exists.`
+          `City hall with ${data.email} email address already exists.`
         )
       )
     }
@@ -35,7 +35,7 @@ export class CreateCityHallService {
     if (cityHallWithSameSlug) {
       return failure(
         new CityHallAlreadyExistsError(
-          `CityHall with ${data.slug} slug already exists.`
+          `City hall with ${data.slug} slug already exists.`
         )
       )
     }

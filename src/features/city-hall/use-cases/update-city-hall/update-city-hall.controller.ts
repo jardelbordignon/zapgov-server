@@ -58,13 +58,15 @@ function UpdateCityHallApiDecorators() {
       type: CityHallEntity,
     }),
     ApiResponse({
-      description: `When an user with same email address already exists <br/>
-        When trying to edit email and/or password without correctly entering currentPassword`,
-      status: 401,
+      description: 'When user not found',
+      schema: { example: new CityHallNotFoundError() },
+      status: 404,
     }),
     ApiResponse({
-      description: 'When user not found',
-      status: 404,
+      description: `When a city hall with same email address already exists <br/>
+      When a city hall with same slug already exists`,
+      schema: { example: new CityHallAlreadyExistsError() },
+      status: 409,
     })
   )
 }

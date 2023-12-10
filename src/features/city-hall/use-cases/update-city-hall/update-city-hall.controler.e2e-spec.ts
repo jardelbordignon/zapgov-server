@@ -108,7 +108,7 @@ describe('Update user (E2E)', () => {
     expect(response.statusCode).toBe(409)
     expect(response.body).toEqual({
       error: 'Conflict',
-      message: `CityHall with ${CREATE_CITY_HALL_DATA.email} email address already exists.`,
+      message: `City hall with ${CREATE_CITY_HALL_DATA.email} email address already exists.`,
       statusCode: 409,
     })
   })
@@ -137,7 +137,7 @@ describe('Update user (E2E)', () => {
     expect(response.statusCode).toBe(409)
     expect(response.body).toEqual({
       error: 'Conflict',
-      message: `CityHall with ${CREATE_CITY_HALL_DATA.slug} slug already exists.`,
+      message: `City hall with ${CREATE_CITY_HALL_DATA.slug} slug already exists.`,
       statusCode: 409,
     })
   })

@@ -57,11 +57,11 @@ describe('Create user (E2E)', () => {
     const createUserData: CreateUserData = { email, name, password }
     await api.post(USERS_URL).send(createUserData)
     const response = await api.post(USERS_URL).send(createUserData)
-    expect(response.statusCode).toBe(401)
+    expect(response.statusCode).toBe(409)
     expect(response.body).toEqual({
-      error: 'Unauthorized',
+      error: 'Conflict',
       message: `User with ${email} email address already exists.`,
-      statusCode: 401,
+      statusCode: 409,
     })
   })
 })

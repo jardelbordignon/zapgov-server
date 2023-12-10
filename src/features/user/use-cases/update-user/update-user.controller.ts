@@ -65,13 +65,20 @@ function UpdateUserApiDecorators() {
       type: UserEntity,
     }),
     ApiResponse({
-      description: `When an user with same email address already exists <br/>
-        When trying to edit email and/or password without correctly entering currentPassword`,
+      description:
+        'When trying to edit email and/or password without correctly entering currentPassword,',
+      schema: { example: new UnauthorizedToUpdateUserError() },
       status: 401,
     }),
     ApiResponse({
       description: 'When user not found',
+      schema: { example: new UserNotFoundError() },
       status: 404,
+    }),
+    ApiResponse({
+      description: 'When an user with same email address already exists',
+      schema: { example: new UserAlreadyExistsError() },
+      status: 409,
     })
   )
 }

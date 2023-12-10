@@ -40,7 +40,11 @@ export class AuthUserController {
   @ApiTags('User')
   @ApiBody({ schema: authUserOpenApiSchema as any })
   @ApiResponse({ description: 'Authentication successful', status: 200 })
-  @ApiResponse({ description: 'When wrong email and/or password', status: 401 })
+  @ApiResponse({
+    description: 'When wrong email and/or password',
+    schema: { example: new WrongCredentialsError() },
+    status: 401,
+  })
   @HttpCode(200)
   @Post()
   async handle(@Body() body: AuthUserData): Promise<AuthUserResponse> {

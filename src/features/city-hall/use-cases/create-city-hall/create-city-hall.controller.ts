@@ -2,9 +2,9 @@ import { extendZodWithOpenApi, generateSchema } from '@anatine/zod-openapi'
 import {
   BadRequestException,
   Body,
+  ConflictException,
   Controller,
   Post,
-  UnauthorizedException,
   UsePipes,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
@@ -51,7 +51,8 @@ export class CreateCityHallController {
     description: `When a city hall with same email address already exists <br/>
     When a city hall with same slug already exists
     `,
-    status: 401,
+    schema: { example: new CityHallAlreadyExistsError() },
+    status: 409,
   })
   @Post()
   async handle(@Body() body: CreateCityHallData): Promise<void> {
@@ -62,7 +63,7 @@ export class CreateCityHallController {
 
       switch (error.constructor) {
         case CityHallAlreadyExistsError:
-          throw new UnauthorizedException(error.message)
+          throw new ConflictException(error.message)
         default:
           throw new BadRequestException(error.message)
       }

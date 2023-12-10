@@ -2,9 +2,9 @@ import { extendZodWithOpenApi, generateSchema } from '@anatine/zod-openapi'
 import {
   BadRequestException,
   Body,
+  ConflictException,
   Controller,
   Post,
-  UnauthorizedException,
   UsePipes,
 } from '@nestjs/common'
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
@@ -19,7 +19,6 @@ import { USERS_URL } from '../constants'
 import { UserAlreadyExistsError } from '../errors'
 
 import { CreateUserService } from './create-user.service'
-
 type CreateUserBodySchema = ZodObject<ZodObj<CreateUserData>>
 
 extendZodWithOpenApi(z)
@@ -44,8 +43,8 @@ export class CreateUserController {
   @ApiResponse({ description: 'User created successful', status: 201 })
   @ApiResponse({
     description: 'When an user with same email address already exists',
-    status: 401,
-    type: UserAlreadyExistsError,
+    schema: { example: new UserAlreadyExistsError() },
+    status: 409,
   })
   @Post()
   async handle(@Body() body: CreateUserData): Promise<void> {
@@ -56,7 +55,7 @@ export class CreateUserController {
 
       switch (error.constructor) {
         case UserAlreadyExistsError:
-          throw new UnauthorizedException(error.message)
+          throw new ConflictException(error.message)
         default:
           throw new BadRequestException(error.message)
       }

@@ -62,11 +62,11 @@ describe('Create city-hall (E2E)', () => {
         slug: 'slug-not-in-use',
       })
 
-    expect(response.statusCode).toBe(401)
+    expect(response.statusCode).toBe(409)
     expect(response.body).toEqual({
-      error: 'Unauthorized',
-      message: `CityHall with ${CREATE_CITY_HALL_DATA.email} email address already exists.`,
-      statusCode: 401,
+      error: 'Conflict',
+      message: `City hall with ${CREATE_CITY_HALL_DATA.email} email address already exists.`,
+      statusCode: 409,
     })
   })
 
@@ -84,11 +84,11 @@ describe('Create city-hall (E2E)', () => {
         email: 'email-not-in-use@email.com',
       })
 
-    expect(response.statusCode).toBe(401)
+    expect(response.statusCode).toBe(409)
     expect(response.body).toEqual({
-      error: 'Unauthorized',
-      message: `CityHall with ${CREATE_CITY_HALL_DATA.slug} slug already exists.`,
-      statusCode: 401,
+      error: 'Conflict',
+      message: `City hall with ${CREATE_CITY_HALL_DATA.slug} slug already exists.`,
+      statusCode: 409,
     })
   })
 })

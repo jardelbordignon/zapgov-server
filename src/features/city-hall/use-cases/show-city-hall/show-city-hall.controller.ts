@@ -25,6 +25,11 @@ function ShowCityHallApiDecorators() {
       description: 'A city-hall',
       status: 200,
       type: CityHallEntity,
+    }),
+    ApiResponse({
+      description: 'When a city hall is not found',
+      schema: { example: new CityHallNotFoundError() },
+      status: 404,
     })
   )
 }
