@@ -3,7 +3,11 @@ import { Role } from '@prisma/client'
 import type { UserPayload } from 'src/infra/auth/jwt-strategy'
 
 import { InMemoryUserRepository } from '../../repositories/in-memory.user.repository'
-import { UnauthorizedToDeleteAnAdminUserError, UserNotFoundError } from '../errors'
+import {
+  OnlyAdminsCanDeleteOtherAccount,
+  UnauthorizedToDeleteAnAdminUserError,
+  UserNotFoundError,
+} from '../errors'
 
 import { DeleteUserService } from './delete-user.service'
 
@@ -107,5 +111,23 @@ describe('Update user', () => {
     )
     expect(result.isFailure()).toBe(true)
     expect(result.value).toBeInstanceOf(UnauthorizedToDeleteAnAdminUserError)
+  })
+
+  it('should not be able for a regular user to delete another account', async () => {
+    const jamesEmail = 'james@email.com'
+
+    await userRepository.create({
+      email: jamesEmail,
+      name: 'James',
+      password: 'Pwd@123',
+    })
+
+    const james = await userRepository.findByEmail(jamesEmail)
+    const joe = await userRepository.findByEmail(joeEmail)
+    const loggedJoeData = { roles: [], sub: joe.id }
+
+    const result = await deleteUserService.execute(loggedJoeData, james!.id, false)
+    expect(result.isFailure()).toBe(true)
+    expect(result.value).toBeInstanceOf(OnlyAdminsCanDeleteOtherAccount)
   })
 })

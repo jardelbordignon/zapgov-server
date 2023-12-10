@@ -1,3 +1,4 @@
+export * from './only-admins-can-delete-other-account.error'
 export * from './unauthorized-to-delete-an-admin-user.error'
 export * from './unauthorized-to-update-user.error'
 export * from './user-already-exists.error'

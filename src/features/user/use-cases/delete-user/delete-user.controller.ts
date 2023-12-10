@@ -15,7 +15,11 @@ import { CurrentUser } from 'src/infra/auth/current-user.decorator'
 import { UserPayload } from 'src/infra/auth/jwt-strategy'
 
 import { USERS_URL } from '../constants'
-import { UnauthorizedToDeleteAnAdminUserError, UserNotFoundError } from '../errors'
+import {
+  OnlyAdminsCanDeleteOtherAccount,
+  UnauthorizedToDeleteAnAdminUserError,
+  UserNotFoundError,
+} from '../errors'
 
 import { DeleteUserService, DeleteUserServiceResponse } from './delete-user.service'
 
@@ -47,6 +51,8 @@ export class DeleteUserController {
       switch (error.constructor) {
         case UserNotFoundError:
           throw new NotFoundException(error.message)
+        case OnlyAdminsCanDeleteOtherAccount:
+          throw new UnauthorizedException(error.message)
         case UnauthorizedToDeleteAnAdminUserError:
           throw new UnauthorizedException(error.message)
         default:

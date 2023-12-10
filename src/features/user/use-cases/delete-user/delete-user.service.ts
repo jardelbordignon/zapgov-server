@@ -8,10 +8,16 @@ import {
 } from 'src/infra/utils/failure-or-success-service-execute'
 
 import { UserRepository } from '../../repositories/user.repository'
-import { UnauthorizedToDeleteAnAdminUserError, UserNotFoundError } from '../errors'
+import {
+  OnlyAdminsCanDeleteOtherAccount,
+  UnauthorizedToDeleteAnAdminUserError,
+  UserNotFoundError,
+} from '../errors'
 
 export type DeleteUserServiceResponse = FailureOrSuccess<
-  UnauthorizedToDeleteAnAdminUserError | UserNotFoundError,
+  | OnlyAdminsCanDeleteOtherAccount
+  | UnauthorizedToDeleteAnAdminUserError
+  | UserNotFoundError,
   void
 >
 
@@ -24,7 +30,10 @@ export class DeleteUserService {
     userId: string,
     soft: boolean
   ): Promise<DeleteUserServiceResponse> {
-    if (userId === loggedUser.sub && loggedUser.roles?.includes('ADMIN')) {
+    const isAdmin = loggedUser.roles?.includes('ADMIN')
+
+    // admin trying to deleting own account
+    if (userId === loggedUser.sub && isAdmin) {
       return failure(new UnauthorizedToDeleteAnAdminUserError())
     }
 
@@ -34,8 +43,14 @@ export class DeleteUserService {
       return failure(new UserNotFoundError())
     }
 
+    // admin trying to deleting other admin account
     if (user.roles?.includes('ADMIN')) {
       return failure(new UnauthorizedToDeleteAnAdminUserError())
+    }
+
+    // common user trying to delete other account
+    if (user.id !== loggedUser.sub && !isAdmin) {
+      return failure(new OnlyAdminsCanDeleteOtherAccount())
     }
 
     if (soft) {
