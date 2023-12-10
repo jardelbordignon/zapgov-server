@@ -30,7 +30,7 @@ export class UpdateCityHallService {
       return failure(new CityHallNotFoundError())
     }
 
-    if (data.email) {
+    if (data.email && data.email !== cityHall.email) {
       const cityHallWithSameEmail = await this.repository.findByEmail(data.email)
 
       if (cityHallWithSameEmail) {
@@ -42,7 +42,7 @@ export class UpdateCityHallService {
       }
     }
 
-    if (data.slug) {
+    if (data.slug && data.slug !== cityHall.slug) {
       const cityHallWithSameSlug = await this.repository.findBySlug(data.slug)
 
       if (cityHallWithSameSlug) {

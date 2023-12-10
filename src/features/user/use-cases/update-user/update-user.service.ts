@@ -63,7 +63,7 @@ export class UpdateUserService {
         }
       }
 
-      if (email) {
+      if (email && email !== user.email) {
         const userWithSameEmail = await this.userRepository.findByEmail(email)
 
         if (userWithSameEmail) {
