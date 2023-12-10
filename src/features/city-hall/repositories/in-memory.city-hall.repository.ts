@@ -24,6 +24,10 @@ export class InMemoryCityHallRepository implements CityHallRepository {
     this.items.push(cityHall)
   }
 
+  async delete(id: string): Promise<void> {
+    this.items = this.items.filter(item => item.id !== id)
+  }
+
   async findByEmail(email: string): Promise<CityHall | null> {
     const cityHall = this.items.find(cityHall => cityHall.email === email)
     if (!cityHall) return null

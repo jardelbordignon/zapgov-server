@@ -5,6 +5,7 @@ import { PaginatedResponse, PaginationParams } from 'src/infra/providers/paginat
 
 export abstract class CityHallRepository {
   abstract create(data: CreateCityHallData): Promise<void>
+  abstract delete(id: string): Promise<void>
   abstract findByEmail(email: string): Promise<CityHall | null>
   abstract findById(id: string): Promise<CityHall | null>
   abstract findBySlug(slug: string): Promise<CityHall | null>

@@ -18,7 +18,7 @@ let loggedJohnAdminData: UserPayload
 const johnEmail = 'johndoe@email.com'
 const joeEmail = 'joesmith@email.com'
 
-describe('Update user', () => {
+describe('Delete user', () => {
   beforeAll(async () => {
     userRepository = new InMemoryUserRepository()
     deleteUserService = new DeleteUserService(userRepository)

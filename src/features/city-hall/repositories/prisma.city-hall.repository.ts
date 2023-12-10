@@ -14,6 +14,10 @@ export class PrismaCityHallRepository
     await this.cityHall.create({ data })
   }
 
+  async delete(id: string): Promise<void> {
+    await this.cityHall.delete({ where: { id } })
+  }
+
   async findByEmail(email: string): Promise<CityHall | null> {
     return this.cityHall.findUnique({ where: { email } })
   }
