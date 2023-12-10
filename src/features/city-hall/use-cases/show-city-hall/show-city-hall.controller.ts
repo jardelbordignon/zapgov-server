@@ -4,6 +4,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  applyDecorators,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
 
@@ -15,6 +16,18 @@ import {
   ShowCityHallService,
   ShowCityHallServiceResponse,
 } from './show-city-hall.service'
+
+function ShowCityHallApiDecorators() {
+  return applyDecorators(
+    ApiTags('CityHall'),
+    ApiBearerAuth(),
+    ApiResponse({
+      description: 'A city-hall',
+      status: 200,
+      type: CityHallEntity,
+    })
+  )
+}
 
 @Controller(CITY_HALLS_URL)
 export class ShowCityHallController {
@@ -35,19 +48,14 @@ export class ShowCityHallController {
     return result.value
   }
 
-  @ApiTags('CityHall')
-  @ApiBearerAuth()
-  @ApiResponse({
-    description: 'A city-hall',
-    status: 200,
-    type: CityHallEntity,
-  })
+  @ShowCityHallApiDecorators()
   @Get('/slug/:slug')
   async handleBySlug(@Param('slug') cityHallSlug: string): Promise<CityHallEntity> {
     const result = await this.showCityHallService.executeBySlug(cityHallSlug)
     return this.handleResult(result)
   }
 
+  @ShowCityHallApiDecorators()
   @Get('/:id')
   async handle(@Param('id') cityHallId: string): Promise<CityHallEntity> {
     const result = await this.showCityHallService.execute(cityHallId)
