@@ -9,9 +9,11 @@ import { PrismaSubCityHallRepository } from './repositories/prisma.sub-city-hall
 import { SubCityHallRepository } from './repositories/sub-city-hall.repository'
 import { CreateSubCityHallController } from './use-cases/create-sub-city-hall/create-sub-city-hall.controller'
 import { CreateSubCityHallService } from './use-cases/create-sub-city-hall/create-sub-city-hall.service'
+import { ListSubCityHallsController } from './use-cases/list-sub-city-halls/list-sub-city-halls.controller'
+import { ListSubCityHallsService } from './use-cases/list-sub-city-halls/list-sub-city-halls.service'
 
 @Module({
-  controllers: [CreateSubCityHallController],
+  controllers: [CreateSubCityHallController, ListSubCityHallsController],
   exports: [PrismaService],
   providers: [
     PrismaService,
@@ -24,6 +26,7 @@ import { CreateSubCityHallService } from './use-cases/create-sub-city-hall/creat
       useClass: PrismaSubCityHallRepository,
     },
     CreateSubCityHallService,
+    ListSubCityHallsService,
   ],
 })
 export class SubCityHallModule {}

@@ -58,7 +58,7 @@ function UpdateCityHallApiDecorators() {
       type: CityHallEntity,
     }),
     ApiResponse({
-      description: 'When user not found',
+      description: 'When city hall not found',
       schema: { example: new CityHallNotFoundError() },
       status: 404,
     }),

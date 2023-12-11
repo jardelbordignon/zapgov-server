@@ -33,7 +33,17 @@ describe('Create sub city hall', () => {
     })
   })
 
-  afterEach(async () => {})
+  afterEach(async () => {
+    const getAll = await subCityHallRepository.findAll({ page: 1, perPage: 100 })
+    const getAllDeleted = await subCityHallRepository.findAllDeleted({
+      page: 1,
+      perPage: 100,
+    })
+    const allItems = [...getAll.data, ...getAllDeleted.data]
+    for (const item of allItems) {
+      await subCityHallRepository.delete(item.id)
+    }
+  })
 
   it('should be able to register a new sub city hall', async () => {
     const newSubCityHalData: CreateSubCityHallData = {
