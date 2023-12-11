@@ -25,7 +25,7 @@ extendZodWithOpenApi(z)
 const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
 
 const createCityHallZodObject = z.object({
-  bg_image: z.string().regex(hexColorRegex).openapi({ example: '#f2f2f2' }),
+  bg_image: z.string().openapi({ example: 'http://repo.com/imgx.png' }),
   email: z
     .string()
     .email()

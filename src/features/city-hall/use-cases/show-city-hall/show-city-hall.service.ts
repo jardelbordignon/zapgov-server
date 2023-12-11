@@ -20,22 +20,22 @@ export class ShowCityHallService {
   constructor(private repository: CityHallRepository) {}
 
   async executeBySlug(slug: string): Promise<ShowCityHallServiceResponse> {
-    const user = await this.repository.findBySlug(slug)
+    const cityHall = await this.repository.findBySlug(slug)
 
-    if (!user) {
+    if (!cityHall) {
       return failure(new CityHallNotFoundError())
     }
 
-    return success(user)
+    return success(cityHall)
   }
 
   async execute(id: string): Promise<ShowCityHallServiceResponse> {
-    const user = await this.repository.findById(id)
+    const cityHall = await this.repository.findById(id)
 
-    if (!user) {
+    if (!cityHall) {
       return failure(new CityHallNotFoundError())
     }
 
-    return success(user)
+    return success(cityHall)
   }
 }

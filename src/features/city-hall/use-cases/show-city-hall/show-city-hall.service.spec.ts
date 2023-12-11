@@ -27,8 +27,8 @@ describe('Show city hall', () => {
     )
   })
 
-  it('should not be able to show a nonexistent user', async () => {
-    const result = await showCityHallService.execute('invalid-user-id')
+  it('should not be able to show a nonexistent city hall', async () => {
+    const result = await showCityHallService.execute('invalid-city-hall-id')
     expect(result.isFailure()).toBe(true)
     expect(result.value).toBeInstanceOf(CityHallNotFoundError)
   })

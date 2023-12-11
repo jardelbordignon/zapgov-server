@@ -44,7 +44,7 @@ export class CreateSubCityHallController {
   @ApiBody({ schema: createSubCityHallOpenApiSchema as any })
   @ApiResponse({ description: 'Sub city hall registered successful', status: 201 })
   @ApiResponse({
-    description: 'When the city hall is not found',
+    description: 'When the linked city hall is not found',
     schema: { example: new CityHallNotFoundError() },
     status: 404,
   })

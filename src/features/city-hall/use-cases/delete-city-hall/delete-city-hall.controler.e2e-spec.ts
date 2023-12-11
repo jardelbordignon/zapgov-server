@@ -13,7 +13,7 @@ import {
 import { CityHallEntity } from '../../city-hall.entity'
 import { CITY_HALLS_URL, CREATE_CITY_HALL_DATA } from '../constants'
 
-describe('Delete user (E2E)', () => {
+describe('Delete city hall (E2E)', () => {
   let api: supertest.SuperTest<supertest.Test>
   let app: INestApplication
 
@@ -68,7 +68,7 @@ describe('Delete user (E2E)', () => {
     }
   })
 
-  test(`[DELETE] ${USERS_URL} - success`, async () => {
+  test(`[DELETE] ${CITY_HALLS_URL} - success`, async () => {
     let cityHalls = await getCityHalls()
 
     const defaultCityHall = cityHalls.find(
@@ -90,7 +90,7 @@ describe('Delete user (E2E)', () => {
     expect(deletedCityHalls.length).toBe(0)
   })
 
-  test(`[DELETE] ${USERS_URL} - success [soft]`, async () => {
+  test(`[DELETE] ${CITY_HALLS_URL} - success [soft]`, async () => {
     let cityHalls = await getCityHalls()
 
     const defaultCityHall = cityHalls.find(
@@ -110,5 +110,19 @@ describe('Delete user (E2E)', () => {
     const deleted = true
     const deletedCityHalls = await getCityHalls(deleted)
     expect(deletedCityHalls.length).toBe(1)
+  })
+
+  test(`[DELETE] ${CITY_HALLS_URL} - failure`, async () => {
+    const response = await api
+      .delete(`${CITY_HALLS_URL}/invalid-sub-city-hall-id`)
+      .set('Authorization', authorization)
+      .send()
+
+    expect(response.statusCode).toBe(404)
+    expect(response.body).toEqual({
+      error: 'Not Found',
+      message: 'City hall not found.',
+      statusCode: 404,
+    })
   })
 })

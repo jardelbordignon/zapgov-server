@@ -16,7 +16,7 @@ export class InMemorySubCityHallRepository implements SubCityHallRepository {
   async create(data: CreateSubCityHallData): Promise<void> {
     const date = new Date()
 
-    const cityHall: SubCityHall = {
+    const item: SubCityHall = {
       ...data,
       created_at: date,
       deleted_at: null,
@@ -24,7 +24,7 @@ export class InMemorySubCityHallRepository implements SubCityHallRepository {
       updated_at: date,
     }
 
-    this.items.push(cityHall)
+    this.items.push(item)
   }
 
   async delete(id: string): Promise<void> {
@@ -32,15 +32,15 @@ export class InMemorySubCityHallRepository implements SubCityHallRepository {
   }
 
   async findByEmail(email: string): Promise<SubCityHall | null> {
-    const cityHall = this.items.find(cityHall => cityHall.email === email)
-    if (!cityHall) return null
-    return cityHall
+    const item = this.items.find(item => item.email === email)
+    if (!item) return null
+    return item
   }
 
   async findById(id: string): Promise<SubCityHall | null> {
-    const cityHall = this.items.find(cityHall => cityHall.id === id)
-    if (!cityHall) return null
-    return cityHall
+    const item = this.items.find(item => item.id === id)
+    if (!item) return null
+    return item
   }
 
   private async findSubCityHalls(

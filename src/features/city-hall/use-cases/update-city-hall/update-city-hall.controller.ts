@@ -10,7 +10,6 @@ import {
   applyDecorators,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { Role } from '@prisma/client'
 import { ZodObject, z } from 'zod'
 
 import type { UpdateCityHallData } from 'src/contracts/city-halls'
@@ -27,11 +26,13 @@ type UpdateCityHallBodySchema = ZodObject<ZodObj<UpdateCityHallData>>
 extendZodWithOpenApi(z)
 
 const updateCityHallZodObject = z.object({
-  currentPassword: z.string().optional().openapi({ example: 'Pwd@123' }),
-  email: z.string().email().optional().openapi({ example: 'johndoe@email.com' }),
-  name: z.string().optional().openapi({ example: 'Updated John Doe' }),
-  password: z.string().optional().openapi({ example: 'UpdatedPwd@123' }),
-  roles: z.array(z.nativeEnum(Role)).optional(),
+  bg_image: z.string().optional().openapi({ example: 'http://repo.com/imgx.png' }),
+  deleted_at: z.date().optional(),
+  email: z.string().email().optional().openapi({ example: 'city-hall-x@email.com' }),
+  name: z.string().optional().openapi({ example: 'City Hall X' }),
+  phone: z.string().optional().openapi({ example: '54 3333 3333' }),
+  slug: z.string().optional().openapi({ example: 'city_hall_x' }),
+  txt_color: z.string().optional().openapi({ example: '#f2f2f2' }),
 }) as UpdateCityHallBodySchema
 
 // const updateCityHallValidationPipe = new ZodValidationPipe(

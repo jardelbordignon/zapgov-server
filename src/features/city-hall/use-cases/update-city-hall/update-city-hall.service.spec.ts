@@ -30,7 +30,7 @@ describe('Update user', () => {
     const name = `Updated ${CREATE_CITY_HALL_DATA.name}`
     const result = await updateCityHallService.execute(item!.id, { name })
     expect(result.isSuccess()).toBe(true)
-    expect(result.value.name).toBe(name)
+    expect(result.value).toEqual(expect.objectContaining({ name }))
   })
 
   it('should not be able to update a nonexistent city hall', async () => {
