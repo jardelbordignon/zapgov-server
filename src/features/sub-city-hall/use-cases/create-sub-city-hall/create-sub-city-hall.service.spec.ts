@@ -1,12 +1,12 @@
 import { CreateSubCityHallData } from 'src/contracts/sub-city-halls'
 import { CityHallEntity } from 'src/features/city-hall/city-hall.entity'
 import { InMemoryCityHallRepository } from 'src/features/city-hall/repositories/in-memory.city-hall.repository'
-import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/use-cases/constants'
 import { CityHallNotFoundError } from 'src/features/city-hall/use-cases/errors'
+import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/use-cases/test-helper'
 
 import { InMemorySubCityHallRepository } from '../../repositories/in-memory.sub-city-hall.repository'
-import { CREATE_SUB_CITY_HALL_DATA } from '../constants'
 import { SubCityHallAlreadyExistsError } from '../errors'
+import { CREATE_SUB_CITY_HALL_DATA } from '../test-helper'
 
 import { CreateSubCityHallService } from './create-sub-city-hall.service'
 

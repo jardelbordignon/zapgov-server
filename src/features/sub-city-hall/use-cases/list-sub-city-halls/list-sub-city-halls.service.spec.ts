@@ -1,9 +1,9 @@
 import { InMemoryCityHallRepository } from 'src/features/city-hall/repositories/in-memory.city-hall.repository'
-import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/use-cases/constants'
+import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/use-cases/test-helper'
 import { slugify } from 'src/infra/utils/text-formatters'
 
 import { InMemorySubCityHallRepository } from '../../repositories/in-memory.sub-city-hall.repository'
-import { CREATE_SUB_CITY_HALL_DATA } from '../constants'
+import { CREATE_SUB_CITY_HALL_DATA } from '../test-helper'
 
 import { ListSubCityHallsService } from './list-sub-city-halls.service'
 

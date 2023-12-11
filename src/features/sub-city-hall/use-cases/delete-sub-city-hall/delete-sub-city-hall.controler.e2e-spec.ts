@@ -3,14 +3,11 @@ import { Test } from '@nestjs/testing'
 import supertest from 'supertest'
 
 import { AppModule } from 'src/app.module'
-import {
-  CITY_HALLS_URL,
-  CREATE_CITY_HALL_DATA,
-} from 'src/features/city-hall/use-cases/constants'
-import { AUTH_URL, USERS_URL } from 'src/features/user/use-cases/constants'
+import { getCityHallId } from 'src/features/city-hall/use-cases/test-helper'
+import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
 
 import { SubCityHallEntity } from '../../sub-city-hall.entity'
-import { CREATE_SUB_CITY_HALL_DATA, SUB_CITY_HALLS_URL } from '../constants'
+import { CREATE_SUB_CITY_HALL_DATA, SUB_CITY_HALLS_URL } from '../test-helper'
 
 describe('Delete sub city hall (E2E)', () => {
   let api: supertest.SuperTest<supertest.Test>
@@ -18,30 +15,6 @@ describe('Delete sub city hall (E2E)', () => {
 
   let authorization: string
   let city_hall_id: string
-
-  const registerAndAuthenticateUser = async () => {
-    const email = 'johndoe@email.com'
-    const name = 'John Doe'
-    const password = 'Pwd@123'
-    const data = { email, name, password }
-    await api.post(USERS_URL).send(data)
-    const response = await api.post(AUTH_URL).send(data)
-    authorization = `Bearer ${response.body.accessToken}`
-  }
-
-  const createACityHallAndGetTheId = async () => {
-    await api
-      .post(CITY_HALLS_URL)
-      .set('Authorization', authorization)
-      .send(CREATE_CITY_HALL_DATA)
-
-    const getCityHalls = await api
-      .get(CITY_HALLS_URL)
-      .set('Authorization', authorization)
-      .send()
-
-    city_hall_id = getCityHalls.body.data[0].id
-  }
 
   const getSubCityHalls = async (deleted = false): Promise<SubCityHallEntity[]> => {
     let url = `${SUB_CITY_HALLS_URL}?page=1&perPage=100`
@@ -60,8 +33,8 @@ describe('Delete sub city hall (E2E)', () => {
 
     await app.init()
 
-    await registerAndAuthenticateUser()
-    await createACityHallAndGetTheId()
+    authorization = await getUserAuthorization(api)
+    city_hall_id = await getCityHallId(api)
   })
 
   beforeEach(async () => {

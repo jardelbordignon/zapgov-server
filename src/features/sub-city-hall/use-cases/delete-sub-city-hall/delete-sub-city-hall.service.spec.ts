@@ -1,7 +1,7 @@
 import { InMemorySubCityHallRepository } from '../../repositories/in-memory.sub-city-hall.repository'
 import { SubCityHallRepository } from '../../repositories/sub-city-hall.repository'
-import { CREATE_SUB_CITY_HALL_DATA } from '../constants'
 import { SubCityHallNotFoundError } from '../errors'
+import { CREATE_SUB_CITY_HALL_DATA } from '../test-helper'
 
 import { DeleteSubCityHallService } from './delete-sub-city-hall.service'
 

@@ -3,31 +3,18 @@ import { Test } from '@nestjs/testing'
 import supertest from 'supertest'
 
 import { AppModule } from 'src/app.module'
-import { AuthUserData, CreateUserData } from 'src/contracts/account'
 import { CreateCityHallData } from 'src/contracts/city-halls'
-import { AUTH_URL, USERS_URL } from 'src/features/user/use-cases/constants'
+import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
 import { slugify } from 'src/infra/utils/text-formatters'
 
-import { CITY_HALLS_URL } from '../constants'
+import { CITY_HALLS_URL } from '../test-helper'
 
 describe('List city halls (E2E)', () => {
   let api: supertest.SuperTest<supertest.Test>
   let app: INestApplication
 
   let authorization: string
-  const email = 'johndoe@email.com'
-  const name = 'John Doe'
-  const password = 'Pwd@123'
   const cityNames = ['Tangamandapio', 'Acapulco', 'Ciudad de México']
-
-  const registerUser = async (data: CreateUserData) => {
-    await api.post(USERS_URL).send(data)
-  }
-
-  const authenticate = async (data: AuthUserData) => {
-    const authRes = await api.post(AUTH_URL).send(data)
-    authorization = `Bearer ${authRes.body.accessToken}`
-  }
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -39,8 +26,7 @@ describe('List city halls (E2E)', () => {
 
     await app.init()
 
-    await registerUser({ email, name, password })
-    await authenticate({ email, password })
+    authorization = await getUserAuthorization(api)
 
     for (const cityName of cityNames) {
       const createUserData: CreateCityHallData = {

@@ -1,6 +1,6 @@
 import { InMemoryCityHallRepository } from '../../repositories/in-memory.city-hall.repository'
-import { CREATE_CITY_HALL_DATA } from '../constants'
 import { CityHallAlreadyExistsError, CityHallNotFoundError } from '../errors'
+import { CREATE_CITY_HALL_DATA } from '../test-helper'
 
 import { UpdateCityHallService } from './update-city-hall.service'
 

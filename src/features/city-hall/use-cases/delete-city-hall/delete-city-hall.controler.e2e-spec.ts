@@ -3,30 +3,16 @@ import { Test } from '@nestjs/testing'
 import supertest from 'supertest'
 
 import { AppModule } from 'src/app.module'
-import type { AuthUserData, CreateUserData } from 'src/contracts/account'
-import {
-  AUTH_URL,
-  CREATE_REGULAR_USER_DATA,
-  USERS_URL,
-} from 'src/features/user/use-cases/constants'
+import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
 
 import { CityHallEntity } from '../../city-hall.entity'
-import { CITY_HALLS_URL, CREATE_CITY_HALL_DATA } from '../constants'
+import { CITY_HALLS_URL, CREATE_CITY_HALL_DATA } from '../test-helper'
 
 describe('Delete city hall (E2E)', () => {
   let api: supertest.SuperTest<supertest.Test>
   let app: INestApplication
 
   let authorization: string
-
-  const registerUser = async (data: CreateUserData) => {
-    await api.post(USERS_URL).send(data)
-  }
-
-  const authenticateUser = async (data: AuthUserData) => {
-    const response = await api.post(AUTH_URL).send(data)
-    authorization = `Bearer ${response.body.accessToken}`
-  }
 
   const getCityHalls = async (deleted = false): Promise<CityHallEntity[]> => {
     let url = `${CITY_HALLS_URL}?page=1&perPage=100`
@@ -45,8 +31,7 @@ describe('Delete city hall (E2E)', () => {
 
     await app.init()
 
-    await registerUser(CREATE_REGULAR_USER_DATA)
-    await authenticateUser(CREATE_REGULAR_USER_DATA)
+    authorization = await getUserAuthorization(api)
   })
 
   beforeEach(async () => {

@@ -1,7 +1,7 @@
 import { CityHallRepository } from '../../repositories/city-hall.repository'
 import { InMemoryCityHallRepository } from '../../repositories/in-memory.city-hall.repository'
-import { CREATE_CITY_HALL_DATA } from '../constants'
 import { CityHallNotFoundError } from '../errors'
+import { CREATE_CITY_HALL_DATA } from '../test-helper'
 
 import { DeleteCityHallService } from './delete-city-hall.service'
 

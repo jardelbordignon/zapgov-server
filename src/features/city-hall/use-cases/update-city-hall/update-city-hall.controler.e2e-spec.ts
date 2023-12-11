@@ -3,25 +3,15 @@ import { Test } from '@nestjs/testing'
 import supertest from 'supertest'
 
 import { AppModule } from 'src/app.module'
-import { AuthUserData, CreateUserData } from 'src/contracts/account'
-import { AUTH_URL, USERS_URL } from 'src/features/user/use-cases/constants'
+import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
 
-import { CITY_HALLS_URL, CREATE_CITY_HALL_DATA } from '../constants'
+import { CITY_HALLS_URL, CREATE_CITY_HALL_DATA } from '../test-helper'
 
 describe('Update user (E2E)', () => {
   let api: supertest.SuperTest<supertest.Test>
   let app: INestApplication
 
   let authorization: string
-
-  const register = async (data: CreateUserData) => {
-    await api.post(USERS_URL).send(data)
-  }
-
-  const authenticate = async (data: AuthUserData) => {
-    const authRes = await api.post(AUTH_URL).send(data)
-    authorization = `Bearer ${authRes.body.accessToken}`
-  }
 
   const getAll = async () => {
     const response = await api
@@ -41,11 +31,7 @@ describe('Update user (E2E)', () => {
 
     await app.init()
 
-    const email = 'johndoe@email.com'
-    const name = 'John Doe'
-    const password = 'Pwd@123'
-    await register({ email, name, password })
-    await authenticate({ email, password })
+    authorization = await getUserAuthorization(api)
 
     await api
       .post(CITY_HALLS_URL)
@@ -70,7 +56,7 @@ describe('Update user (E2E)', () => {
   //   }
   // })
 
-  test(`[PUT] ${USERS_URL} - success`, async () => {
+  test(`[PUT] ${CITY_HALLS_URL} - success`, async () => {
     const items = await getAll()
     const item = items.find(item => item.email === CREATE_CITY_HALL_DATA.email)
 
@@ -84,7 +70,7 @@ describe('Update user (E2E)', () => {
     expect(response.body).toEqual(expect.objectContaining({ name: updatedName }))
   })
 
-  test(`[PUT] ${USERS_URL} - failure (same email)`, async () => {
+  test(`[PUT] ${CITY_HALLS_URL} - failure (same email)`, async () => {
     const cancunEmail = 'cancun@email.com'
     const cancunSlug = 'cancun'
     await api
@@ -113,7 +99,7 @@ describe('Update user (E2E)', () => {
     })
   })
 
-  test(`[PUT] ${USERS_URL} - failure (same slug)`, async () => {
+  test(`[PUT] ${CITY_HALLS_URL} - failure (same slug)`, async () => {
     const cancunEmail = 'cancun@email.com'
     const cancunSlug = 'cancun'
     await api

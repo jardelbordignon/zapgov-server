@@ -3,28 +3,15 @@ import { Test } from '@nestjs/testing'
 import supertest from 'supertest'
 
 import { AppModule } from 'src/app.module'
-import { AuthUserData, CreateUserData } from 'src/contracts/account'
-import { AUTH_URL, USERS_URL } from 'src/features/user/use-cases/constants'
+import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
 
-import { CITY_HALLS_URL, CREATE_CITY_HALL_DATA } from '../constants'
+import { CITY_HALLS_URL, CREATE_CITY_HALL_DATA } from '../test-helper'
 
 describe('Create city-hall (E2E)', () => {
   let api: supertest.SuperTest<supertest.Test>
   let app: INestApplication
 
   let authorization: string
-  const email = 'johndoe@email.com'
-  const name = 'John Doe'
-  const password = 'Pwd@123'
-
-  const registerUser = async (data: CreateUserData) => {
-    await api.post(USERS_URL).send(data)
-  }
-
-  const authenticate = async (data: AuthUserData) => {
-    const authRes = await api.post(AUTH_URL).send(data)
-    authorization = `Bearer ${authRes.body.accessToken}`
-  }
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -36,8 +23,7 @@ describe('Create city-hall (E2E)', () => {
 
     await app.init()
 
-    await registerUser({ email, name, password })
-    await authenticate({ email, password })
+    authorization = await getUserAuthorization(api)
   })
 
   test(`[POST] ${CITY_HALLS_URL} - success`, async () => {

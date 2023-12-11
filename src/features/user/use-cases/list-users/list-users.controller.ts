@@ -22,7 +22,7 @@ export class ListUsersController {
   })
   @Get()
   async handle(
-    @Query('deleted') deleted: boolean,
+    @Query('deleted') deleted?: boolean,
     @Query('page') page?: number,
     @Query('perPage') perPage?: number,
     @Query('search') searchTerm?: string

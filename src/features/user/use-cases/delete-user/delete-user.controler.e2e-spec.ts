@@ -11,7 +11,7 @@ import {
   CREATE_ADMIN_USER_DATA,
   CREATE_REGULAR_USER_DATA,
   USERS_URL,
-} from '../constants'
+} from '../test-helper'
 
 describe('Delete user (E2E)', () => {
   let api: supertest.SuperTest<supertest.Test>
