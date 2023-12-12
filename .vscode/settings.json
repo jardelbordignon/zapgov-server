@@ -2,9 +2,9 @@
   "editor.tabSize": 2,
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.insertFinalNewline": true,
-    "source.formatDocument": true,
-    "source.fixAll.eslint": true
+    "source.insertFinalNewline": "explicit",
+    "source.formatDocument": "explicit",
+    "source.fixAll.eslint": "explicit"
   },
   "files.autoSave": "onFocusChange",
   "material-icon-theme.activeIconPack": "nest",
