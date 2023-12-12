@@ -1,0 +1,60 @@
+@authUrl = {{serverUrl}}/auth
+@neighborhoodsUrl = {{serverUrl}}/neighborhoods
+
+
+@authorization = Bearer {{auth.response.body.accessToken}}
+@userEmail = john@email.com
+@userPassword = Pwd@123
+
+# @name auth
+POST  {{authUrl}}
+Content-Type: application/json
+
+{
+  "email": "{{userEmail}}",
+  "password": "{{userPassword}}"
+}
+###
+
+# @name register_city_hall
+POST  {{neighborhoodsUrl}}
+Content-Type: application/json
+Authorization: {{authorization}}
+
+{
+  "city_hall_id": "9b699898-5e2f-403b-aa07-f31d2ab4c7de",
+  "email": "subcityhall@email.com",
+  "name": "Some Sub City Hall",
+  "observation": "Some observation",
+  "phone": "54 3333 3333"
+}
+###
+
+# buscando as prefeituras ativas
+# @name list_sub_city_halls
+GET  {{neighborhoodsUrl}}?page=1&perPage=20
+###
+
+
+# buscando as sub prefeituras deletadas (query param deleted=true)
+# @name list_deleted_sub_city_halls
+GET  {{neighborhoodsUrl}}?deleted=true&page=1&perPage=20
+###
+
+# buscando uma sub prefeitura pelo id
+# @name show_sub_city_hall
+GET  {{neighborhoodsUrl}}/703e54ec-2a08-45c6-bb3c-580a49378b71
+Authorization: {{authorization}}
+###
+
+# editando uma sub prefeitura
+# @name update_sub_city_hall
+PUT  {{neighborhoodsUrl}}/703e54ec-2a08-45c6-bb3c-580a49378b71
+Content-Type: application/json
+Authorization: {{authorization}}
+
+{
+  "email": "subcityhall@email.com",
+  "name": "Some Sub City Hall"
+}
+###

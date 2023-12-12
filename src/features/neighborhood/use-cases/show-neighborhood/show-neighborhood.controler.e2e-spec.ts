@@ -1,0 +1,85 @@
+import { INestApplication } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
+import supertest from 'supertest'
+
+import { AppModule } from 'src/app.module'
+import { getCityHallId } from 'src/features/city-hall/use-cases/test-helper'
+import { getSubCityHallId } from 'src/features/sub-city-hall/use-cases/test-helper'
+import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
+
+import { CREATE_NEIGHBORHOOD_DATA, NEIGHBORHOODS_URL } from '../test-helper'
+
+describe('Show neighborhood (E2E)', () => {
+  let api: supertest.SuperTest<supertest.Test>
+  let app: INestApplication
+
+  let authorization: string
+  let city_hall_id: string
+  let sub_city_hall_id: string
+
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile()
+
+    app = moduleRef.createNestApplication()
+    api = supertest(app.getHttpServer())
+
+    await app.init()
+
+    authorization = await getUserAuthorization(api)
+    city_hall_id = await getCityHallId(api)
+    sub_city_hall_id = await getSubCityHallId(api)
+
+    await api
+      .post(NEIGHBORHOODS_URL)
+      .set('Authorization', authorization)
+      .send({
+        ...CREATE_NEIGHBORHOOD_DATA,
+        city_hall_id,
+        sub_city_hall_id,
+      })
+  })
+
+  test(`[GET] ${NEIGHBORHOODS_URL} - success`, async () => {
+    const getItems = await api
+      .get(NEIGHBORHOODS_URL)
+      .set('Authorization', authorization)
+      .send()
+
+    const item = getItems.body.data.find(
+      item => item.name === CREATE_NEIGHBORHOOD_DATA.name
+    )
+
+    const getItem = await api
+      .get(`${NEIGHBORHOODS_URL}/${item.id}`)
+      .set('Authorization', authorization)
+      .send()
+
+    expect(getItem.statusCode).toBe(200)
+    expect(getItem.body).toEqual(
+      expect.objectContaining({
+        ...CREATE_NEIGHBORHOOD_DATA,
+        city_hall_id,
+        id: expect.any(String),
+        sub_city_hall_id,
+      })
+    )
+  })
+
+  test(`[GET] ${NEIGHBORHOODS_URL}/:id - failure`, async () => {
+    const getUser = await api
+      .get(`${NEIGHBORHOODS_URL}/invalid-neighborhood-id`)
+      .set('Authorization', authorization)
+      .send()
+
+    expect(getUser.statusCode).toBe(404)
+    expect(getUser.body).toEqual(
+      expect.objectContaining({
+        error: 'Not Found',
+        message: 'Neighborhood not found.',
+        statusCode: 404,
+      })
+    )
+  })
+})

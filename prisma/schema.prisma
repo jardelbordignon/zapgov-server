@@ -28,32 +28,51 @@ model User {
 }
 
 model CityHall {
-  id             String        @id @default(uuid())
+  id             String         @id @default(uuid())
   name           String
   phone          String?
-  email          String?       @unique
-  slug           String        @unique
+  email          String?        @unique
+  slug           String         @unique
   txt_color      String
-  bg_image       String?
-  created_at     DateTime      @default(now())
-  updated_at     DateTime      @updatedAt
+  bg_image       String
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
   deleted_at     DateTime?
   sub_city_halls SubCityHall[]
+  neighborhoods  Neighborhood[]
 
   @@map("city_halls")
 }
 
 model SubCityHall {
-  id           String    @id @default(uuid())
-  city_hall_id String
-  city_hall    CityHall  @relation(fields: [city_hall_id], references: [id])
-  name         String
-  phone        String?
-  email        String?   @unique
-  observation  String
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
-  deleted_at   DateTime?
+  id            String         @id @default(uuid())
+  city_hall_id  String
+  city_hall     CityHall       @relation(fields: [city_hall_id], references: [id])
+  name          String
+  phone         String?
+  email         String?        @unique
+  observation   String?
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  deleted_at    DateTime?
+  neighborhoods Neighborhood[]
 
   @@map("sub_city_halls")
+}
+
+model Neighborhood {
+  id               String      @id @default(uuid())
+  city_hall_id     String
+  city_hall        CityHall    @relation(fields: [city_hall_id], references: [id])
+  sub_city_hall_id String
+  sub_city_hall    SubCityHall @relation(fields: [sub_city_hall_id], references: [id])
+  name             String
+  cep              String
+  locality         String?
+  observation      String?
+  created_at       DateTime    @default(now())
+  updated_at       DateTime    @updatedAt
+  deleted_at       DateTime?
+
+  @@map("neighborhoods")
 }
