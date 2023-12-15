@@ -7,7 +7,10 @@ import {
   success,
 } from 'src/infra/utils/failure-or-success-service-execute'
 
-import { CityHallRepository } from '../../repositories/city-hall.repository'
+import {
+  CityHallInclude,
+  CityHallRepository,
+} from '../../repositories/city-hall.repository'
 import { CityHallNotFoundError } from '../errors'
 
 export type ShowCityHallServiceResponse = FailureOrSuccess<
@@ -19,8 +22,30 @@ export type ShowCityHallServiceResponse = FailureOrSuccess<
 export class ShowCityHallService {
   constructor(private repository: CityHallRepository) {}
 
-  async executeBySlug(slug: string): Promise<ShowCityHallServiceResponse> {
-    const cityHall = await this.repository.findBySlug(slug)
+  private async handleExecute(
+    method: 'findBySlug' | 'findById',
+    param: string,
+    includes?: string
+  ): Promise<ShowCityHallServiceResponse> {
+    const validIncludes: { [K in keyof Omit<CityHallInclude, '_count'>]?: K } = {
+      neighborhoods: 'neighborhoods',
+      sub_city_halls: 'sub_city_halls',
+    }
+
+    let include: CityHallInclude = {}
+
+    if (typeof includes === 'string') {
+      for (const item of includes?.split(',')) {
+        if (item in validIncludes) {
+          include = {
+            ...include,
+            [validIncludes[item]]: true,
+          }
+        }
+      }
+    }
+
+    const cityHall = await this.repository[method](param, include)
 
     if (!cityHall) {
       return failure(new CityHallNotFoundError())
@@ -29,13 +54,15 @@ export class ShowCityHallService {
     return success(cityHall)
   }
 
-  async execute(id: string): Promise<ShowCityHallServiceResponse> {
-    const cityHall = await this.repository.findById(id)
+  async executeBySlug(
+    slug: string,
+    includes?: string
+  ): Promise<ShowCityHallServiceResponse> {
+    return this.handleExecute('findBySlug', slug, includes)
+  }
 
-    if (!cityHall) {
-      return failure(new CityHallNotFoundError())
-    }
-
-    return success(cityHall)
+  async execute(id: string, includes?: string): Promise<ShowCityHallServiceResponse> {
+    console.log('execute', id, includes)
+    return this.handleExecute('findById', id, includes)
   }
 }

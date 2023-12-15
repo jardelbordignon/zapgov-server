@@ -4,7 +4,11 @@ import { CreateCityHallData, UpdateCityHallData } from 'src/contracts/city-halls
 import { PrismaService } from 'src/infra/prisma.service'
 import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
 
-import { CityHallRepository } from './city-hall.repository'
+import {
+  CityHallInclude,
+  CityHallRepository,
+  ShowCityHallResponse,
+} from './city-hall.repository'
 
 export class PrismaCityHallRepository
   extends PrismaService
@@ -18,16 +22,25 @@ export class PrismaCityHallRepository
     await this.cityHall.delete({ where: { id } })
   }
 
-  async findByEmail(email: string): Promise<CityHall | null> {
-    return this.cityHall.findUnique({ where: { email } })
+  async findByEmail(
+    email: string,
+    include?: CityHallInclude
+  ): Promise<ShowCityHallResponse> {
+    return this.cityHall.findUnique({ include, where: { email } })
   }
 
-  async findById(id: string): Promise<CityHall | null> {
-    return this.cityHall.findFirst({ where: { id } })
+  async findById(
+    id: string,
+    include?: CityHallInclude
+  ): Promise<ShowCityHallResponse> {
+    return this.cityHall.findFirst({ include, where: { id } })
   }
 
-  async findBySlug(slug: string): Promise<CityHall | null> {
-    return this.cityHall.findUnique({ where: { slug } })
+  async findBySlug(
+    slug: string,
+    include?: CityHallInclude
+  ): Promise<ShowCityHallResponse> {
+    return this.cityHall.findUnique({ include, where: { slug } })
   }
 
   private async findCityHalls(

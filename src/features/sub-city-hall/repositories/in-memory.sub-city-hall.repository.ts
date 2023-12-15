@@ -46,8 +46,9 @@ export class InMemorySubCityHallRepository implements SubCityHallRepository {
   private async findSubCityHalls(
     page: number,
     perPage: number,
-    deleted: boolean,
-    searchTerm: string
+    searchTerm: string,
+    cityHallId: string,
+    deleted: boolean
   ): Promise<PaginatedResponse<SubCityHall>> {
     const start = (page - 1) * perPage
     const end = start + perPage
@@ -55,6 +56,10 @@ export class InMemorySubCityHallRepository implements SubCityHallRepository {
     let items = this.items.filter(({ deleted_at }) =>
       deleted ? deleted_at : !deleted_at
     )
+
+    if (cityHallId) {
+      items = items.filter(({ city_hall_id }) => city_hall_id === cityHallId)
+    }
 
     if (searchTerm) {
       const term = searchTerm.toLowerCase()
@@ -88,7 +93,7 @@ export class InMemorySubCityHallRepository implements SubCityHallRepository {
     perPage,
     searchTerm,
   }: PaginationParams): Promise<PaginatedResponse<SubCityHall>> {
-    return this.findSubCityHalls(page, perPage, false, searchTerm)
+    return this.findSubCityHalls(page, perPage, searchTerm, null, false)
   }
 
   async findAllDeleted({
@@ -96,7 +101,23 @@ export class InMemorySubCityHallRepository implements SubCityHallRepository {
     perPage,
     searchTerm,
   }: PaginationParams): Promise<PaginatedResponse<SubCityHall>> {
-    return this.findSubCityHalls(page, perPage, true, searchTerm)
+    return this.findSubCityHalls(page, perPage, searchTerm, null, true)
+  }
+
+  async findAllByCityHallId(
+    cityHallId: string,
+    searchTerm: string
+  ): Promise<SubCityHall[]> {
+    const result = await this.findSubCityHalls(1, 1000, searchTerm, cityHallId, false)
+    return result.data
+  }
+
+  async findAllDeletedByCityHallId(
+    cityHallId: string,
+    searchTerm: string
+  ): Promise<SubCityHall[]> {
+    const result = await this.findSubCityHalls(1, 1000, searchTerm, cityHallId, false)
+    return result.data
   }
 
   async update(id: string, data: UpdateSubCityHallData): Promise<SubCityHall> {

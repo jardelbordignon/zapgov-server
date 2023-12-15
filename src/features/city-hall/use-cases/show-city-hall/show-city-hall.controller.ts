@@ -4,6 +4,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  Query,
   applyDecorators,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
@@ -55,15 +56,21 @@ export class ShowCityHallController {
 
   @ShowCityHallApiDecorators()
   @Get('/slug/:slug')
-  async handleBySlug(@Param('slug') cityHallSlug: string): Promise<CityHallEntity> {
-    const result = await this.showCityHallService.executeBySlug(cityHallSlug)
+  async handleBySlug(
+    @Param('slug') cityHallSlug: string,
+    @Query('add') add: string
+  ): Promise<CityHallEntity> {
+    const result = await this.showCityHallService.executeBySlug(cityHallSlug, add)
     return this.handleResult(result)
   }
 
   @ShowCityHallApiDecorators()
   @Get('/:id')
-  async handle(@Param('id') cityHallId: string): Promise<CityHallEntity> {
-    const result = await this.showCityHallService.execute(cityHallId)
+  async handle(
+    @Param('id') cityHallId: string,
+    @Query('add') add: string
+  ): Promise<CityHallEntity> {
+    const result = await this.showCityHallService.execute(cityHallId, add)
     return this.handleResult(result)
   }
 }

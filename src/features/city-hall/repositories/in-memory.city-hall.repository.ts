@@ -1,14 +1,20 @@
 import { randomUUID } from 'node:crypto'
 
-import type { CityHall } from '@prisma/client'
+import type { CityHall, Neighborhood, SubCityHall } from '@prisma/client'
 
 import type { CreateCityHallData, UpdateCityHallData } from 'src/contracts/city-halls'
 import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
 
-import { CityHallRepository } from './city-hall.repository'
+import {
+  CityHallInclude,
+  CityHallRepository,
+  ShowCityHallResponse,
+} from './city-hall.repository'
 
 export class InMemoryCityHallRepository implements CityHallRepository {
-  items: CityHall[] = []
+  cityHalls: CityHall[] = []
+  subCityHalls: SubCityHall[] = []
+  neighborhoods: Neighborhood[] = []
 
   async create(data: CreateCityHallData): Promise<void> {
     const date = new Date()
@@ -21,29 +27,61 @@ export class InMemoryCityHallRepository implements CityHallRepository {
       updated_at: date,
     }
 
-    this.items.push(cityHall)
+    this.cityHalls.push(cityHall)
   }
 
   async delete(id: string): Promise<void> {
-    this.items = this.items.filter(item => item.id !== id)
+    this.cityHalls = this.cityHalls.filter(item => item.id !== id)
   }
 
-  async findByEmail(email: string): Promise<CityHall | null> {
-    const cityHall = this.items.find(cityHall => cityHall.email === email)
-    if (!cityHall) return null
-    return cityHall
+  private async handleShowCityHall(
+    cityHall: CityHall,
+    include: CityHallInclude
+  ): Promise<ShowCityHallResponse> {
+    let result = cityHall
+
+    if (include?.neighborhoods) {
+      const neighborhoods = this.neighborhoods.filter(
+        item => item.city_hall_id === cityHall.id
+      )
+      result = Object.assign(result, { neighborhoods })
+    }
+
+    if (include?.sub_city_halls) {
+      const subCityHalls = this.subCityHalls.filter(
+        item => item.city_hall_id === cityHall.id
+      )
+      result = Object.assign(result, { subCityHalls })
+    }
+
+    return result
   }
 
-  async findById(id: string): Promise<CityHall | null> {
-    const cityHall = this.items.find(cityHall => cityHall.id === id)
+  async findByEmail(
+    email: string,
+    include?: CityHallInclude
+  ): Promise<ShowCityHallResponse> {
+    const cityHall = this.cityHalls.find(cityHall => cityHall.email === email)
     if (!cityHall) return null
-    return cityHall
+    return this.handleShowCityHall(cityHall, include)
   }
 
-  async findBySlug(slug: string): Promise<CityHall | null> {
-    const cityHall = this.items.find(cityHall => cityHall.slug === slug)
+  async findById(
+    id: string,
+    include?: CityHallInclude
+  ): Promise<ShowCityHallResponse> {
+    const cityHall = this.cityHalls.find(cityHall => cityHall.id === id)
     if (!cityHall) return null
-    return cityHall
+    return this.handleShowCityHall(cityHall, include)
+  }
+
+  async findBySlug(
+    slug: string,
+    include?: CityHallInclude
+  ): Promise<ShowCityHallResponse> {
+    const cityHall = this.cityHalls.find(cityHall => cityHall.slug === slug)
+    if (!cityHall) return null
+    return this.handleShowCityHall(cityHall, include)
   }
 
   private async findCityHalls(
@@ -55,13 +93,13 @@ export class InMemoryCityHallRepository implements CityHallRepository {
     const start = (page - 1) * perPage
     const end = start + perPage
 
-    let items = this.items.filter(({ deleted_at }) =>
+    let cityHalls = this.cityHalls.filter(({ deleted_at }) =>
       deleted ? deleted_at : !deleted_at
     )
 
     if (searchTerm) {
       const term = searchTerm.toLowerCase()
-      items = items.filter(
+      cityHalls = cityHalls.filter(
         ({ email, name, slug }) =>
           email.toLowerCase().includes(term) ||
           name.toLowerCase().includes(term) ||
@@ -69,8 +107,8 @@ export class InMemoryCityHallRepository implements CityHallRepository {
       )
     }
 
-    const data = items.slice(start, end)
-    const totalItems = items.length
+    const data = cityHalls.slice(start, end)
+    const totalItems = cityHalls.length
     const totalPages = Math.ceil(totalItems / perPage)
     const hasPrevious = start > 0
     const hasNext = end < totalItems
@@ -105,8 +143,8 @@ export class InMemoryCityHallRepository implements CityHallRepository {
   }
 
   async update(id: string, data: UpdateCityHallData): Promise<CityHall> {
-    const index = this.items.findIndex(item => item.id === id)
-    this.items[index] = Object.assign(this.items[index], data)
-    return this.items[index]
+    const index = this.cityHalls.findIndex(item => item.id === id)
+    this.cityHalls[index] = Object.assign(this.cityHalls[index], data)
+    return this.cityHalls[index]
   }
 }

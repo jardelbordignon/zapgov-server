@@ -52,6 +52,30 @@ describe('Show city hall (E2E)', () => {
     )
   })
 
+  // test(`[GET] ${CITY_HALLS_URL} - success [with add]`, async () => {
+  //   const getItems = await api
+  //     .get(CITY_HALLS_URL)
+  //     .set('Authorization', authorization)
+  //     .send()
+
+  //   const item = getItems.body.data.find(
+  //     item => item.email === CREATE_CITY_HALL_DATA.email
+  //   )
+
+  //   const url = `${CITY_HALLS_URL}/${item.id}?add=neighborhoods,sub_city_halls`
+  //   const getItem = await api.get(url).set('Authorization', authorization).send()
+
+  //   expect(getItem.statusCode).toBe(200)
+  //   expect(getItem.body).toEqual(
+  //     expect.objectContaining({
+  //       ...CREATE_CITY_HALL_DATA,
+  //       id: expect.any(String),
+  //       neighborhoods: expect.any(Array),
+  //       subCityHalls: expect.any(Array),
+  //     })
+  //   )
+  // })
+
   test(`[GET] ${CITY_HALLS_URL}/:id - failure`, async () => {
     const getUser = await api
       .get(`${CITY_HALLS_URL}/invalid-user-id`)

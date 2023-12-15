@@ -15,5 +15,13 @@ export abstract class SubCityHallRepository {
   abstract findAllDeleted(
     params: PaginationParams
   ): Promise<PaginatedResponse<SubCityHall>>
+  abstract findAllByCityHallId(
+    cityHallId: string,
+    searchTerm: string
+  ): Promise<SubCityHall[]>
+  abstract findAllDeletedByCityHallId(
+    cityHallId: string,
+    searchTerm: string
+  ): Promise<SubCityHall[]>
   abstract update(id: string, data: UpdateSubCityHallData): Promise<SubCityHall>
 }

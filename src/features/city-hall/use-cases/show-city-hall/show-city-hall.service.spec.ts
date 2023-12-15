@@ -27,6 +27,22 @@ describe('Show city hall', () => {
     )
   })
 
+  it('should be able to show a city hall with includes', async () => {
+    const { id } = await repository.findByEmail(CREATE_CITY_HALL_DATA.email)
+    const includes = 'neighborhoods,sub_city_halls'
+    const result = await showCityHallService.execute(id, includes)
+    console.log('result', result)
+    expect(result.isSuccess()).toBe(true)
+    expect(result.value).toEqual(
+      expect.objectContaining({
+        ...CREATE_CITY_HALL_DATA,
+        id: expect.any(String),
+        neighborhoods: [],
+        subCityHalls: [],
+      })
+    )
+  })
+
   it('should not be able to show a nonexistent city hall', async () => {
     const result = await showCityHallService.execute('invalid-city-hall-id')
     expect(result.isFailure()).toBe(true)

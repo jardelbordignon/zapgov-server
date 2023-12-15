@@ -46,13 +46,13 @@ GET  {{cityHallsUrl}}?page=1&perPage=20
 
 
 # buscando as prefeituras deletadas (query param deleted=true)
-# @name list_deleted_users
+# @name list_deleted_city_halls
 GET  {{cityHallsUrl}}?deleted=true&page=1&perPage=20
 ###
 
 # buscando uma prefeitura pelo id
-# @name list_city_halls
-GET  {{cityHallsUrl}}/afac3fa2-6cda-4151-91a5-0a2ea1ec71e2
+# @name show_city_halls
+GET  {{cityHallsUrl}}/e54a9142-fa13-45f5-8232-e7ccec2de9a0?add=neighborhoods,sub_city_halls
 Authorization: {{authorization}}
 ###
 

@@ -58,3 +58,10 @@ Authorization: {{authorization}}
   "name": "Some Sub City Hall"
 }
 ###
+
+# deletando uma sub prefeitura
+# @name delete_sub_city_hall
+DELETE  {{subCityHallsUrl}}/703e54ec-2a08-45c6-bb3c-580a49378b71?soft=true
+Content-Type: application/json
+Authorization: {{authorization}}
+###
