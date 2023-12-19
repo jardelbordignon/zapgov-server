@@ -2,20 +2,20 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class PaginationMetadata {
   @ApiProperty({ example: false })
-  hasPrevious: boolean
+  hasPrevious: boolean = false
 
   @ApiProperty({ example: true })
-  hasNext: boolean
+  hasNext: boolean = false
 
   @ApiProperty({ example: 1 })
-  page: number
+  page: number = 0
 
   @ApiProperty({ example: 1 })
-  perPage: number
+  perPage: number = 0
 
   @ApiProperty({ example: 10 })
-  totalItems: number
+  totalItems: number = 0
 
   @ApiProperty({ example: 10 })
-  totalPages: number
+  totalPages: number = 0
 }

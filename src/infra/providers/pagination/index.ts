@@ -4,10 +4,10 @@ import { PaginationMetadata } from './pagination-meta'
 
 export class PaginatedResponse<T> {
   @ApiProperty({ isArray: true })
-  data: T[]
+  data: T[] = []
 
   @ApiProperty()
-  meta: PaginationMetadata
+  meta: PaginationMetadata = new PaginationMetadata()
 }
 
 export * from './pagination-params'
