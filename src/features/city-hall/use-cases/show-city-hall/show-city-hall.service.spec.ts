@@ -1,9 +1,12 @@
+import { CityHall } from '@prisma/client'
+
 import { InMemoryCityHallRepository } from '../../repositories/in-memory.city-hall.repository'
 import { CityHallNotFoundError } from '../errors'
 import { CREATE_CITY_HALL_DATA } from '../test-helper'
 
 import { ShowCityHallService } from './show-city-hall.service'
 
+let cityHall: CityHall
 let repository: InMemoryCityHallRepository
 let showCityHallService: ShowCityHallService
 
@@ -12,12 +15,11 @@ describe('Show city hall', () => {
     repository = new InMemoryCityHallRepository()
     showCityHallService = new ShowCityHallService(repository)
 
-    await repository.create(CREATE_CITY_HALL_DATA)
+    cityHall = await repository.create(CREATE_CITY_HALL_DATA)
   })
 
   it('should be able to show a city hall', async () => {
-    const { id } = await repository.findByEmail(CREATE_CITY_HALL_DATA.email)
-    const result = await showCityHallService.execute(id)
+    const result = await showCityHallService.execute(cityHall.id)
     expect(result.isSuccess()).toBe(true)
     expect(result.value).toEqual(
       expect.objectContaining({
@@ -28,10 +30,8 @@ describe('Show city hall', () => {
   })
 
   it('should be able to show a city hall with includes', async () => {
-    const { id } = await repository.findByEmail(CREATE_CITY_HALL_DATA.email)
     const includes = 'neighborhoods,sub_city_halls'
-    const result = await showCityHallService.execute(id, includes)
-    console.log('result', result)
+    const result = await showCityHallService.execute(cityHall.id, includes)
     expect(result.isSuccess()).toBe(true)
     expect(result.value).toEqual(
       expect.objectContaining({

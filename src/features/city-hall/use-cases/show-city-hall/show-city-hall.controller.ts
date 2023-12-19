@@ -9,6 +9,8 @@ import {
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
 
+import { AllowUnauthenticated } from 'src/infra/providers/auth/authentication.guard'
+
 import { CityHallEntity } from '../../city-hall.entity'
 import { CITY_HALLS_URL } from '../constants'
 import { CityHallNotFoundError } from '../errors'
@@ -54,6 +56,7 @@ export class ShowCityHallController {
     return result.value
   }
 
+  @AllowUnauthenticated()
   @ShowCityHallApiDecorators()
   @Get('/slug/:slug')
   async handleBySlug(

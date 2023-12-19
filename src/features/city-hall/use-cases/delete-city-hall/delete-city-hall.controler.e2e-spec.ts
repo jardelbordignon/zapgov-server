@@ -61,7 +61,7 @@ describe('Delete city hall (E2E)', () => {
     )
 
     const response = await api
-      .delete(`${CITY_HALLS_URL}/${defaultCityHall.id}`)
+      .delete(`${CITY_HALLS_URL}/${defaultCityHall!.id}`)
       .set('Authorization', authorization)
       .send()
 
@@ -83,7 +83,7 @@ describe('Delete city hall (E2E)', () => {
     )
 
     const response = await api
-      .delete(`${CITY_HALLS_URL}/${defaultCityHall.id}?soft=true`)
+      .delete(`${CITY_HALLS_URL}/${defaultCityHall!.id}?soft=true`)
       .set('Authorization', authorization)
       .send()
 

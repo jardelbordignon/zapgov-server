@@ -1,3 +1,5 @@
+import { CityHall } from '@prisma/client'
+
 import { CityHallRepository } from '../../repositories/city-hall.repository'
 import { InMemoryCityHallRepository } from '../../repositories/in-memory.city-hall.repository'
 import { CityHallNotFoundError } from '../errors'
@@ -5,6 +7,7 @@ import { CREATE_CITY_HALL_DATA } from '../test-helper'
 
 import { DeleteCityHallService } from './delete-city-hall.service'
 
+let cityHall: CityHall
 let cityHallRepository: CityHallRepository
 let deleteCityHallService: DeleteCityHallService
 
@@ -15,7 +18,7 @@ describe('Delete city hall', () => {
   })
 
   beforeEach(async () => {
-    await cityHallRepository.create(CREATE_CITY_HALL_DATA)
+    cityHall = await cityHallRepository.create(CREATE_CITY_HALL_DATA)
   })
 
   afterEach(async () => {
@@ -26,11 +29,8 @@ describe('Delete city hall', () => {
   })
 
   it('should be able to delete a city hall', async () => {
-    const defaultCityHall = await cityHallRepository.findByEmail(
-      CREATE_CITY_HALL_DATA.email
-    )
     const soft = false
-    const result = await deleteCityHallService.execute(defaultCityHall.id, soft)
+    const result = await deleteCityHallService.execute(cityHall.id, soft)
 
     expect(result.isSuccess()).toBe(true)
     const getCityHalls = await cityHallRepository.findAll({ page: 1, perPage: 100 })
@@ -38,11 +38,8 @@ describe('Delete city hall', () => {
   })
 
   it('should be able to soft delete a city hall', async () => {
-    const defaultCityHall = await cityHallRepository.findByEmail(
-      CREATE_CITY_HALL_DATA.email
-    )
     const soft = true
-    const result = await deleteCityHallService.execute(defaultCityHall.id, soft)
+    const result = await deleteCityHallService.execute(cityHall.id, soft)
 
     expect(result.isSuccess()).toBe(true)
     const getCityHalls = await cityHallRepository.findAll({ page: 1, perPage: 100 })

@@ -62,7 +62,6 @@ export class ShowCityHallService {
   }
 
   async execute(id: string, includes?: string): Promise<ShowCityHallServiceResponse> {
-    console.log('execute', id, includes)
     return this.handleExecute('findById', id, includes)
   }
 }

@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
-import { AllowUnauthenticated } from 'src/infra/auth/authentication.guard'
+import { AllowUnauthenticated } from 'src/infra/providers/auth/authentication.guard'
 import {
   ApiPaginatedResponse,
   PaginatedResponse,
@@ -23,19 +23,19 @@ export class ListCityHallsController {
   })
   @Get()
   async handle(
-    @Query('deleted') deleted: boolean,
-    @Query('page') page?: number,
-    @Query('perPage') perPage?: number,
-    @Query('search') searchTerm?: string
+    @Query('deleted') deleted: boolean = false,
+    @Query('page') page: number = 1,
+    @Query('perPage') perPage: number = 20,
+    @Query('search') searchTerm: string
   ): Promise<PaginatedResponse<CityHallEntity>> {
-    page = +page || 1
-    perPage = +perPage || 20
     const result = await this.listCityHallsService.execute({
       deleted,
       page,
       perPage,
       searchTerm,
     })
+
+    if (!result.value) return new PaginatedResponse()
 
     return result.value
   }

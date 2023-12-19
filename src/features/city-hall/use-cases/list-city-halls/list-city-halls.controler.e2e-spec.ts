@@ -30,7 +30,6 @@ describe('List city halls (E2E)', () => {
 
     for (const cityName of cityNames) {
       const createUserData: CreateCityHallData = {
-        bg_image: '#ffffff',
         email: `${slugify(cityName)}@email.com`,
         name: cityName,
         phone: `01 (744) 440 700${cityName.length}`,
@@ -41,12 +40,17 @@ describe('List city halls (E2E)', () => {
       await api
         .post(CITY_HALLS_URL)
         .set('Authorization', authorization)
-        .send(createUserData)
+        .field('name', createUserData.name)
+        .field('email', createUserData.email!)
+        .field('phone', createUserData.phone!)
+        .field('slug', createUserData.slug)
+        .field('txt_color', createUserData.txt_color)
+        .attach('file', './test/software-testing.jpg')
     }
   })
 
   test(`[GET] ${CITY_HALLS_URL}`, async () => {
-    const getCityHalls = await api.get(`${CITY_HALLS_URL}?page=1&perPage=3`).send()
+    const getCityHalls = await api.get(CITY_HALLS_URL).send()
 
     expect(getCityHalls.statusCode).toBe(200)
     expect(getCityHalls.body.data.length).toBe(3)
@@ -65,7 +69,7 @@ describe('List city halls (E2E)', () => {
           hasNext: false,
           hasPrevious: false,
           page: 1,
-          perPage: 3,
+          perPage: 20,
           totalItems: 3,
           totalPages: 1,
         },
