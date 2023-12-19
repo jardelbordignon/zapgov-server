@@ -1,7 +1,7 @@
 export class NotFoundError {
-  statusCode: number
-  error: string
   message: string
+  error: string
+  statusCode: number
 
   constructor(message: string, error = 'NotFound', statusCode = 404) {
     this.error = error

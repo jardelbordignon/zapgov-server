@@ -1,7 +1,7 @@
 export class ConflictError {
-  statusCode: number
-  error: string
   message: string
+  error: string
+  statusCode: number
 
   constructor(message: string, error = 'Conflict', statusCode = 409) {
     this.error = error

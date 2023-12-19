@@ -1,7 +1,7 @@
 export class ForbiddenError {
-  statusCode: number
-  error: string
   message: string
+  error: string
+  statusCode: number
 
   constructor(message: string, error = 'Forbidden', statusCode = 403) {
     this.error = error
