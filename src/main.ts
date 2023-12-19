@@ -14,7 +14,11 @@ async function bootstrap() {
 
   await app
     .listen(port)
-    .then(async () => logger.log(`🚀 Server is running on: ${await app.getUrl()}`))
+    .then(async () => {
+      const url = await app.getUrl()
+      global['serverUrl'] = url
+      logger.log(`🚀 Server is running on: ${url}`)
+    })
     .catch(error => logger.error(`❌ Server starts error: ${error}`))
 }
 bootstrap()
