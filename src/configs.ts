@@ -2,9 +2,11 @@ import { INestApplication } from '@nestjs/common'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
 import { EnvService } from './infra/env/env.service'
+//import { ExceptionsLogger } from './infra/middlewares/exceptions-logger'
 
 export function configs(app: INestApplication) {
   app.enableCors({ allowedHeaders: '*', origin: '*' })
+  //app.useGlobalFilters(new ExceptionsLogger())
 
   const environment = app.get(EnvService).get('NODE_ENV')
 

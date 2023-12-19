@@ -10,7 +10,8 @@
   "material-icon-theme.activeIconPack": "nest",
   "material-icon-theme.files.associations": {
     "vitest.config.e2e.ts": "Vitest",
-    "*.error.ts": "Nest-filter"
+    "*.error.ts": "Nest-filter",
+    "*.decorators.ts": "Nest-decorator",
   },
   "material-icon-theme.folders.associations": {
     "cryptography": "Keys",

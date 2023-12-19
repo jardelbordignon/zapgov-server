@@ -34,7 +34,6 @@ model CityHall {
   email          String?        @unique
   slug           String         @unique
   txt_color      String
-  bg_image       String
   created_at     DateTime       @default(now())
   updated_at     DateTime       @updatedAt
   deleted_at     DateTime?
