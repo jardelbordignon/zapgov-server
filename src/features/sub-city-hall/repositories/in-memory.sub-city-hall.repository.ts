@@ -10,6 +10,14 @@ import { PaginatedResponse, PaginationParams } from 'src/infra/providers/paginat
 
 import { SubCityHallRepository } from './sub-city-hall.repository'
 
+type Props = {
+  cityHallId?: string
+  deleted: boolean
+  page: number
+  perPage: number
+  searchTerm?: string
+}
+
 export class InMemorySubCityHallRepository implements SubCityHallRepository {
   items: SubCityHall[] = []
 
@@ -43,13 +51,13 @@ export class InMemorySubCityHallRepository implements SubCityHallRepository {
     return item
   }
 
-  private async findSubCityHalls(
-    page: number,
-    perPage: number,
-    searchTerm: string,
-    cityHallId: string,
-    deleted: boolean
-  ): Promise<PaginatedResponse<SubCityHall>> {
+  private async findSubCityHalls({
+    cityHallId,
+    deleted,
+    page,
+    perPage,
+    searchTerm,
+  }: Props): Promise<PaginatedResponse<SubCityHall>> {
     const start = (page - 1) * perPage
     const end = start + perPage
 
@@ -65,7 +73,7 @@ export class InMemorySubCityHallRepository implements SubCityHallRepository {
       const term = searchTerm.toLowerCase()
       items = items.filter(
         ({ email, name }) =>
-          email.toLowerCase().includes(term) || name.toLowerCase().includes(term)
+          email?.toLowerCase().includes(term) || name.toLowerCase().includes(term)
       )
     }
 
@@ -93,7 +101,13 @@ export class InMemorySubCityHallRepository implements SubCityHallRepository {
     perPage,
     searchTerm,
   }: PaginationParams): Promise<PaginatedResponse<SubCityHall>> {
-    return this.findSubCityHalls(page, perPage, searchTerm, null, false)
+    return this.findSubCityHalls({
+      cityHallId: undefined,
+      deleted: false,
+      page,
+      perPage,
+      searchTerm,
+    })
   }
 
   async findAllDeleted({
@@ -101,14 +115,26 @@ export class InMemorySubCityHallRepository implements SubCityHallRepository {
     perPage,
     searchTerm,
   }: PaginationParams): Promise<PaginatedResponse<SubCityHall>> {
-    return this.findSubCityHalls(page, perPage, searchTerm, null, true)
+    return this.findSubCityHalls({
+      cityHallId: undefined,
+      deleted: true,
+      page,
+      perPage,
+      searchTerm,
+    })
   }
 
   async findAllByCityHallId(
     cityHallId: string,
     searchTerm: string
   ): Promise<SubCityHall[]> {
-    const result = await this.findSubCityHalls(1, 1000, searchTerm, cityHallId, false)
+    const result = await this.findSubCityHalls({
+      cityHallId,
+      deleted: false,
+      page: 1,
+      perPage: 1000,
+      searchTerm,
+    })
     return result.data
   }
 
@@ -116,7 +142,13 @@ export class InMemorySubCityHallRepository implements SubCityHallRepository {
     cityHallId: string,
     searchTerm: string
   ): Promise<SubCityHall[]> {
-    const result = await this.findSubCityHalls(1, 1000, searchTerm, cityHallId, false)
+    const result = await this.findSubCityHalls({
+      cityHallId,
+      deleted: true,
+      page: 1,
+      perPage: 1000,
+      searchTerm,
+    })
     return result.data
   }
 

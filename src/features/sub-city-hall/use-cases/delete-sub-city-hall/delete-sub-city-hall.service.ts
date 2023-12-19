@@ -33,7 +33,7 @@ export class DeleteSubCityHallService {
       await this.subSubCityHallRepository.update(subSubCityHallId, {
         deleted_at: new Date(),
       })
-      return success(null)
+      return success(undefined)
     }
 
     return success(await this.subSubCityHallRepository.delete(subSubCityHallId))

@@ -3,27 +3,29 @@ import { SubCityHall } from '@prisma/client'
 
 export class SubCityHallEntity implements SubCityHall {
   @ApiProperty()
-  id: string
+  id!: string
 
   @ApiProperty()
-  city_hall_id: string
-  name: string
+  city_hall_id!: string
 
   @ApiProperty()
-  phone: string
+  name!: string
 
   @ApiProperty()
-  email: string
+  phone!: string | null
 
   @ApiProperty()
-  observation: string
+  email!: string | null
 
   @ApiProperty()
-  created_at: Date
+  observation!: string | null
 
   @ApiProperty()
-  updated_at: Date
+  created_at!: Date
 
   @ApiProperty()
-  deleted_at: Date
+  updated_at!: Date
+
+  @ApiProperty()
+  deleted_at!: Date | null
 }
