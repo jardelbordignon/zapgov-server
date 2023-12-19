@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import type { CreateCityHallData } from 'src/contracts/city-halls'
+import { Storage } from 'src/infra/providers/storage/storage'
 import {
   FailureOrSuccess,
   failure,
@@ -17,22 +18,32 @@ type CreateCityHallServiceResponse = FailureOrSuccess<
 
 @Injectable()
 export class CreateCityHallService {
-  constructor(private repository: CityHallRepository) {}
+  constructor(
+    private repository: CityHallRepository,
+    private storage: Storage
+  ) {}
 
-  async execute(data: CreateCityHallData): Promise<CreateCityHallServiceResponse> {
-    const cityHallWithSameEmail = await this.repository.findByEmail(data.email)
+  async execute(
+    data: CreateCityHallData,
+    file?: Express.Multer.File
+  ): Promise<CreateCityHallServiceResponse> {
+    if (data.email) {
+      const cityHallWithSameEmail = await this.repository.findByEmail(data.email)
 
-    if (cityHallWithSameEmail) {
-      return failure(
-        new CityHallAlreadyExistsError(
-          `City hall with ${data.email} email address already exists.`
+      if (cityHallWithSameEmail) {
+        if (file) await this.storage.destroyTmp(file.filename)
+        return failure(
+          new CityHallAlreadyExistsError(
+            `City hall with ${data.email} email address already exists.`
+          )
         )
-      )
+      }
     }
 
     const cityHallWithSameSlug = await this.repository.findBySlug(data.slug)
 
     if (cityHallWithSameSlug) {
+      if (file) await this.storage.destroyTmp(file.filename)
       return failure(
         new CityHallAlreadyExistsError(
           `City hall with ${data.slug} slug already exists.`
@@ -40,6 +51,10 @@ export class CreateCityHallService {
       )
     }
 
-    return success(await this.repository.create(data))
+    const cityHall = await this.repository.create(data)
+
+    if (file) await this.storage.store(file, `city-halls/${cityHall.id}`)
+
+    return success(undefined)
   }
 }

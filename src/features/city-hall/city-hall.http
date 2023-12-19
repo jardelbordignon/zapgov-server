@@ -18,25 +18,66 @@ Content-Type: application/json
 
 
 @bg_image = #f2f2f2
-@email = tangamandapio.ayuntamiento@email.com
+@email = tangamandapio.ayuntamiento2@email.com
 @name = Ayuntamiento de Tangamandapio
 @phone = 01 (383) 518 32 57
 @slug = tangamandapio
 @txt_color = #222222
 
 # @name register_city_hall
-POST  {{cityHallsUrl}}
-Content-Type: application/json
+POST {{cityHallsUrl}} HTTP/1.1
+Content-Type: multipart/form-data; boundary=boundary
 Authorization: {{authorization}}
 
-{
-  "bg_image": "{{bg_image}}", 
-  "email": "{{email}}", 
-  "name": "{{name}}", 
-  "phone": "{{phone}}", 
-  "slug": "{{slug}}", 
-  "txt_color": "{{txt_color}}"
-}
+--boundary
+Content-Disposition: form-data; name="file"; filename="jardel.png"
+Content-Type: image/jpeg
+
+< ./Users/jardelbordignon/Downloads/jardel.png
+
+--boundary
+Content-Disposition: form-data; name="bg_image"
+
+{{bg_image}}
+
+--boundary
+Content-Disposition: form-data; name="name"
+
+{{name}}
+
+--boundary
+Content-Disposition: form-data; name="email"
+
+{{email}}
+
+--boundary
+Content-Disposition: form-data; name="phone"
+
+{{phone}}
+
+--boundary
+Content-Disposition: form-data; name="slug"
+
+{{slug}}
+
+--boundary
+Content-Disposition: form-data; name="txt_color"
+
+{{txt_color}}
+--boundary--
+
+# POST  {{cityHallsUrl}}
+# Content-Type: application/json
+# Authorization: {{authorization}}
+
+# {
+#   "bg_image": "{{bg_image}}", 
+#   "email": "{{email}}", 
+#   "name": "{{name}}", 
+#   "phone": "{{phone}}", 
+#   "slug": "{{slug}}", 
+#   "txt_color": "{{txt_color}}"
+# }
 ###
 
 # buscando as prefeituras ativas

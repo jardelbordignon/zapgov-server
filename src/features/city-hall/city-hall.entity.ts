@@ -3,32 +3,32 @@ import { CityHall } from '@prisma/client'
 
 export class CityHallEntity implements CityHall {
   @ApiProperty()
-  id: string
+  id!: string
 
   @ApiProperty()
-  name: string
+  name!: string
 
   @ApiProperty()
-  phone: string
+  phone!: string | null
 
   @ApiProperty()
-  email: string
+  email!: string | null
 
   @ApiProperty()
-  slug: string
+  slug!: string
 
   @ApiProperty()
-  txt_color: string
+  txt_color!: string
 
   @ApiProperty()
-  bg_image: string
+  created_at!: Date
 
   @ApiProperty()
-  created_at: Date
+  updated_at!: Date
 
   @ApiProperty()
-  updated_at: Date
+  deleted_at!: Date | null
 
   @ApiProperty()
-  deleted_at: Date
+  file?: Express.Multer.File
 }

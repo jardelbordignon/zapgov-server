@@ -13,7 +13,7 @@ export type ShowCityHallResponse =
   | null
 
 export abstract class CityHallRepository {
-  abstract create(data: CreateCityHallData): Promise<void>
+  abstract create(data: CreateCityHallData): Promise<CityHall>
   abstract delete(id: string): Promise<void>
   abstract findByEmail(
     email: string,

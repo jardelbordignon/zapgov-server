@@ -16,7 +16,7 @@ export class InMemoryCityHallRepository implements CityHallRepository {
   subCityHalls: SubCityHall[] = []
   neighborhoods: Neighborhood[] = []
 
-  async create(data: CreateCityHallData): Promise<void> {
+  async create(data: CreateCityHallData): Promise<CityHall> {
     const date = new Date()
 
     const cityHall: CityHall = {
@@ -28,6 +28,8 @@ export class InMemoryCityHallRepository implements CityHallRepository {
     }
 
     this.cityHalls.push(cityHall)
+
+    return cityHall
   }
 
   async delete(id: string): Promise<void> {
@@ -36,7 +38,7 @@ export class InMemoryCityHallRepository implements CityHallRepository {
 
   private async handleShowCityHall(
     cityHall: CityHall,
-    include: CityHallInclude
+    include?: CityHallInclude
   ): Promise<ShowCityHallResponse> {
     let result = cityHall
 
@@ -88,7 +90,7 @@ export class InMemoryCityHallRepository implements CityHallRepository {
     page: number,
     perPage: number,
     deleted: boolean,
-    searchTerm: string
+    searchTerm?: string
   ): Promise<PaginatedResponse<CityHall>> {
     const start = (page - 1) * perPage
     const end = start + perPage
@@ -101,9 +103,9 @@ export class InMemoryCityHallRepository implements CityHallRepository {
       const term = searchTerm.toLowerCase()
       cityHalls = cityHalls.filter(
         ({ email, name, slug }) =>
-          email.toLowerCase().includes(term) ||
           name.toLowerCase().includes(term) ||
-          slug.toLowerCase().includes(term)
+          slug.toLowerCase().includes(term) ||
+          email?.toLowerCase().includes(term)
       )
     }
 
