@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common'
 
-import { AuthModule } from './auth/auth.module'
-import { CryptographyModule } from './cryptography/cryptography.module'
 import { EnvModule } from './env/env.module'
+import { ProvidersModule } from './providers/providers.module'
 
 @Module({
-  imports: [EnvModule, AuthModule, CryptographyModule],
+  imports: [EnvModule, ProvidersModule],
 })
 export class InfraModule {}

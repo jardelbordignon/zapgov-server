@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 
-import { PrismaService } from 'src/infra/prisma.service'
+import { PrismaModule } from 'src/infra/providers/prisma/prisma.module'
+import { StorageModule } from 'src/infra/providers/storage/storage.module'
 
 import { CityHallRepository } from './repositories/city-hall.repository'
 import { PrismaCityHallRepository } from './repositories/prisma.city-hall.repository'
@@ -23,9 +24,8 @@ import { UpdateCityHallService } from './use-cases/update-city-hall/update-city-
     ShowCityHallController,
     UpdateCityHallController,
   ],
-  exports: [PrismaService],
+  imports: [PrismaModule, StorageModule],
   providers: [
-    PrismaService,
     {
       provide: CityHallRepository,
       useClass: PrismaCityHallRepository,

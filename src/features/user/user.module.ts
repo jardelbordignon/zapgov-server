@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 
-import { CryptographyModule } from 'src/infra/cryptography/cryptography.module'
-import { PrismaService } from 'src/infra/prisma.service'
+import { CryptographyModule } from 'src/infra/providers/cryptography/cryptography.module'
+import { PrismaModule } from 'src/infra/providers/prisma/prisma.module'
 
 import { PrismaUserRepository } from './repositories/prisma.user.repository'
 import { UserRepository } from './repositories/user.repository'
@@ -27,10 +27,8 @@ import { UpdateUserService } from './use-cases/update-user/update-user.service'
     ShowUserController,
     UpdateUserController,
   ],
-  exports: [PrismaService],
-  imports: [CryptographyModule],
+  imports: [PrismaModule, CryptographyModule],
   providers: [
-    PrismaService,
     {
       provide: UserRepository,
       useClass: PrismaUserRepository,
