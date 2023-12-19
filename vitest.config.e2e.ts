@@ -7,6 +7,6 @@ export default defineConfig({
   test: {
     ...userConfig.test,
     include: ['**/*.e2e-spec.ts'],
-    setupFiles: ['./test/setup-prisma-e2e.ts'],
+    setupFiles: ['./test/setup-e2e.ts'],
   },
 })
