@@ -3,32 +3,32 @@ import { Neighborhood } from '@prisma/client'
 
 export class NeighborhoodEntity implements Neighborhood {
   @ApiProperty()
-  id: string
+  id!: string
 
   @ApiProperty()
-  city_hall_id: string
+  city_hall_id!: string
 
   @ApiProperty()
-  sub_city_hall_id: string
+  sub_city_hall_id!: string
 
   @ApiProperty()
-  name: string
+  name!: string
 
   @ApiProperty()
-  cep: string
+  cep!: string
 
   @ApiProperty()
-  locality: string
+  locality!: string | null
 
   @ApiProperty()
-  observation: string
+  observation!: string | null
 
   @ApiProperty()
-  created_at: Date
+  created_at!: Date
 
   @ApiProperty()
-  updated_at: Date
+  updated_at!: Date
 
   @ApiProperty()
-  deleted_at: Date
+  deleted_at!: Date | null
 }

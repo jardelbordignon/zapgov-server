@@ -47,7 +47,7 @@ export class InMemoryNeighborhoodRepository implements NeighborhoodRepository {
     page: number,
     perPage: number,
     deleted: boolean,
-    searchTerm: string
+    searchTerm?: string
   ): Promise<PaginatedResponse<Neighborhood>> {
     const start = (page - 1) * perPage
     const end = start + perPage

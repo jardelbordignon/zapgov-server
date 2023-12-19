@@ -32,7 +32,7 @@ export class DeleteNeighborhoodService {
       await this.neighborhoodRepository.update(neighborhoodId, {
         deleted_at: new Date(),
       })
-      return success(null)
+      return success(undefined)
     }
 
     return success(await this.neighborhoodRepository.delete(neighborhoodId))

@@ -4,8 +4,8 @@ import {
   CreateNeighborhoodData,
   UpdateNeighborhoodData,
 } from 'src/contracts/neighborhoods'
-import { PrismaService } from 'src/infra/prisma.service'
 import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
+import { PrismaService } from 'src/infra/providers/prisma/prisma.service'
 
 import { NeighborhoodRepository } from './neighborhood.repository'
 
@@ -33,9 +33,10 @@ export class PrismaNeighborhoodRepository
     page: number,
     perPage: number,
     deleted: boolean,
-    searchTerm: string
+    searchTerm?: string
   ): Promise<PaginatedResponse<Neighborhood>> {
-    const skip = (page - 1) * perPage
+    const take = Number(perPage)
+    const skip = (Number(page) - 1) * take
 
     const deletedCondition = deleted
       ? { NOT: { deleted_at: null } }
@@ -49,13 +50,13 @@ export class PrismaNeighborhoodRepository
     } as any
 
     const [data, totalItems] = await this.$transaction([
-      this.neighborhood.findMany({ skip, take: perPage, where }),
+      this.neighborhood.findMany({ skip, take, where }),
       this.neighborhood.count({ where }),
     ])
 
     const hasPrevious = skip > 0
-    const hasNext = skip + perPage < totalItems
-    const totalPages = Math.ceil(totalItems / perPage)
+    const hasNext = skip + take < totalItems
+    const totalPages = Math.ceil(totalItems / take)
 
     return {
       data,
