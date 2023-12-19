@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import type { User } from '@prisma/client'
 
 import type { UpdateUserData } from 'src/contracts/account'
-import { Hasher } from 'src/infra/cryptography/hasher/hasher'
+import { Hasher } from 'src/infra/providers/cryptography/hasher/hasher'
 import {
   FailureOrSuccess,
   failure,

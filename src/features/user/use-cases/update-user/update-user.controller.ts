@@ -15,8 +15,8 @@ import { Role } from '@prisma/client'
 import { ZodObject, z } from 'zod'
 
 import type { UpdateUserData } from 'src/contracts/account'
-import { CurrentUser } from 'src/infra/auth/current-user.decorator'
 import { ZodObj } from 'src/infra/pipes/zod-validation.pipe'
+import { CurrentUser } from 'src/infra/providers/auth/current-user.decorator'
 import { omitObjectProperties } from 'src/infra/utils/omit-object-properties'
 
 import { UserEntity } from '../../user.entity'

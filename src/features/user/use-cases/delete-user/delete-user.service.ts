@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
-import { UserPayload } from 'src/infra/auth/jwt-strategy'
+import { UserPayload } from 'src/infra/providers/auth/jwt-strategy'
 import {
   FailureOrSuccess,
   failure,
@@ -55,7 +55,7 @@ export class DeleteUserService {
 
     if (soft) {
       await this.userRepository.update(userId, { deleted_at: new Date() })
-      return success(null)
+      return success(undefined)
     }
 
     return success(await this.userRepository.delete(userId))

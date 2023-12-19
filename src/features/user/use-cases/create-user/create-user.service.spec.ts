@@ -1,4 +1,4 @@
-import { FakeHasher } from 'src/infra/cryptography/hasher/fake-hasher'
+import { FakeHasher } from 'src/infra/providers/cryptography/hasher/fake-hasher'
 
 import { InMemoryUserRepository } from '../../repositories/in-memory.user.repository'
 import { UserAlreadyExistsError } from '../errors'

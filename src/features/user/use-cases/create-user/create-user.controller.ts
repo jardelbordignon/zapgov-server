@@ -12,8 +12,8 @@ import { Role } from '@prisma/client'
 import { ZodObject, z } from 'zod'
 
 import type { CreateUserData } from 'src/contracts/account'
-import { AllowUnauthenticated } from 'src/infra/auth/authentication.guard'
 import { ZodObj, ZodValidationPipe } from 'src/infra/pipes/zod-validation.pipe'
+import { AllowUnauthenticated } from 'src/infra/providers/auth/authentication.guard'
 
 import { USERS_URL } from '../constants'
 import { UserAlreadyExistsError } from '../errors'

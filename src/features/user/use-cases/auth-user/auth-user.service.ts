@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 
 import type { AuthUserData, AuthUserResponse } from 'src/contracts/account'
-import { Encrypter } from 'src/infra/cryptography/encrypter/encrypter'
-import { Hasher } from 'src/infra/cryptography/hasher/hasher'
+import { Encrypter } from 'src/infra/providers/cryptography/encrypter/encrypter'
+import { Hasher } from 'src/infra/providers/cryptography/hasher/hasher'
 import {
   FailureOrSuccess,
   failure,

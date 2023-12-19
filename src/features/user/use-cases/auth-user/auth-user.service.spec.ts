@@ -1,6 +1,6 @@
 import { InMemoryUserRepository } from 'src/features/user/repositories/in-memory.user.repository'
-import { FakeEncrypter } from 'src/infra/cryptography/encrypter/fake-encrypter'
-import { FakeHasher } from 'src/infra/cryptography/hasher/fake-hasher'
+import { FakeEncrypter } from 'src/infra/providers/cryptography/encrypter/fake-encrypter'
+import { FakeHasher } from 'src/infra/providers/cryptography/hasher/fake-hasher'
 
 import { WrongCredentialsError } from '../errors'
 

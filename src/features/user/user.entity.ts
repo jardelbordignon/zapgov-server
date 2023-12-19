@@ -3,23 +3,23 @@ import { Role, User } from '@prisma/client'
 
 export class UserEntity implements Omit<User, 'password'> {
   @ApiProperty()
-  id: string
+  id!: string
 
   @ApiProperty()
-  name: string
+  name!: string
 
   @ApiProperty()
-  email: string
+  email!: string
 
   @ApiProperty()
-  roles: Role[]
+  roles!: Role[]
 
   @ApiProperty()
-  created_at: Date
+  created_at!: Date
 
   @ApiProperty()
-  updated_at: Date
+  updated_at!: Date
 
   @ApiProperty()
-  deleted_at: Date
+  deleted_at!: Date | null
 }

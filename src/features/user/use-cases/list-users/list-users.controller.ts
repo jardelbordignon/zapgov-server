@@ -27,8 +27,8 @@ export class ListUsersController {
     @Query('perPage') perPage?: number,
     @Query('search') searchTerm?: string
   ): Promise<PaginatedResponse<UserEntity>> {
-    page = +page || 1
-    perPage = +perPage || 20
+    page = Number(page || 1)
+    perPage = Number(perPage || 20)
     const result = await this.listUsersService.execute({
       deleted,
       page,
@@ -36,12 +36,12 @@ export class ListUsersController {
       searchTerm,
     })
 
+    if (!result.value) return new PaginatedResponse()
+
     const formattedResultValue = {
-      ...result.value,
-      data: result.value.data.map(user => {
-        delete user.password
-        return user
-      }),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      data: result.value.data.map(({ password, ...user }) => user),
+      meta: result.value.meta,
     }
 
     return formattedResultValue

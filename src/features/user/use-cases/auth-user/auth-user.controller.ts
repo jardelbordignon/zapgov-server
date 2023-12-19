@@ -12,8 +12,8 @@ import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ZodObject, z } from 'zod'
 
 import type { AuthUserData, AuthUserResponse } from 'src/contracts/account'
-import { AllowUnauthenticated } from 'src/infra/auth/authentication.guard'
 import { ZodObj, ZodValidationPipe } from 'src/infra/pipes/zod-validation.pipe'
+import { AllowUnauthenticated } from 'src/infra/providers/auth/authentication.guard'
 
 import { AUTH_URL } from '../constants'
 import { WrongCredentialsError } from '../errors'

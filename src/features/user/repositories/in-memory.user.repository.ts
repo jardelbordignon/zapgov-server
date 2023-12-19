@@ -37,7 +37,7 @@ export class InMemoryUserRepository implements UserRepository {
     page: number,
     perPage: number,
     deleted: boolean,
-    searchTerm: string
+    searchTerm?: string
   ): Promise<PaginatedResponse<User>> {
     const start = (page - 1) * perPage
     const end = start + perPage

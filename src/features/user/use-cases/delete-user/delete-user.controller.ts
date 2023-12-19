@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
 
-import { CurrentUser } from 'src/infra/auth/current-user.decorator'
-import { UserPayload } from 'src/infra/auth/jwt-strategy'
+import { CurrentUser } from 'src/infra/providers/auth/current-user.decorator'
+import { UserPayload } from 'src/infra/providers/auth/jwt-strategy'
 
 import { USERS_URL } from '../constants'
 import {
