@@ -7,7 +7,7 @@ import {
   NotFoundException,
   Param,
   Put,
-  UsePipes,
+  //UsePipes,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ZodObject, z } from 'zod'
@@ -16,7 +16,7 @@ import type { UpdateCityHallData } from 'src/contracts/city-halls'
 import {
   ZodObj,
   ZodValidationError,
-  ZodValidationPipe,
+  //ZodValidationPipe,
 } from 'src/infra/pipes/zod-validation.pipe'
 import {
   File,
@@ -34,7 +34,7 @@ type UpdateCityHallBodySchema = ZodObject<ZodObj<UpdateCityHallData>>
 extendZodWithOpenApi(z)
 
 const updateCityHallZodObject = z.object({
-  deleted_at: z.date().optional(),
+  deleted_at: z.date().optional().nullable(),
   email: z.string().email().optional().openapi({ example: 'city-hall-x@email.com' }),
   name: z.string().optional().openapi({ example: 'City Hall X' }),
   phone: z.string().optional().openapi({ example: '54 3333 3333' }),
@@ -72,7 +72,7 @@ export class UpdateCityHallController {
     status: 409,
   })
   @FileInterceptor()
-  @UsePipes(new ZodValidationPipe(updateCityHallZodObject))
+  //@UsePipes(new ZodValidationPipe(updateCityHallZodObject))
   @Put('/:id')
   async handleUpdateByCityHallId(
     @Param('id') cityHallId: string,
