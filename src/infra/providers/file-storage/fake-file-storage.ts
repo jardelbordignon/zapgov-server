@@ -1,6 +1,6 @@
-import { Storage } from './storage'
+import { FileStorage } from './file-storage'
 
-export class FakeStorage implements Storage {
+export class FakeFileStorage implements FileStorage {
   private storage: string[] = []
 
   public async store(file: Express.Multer.File): Promise<string> {
@@ -8,12 +8,12 @@ export class FakeStorage implements Storage {
     return file.filename
   }
 
-  public async destroyTmp(file: string): Promise<void> {
+  public async destroyTmpFile(file: string): Promise<void> {
     const findIndex = this.storage.findIndex(storedFile => storedFile === file)
     this.storage.splice(findIndex, 1)
   }
 
-  public async destroy(file: string): Promise<void> {
-    this.destroyTmp(file)
+  public async destroyFolder(file: string): Promise<void> {
+    this.destroyTmpFile(file)
   }
 }

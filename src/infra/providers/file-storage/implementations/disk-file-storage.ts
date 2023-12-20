@@ -4,7 +4,7 @@ import { extname, resolve } from 'path'
 // yarn add sharp --ignore-engines
 import sharp from 'sharp'
 
-import { Storage } from '../storage'
+import { FileStorage } from '../file-storage'
 import { uploadConfig } from '../upload-config'
 
 const { storageFolder, tmpFolder } = uploadConfig
@@ -20,7 +20,7 @@ const deleteFile = async (filename: string) => {
   return null
 }
 
-export class DiskStorage implements Storage {
+export class DiskFileStorage implements FileStorage {
   public async store(file: Express.Multer.File, folder: string): Promise<string> {
     folder = resolve(storageFolder, folder)
 
@@ -40,14 +40,13 @@ export class DiskStorage implements Storage {
     return folder
   }
 
-  public async destroyTmp(filename: string): Promise<void> {
+  public async destroyTmpFile(filename: string): Promise<void> {
     const tmpFilePath = resolve(tmpFolder, filename)
     if (existsSync(tmpFilePath)) await promises.unlink(tmpFilePath)
   }
 
-  public async destroy(filename: string, folder: string): Promise<void> {
-    this.destroyTmp(filename)
-    const oldFilePath = resolve(storageFolder, folder)
-    if (existsSync(oldFilePath)) await promises.unlink(oldFilePath)
+  public async destroyFolder(folder: string): Promise<void> {
+    folder = resolve(storageFolder, folder)
+    if (existsSync(folder)) await promises.unlink(folder)
   }
 }

@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, promises } from 'fs'
 import { extname, resolve } from 'path'
 
-import { Storage } from '../storage'
+import { FileStorage } from '../file-storage'
 import { uploadConfig } from '../upload-config'
 
 const { storageFolder, tmpFolder } = uploadConfig
@@ -17,7 +17,7 @@ const { storageFolder, tmpFolder } = uploadConfig
 //   return null
 // }
 
-export class CloudinaryStorage implements Storage {
+export class CloudinaryStorage implements FileStorage {
   public async store(file: Express.Multer.File, folder: string): Promise<string> {
     const destinationFolder = resolve(storageFolder, folder)
 
@@ -32,14 +32,13 @@ export class CloudinaryStorage implements Storage {
     return destinationFolder
   }
 
-  public async destroyTmp(filename: string): Promise<void> {
+  public async destroyTmpFile(filename: string): Promise<void> {
     const tmpFilePath = resolve(tmpFolder, filename)
     if (existsSync(tmpFilePath)) await promises.unlink(tmpFilePath)
   }
 
-  public async destroy(filename: string, folder: string): Promise<void> {
-    this.destroyTmp(filename)
-    const oldFilePath = resolve(storageFolder, folder)
-    if (existsSync(oldFilePath)) await promises.unlink(oldFilePath)
+  public async destroyFolder(folder: string): Promise<void> {
+    folder = resolve(storageFolder, folder)
+    if (existsSync(folder)) await promises.unlink(folder)
   }
 }

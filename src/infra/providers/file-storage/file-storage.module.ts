@@ -6,13 +6,13 @@ import { EnvModule } from 'src/infra/env/env.module'
 import { EnvService } from 'src/infra/env/env.service'
 
 //import { CloudinaryStorage } from './implementations/cloudinary-storage'
-import { DiskStorage } from './implementations/disk-storage'
+import { FileStorage } from './file-storage'
+import { DiskFileStorage } from './implementations/disk-file-storage'
 //import { S3Storage } from './implementations/s3-storage'
-import { Storage } from './storage'
 import { uploadConfig } from './upload-config'
 
 @Module({
-  exports: [Storage, DiskStorage],
+  exports: [FileStorage, DiskFileStorage],
   imports: [
     EnvModule,
     ServeStaticModule.forRoot({
@@ -25,10 +25,10 @@ import { uploadConfig } from './upload-config'
   // providers: [DiskStorage, { provide: Storage, useClass: DiskStorage }],
   // providers: [ DiskStorage, { provide: Storage, useExisting: forwardRef(() => DiskStorage) }],
   providers: [
-    DiskStorage,
+    DiskFileStorage,
     {
       inject: [EnvService],
-      provide: Storage,
+      provide: FileStorage,
       useFactory: (env: EnvService) => {
         const storageDriver = env.get('STORAGE_DRIVER')
         console.log(storageDriver)
@@ -37,10 +37,10 @@ import { uploadConfig } from './upload-config'
         // } else if (storageDriver === 'cloudinary') {
         //   return new CloudinaryStorage()
         // } else {
-        return new DiskStorage()
+        return new DiskFileStorage()
         // }
       },
     },
   ],
 })
-export class StorageModule {}
+export class FileStorageModule {}
