@@ -37,6 +37,8 @@ export class ZodValidationPipe implements PipeTransform {
   constructor(private schema: ZodSchema) {}
 
   transform(value: unknown) {
+    if (!value) return
+
     // If it is a file, return it without validation
     if (value && typeof value === 'object' && 'fieldname' in value) {
       return value
