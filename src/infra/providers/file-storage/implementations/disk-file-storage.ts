@@ -26,9 +26,14 @@ export class DiskFileStorage implements FileStorage {
 
     if (!existsSync(folder)) mkdirSync(folder, { recursive: true })
 
+    //try {
     const ext = extname(file.filename)
     await sharp(file.path).resize(800, null).toFile(`${folder}/big${ext}`)
     await sharp(file.path).resize(350, null).toFile(`${folder}/small${ext}`)
+    // } catch (error) {
+    //   console.log('file', file)
+    //   console.error(error)
+    // }
 
     // await promises.rename(
     //   resolve(tmpFolder, file.filename),
@@ -42,7 +47,7 @@ export class DiskFileStorage implements FileStorage {
 
   public async destroyTmpFile(filename: string): Promise<void> {
     const tmpFilePath = resolve(tmpFolder, filename)
-    if (existsSync(tmpFilePath)) await promises.unlink(tmpFilePath)
+    if (existsSync(tmpFilePath)) await deleteFile(tmpFilePath)
   }
 
   public async destroyFolder(folder: string): Promise<void> {
