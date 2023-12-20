@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import type { CityHall } from '@prisma/client'
 
 import type { UpdateCityHallData } from 'src/contracts/city-halls'
+import { FileStorage } from 'src/infra/providers/file-storage/file-storage'
 import {
   FailureOrSuccess,
   failure,
@@ -18,11 +19,15 @@ export type UpdateCityHallServiceResponse = FailureOrSuccess<
 
 @Injectable()
 export class UpdateCityHallService {
-  constructor(private repository: CityHallRepository) {}
+  constructor(
+    private repository: CityHallRepository,
+    private fileStorage: FileStorage
+  ) {}
 
   async execute(
     cityHallId: string,
-    data: UpdateCityHallData
+    data: UpdateCityHallData,
+    file?: Express.Multer.File
   ): Promise<UpdateCityHallServiceResponse> {
     const cityHall = await this.repository.findById(cityHallId)
 
@@ -55,6 +60,8 @@ export class UpdateCityHallService {
     }
 
     const updatedCityHall = await this.repository.update(cityHallId, data)
+
+    if (file) await this.fileStorage.store(file, `city-halls/${cityHall.id}`)
 
     return success(updatedCityHall)
   }

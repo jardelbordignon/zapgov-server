@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
+import { FileStorage } from 'src/infra/providers/file-storage/file-storage'
 import {
   FailureOrSuccess,
   failure,
@@ -16,7 +17,10 @@ export type DeleteCityHallServiceResponse = FailureOrSuccess<
 
 @Injectable()
 export class DeleteCityHallService {
-  constructor(private cityHallRepository: CityHallRepository) {}
+  constructor(
+    private cityHallRepository: CityHallRepository,
+    private fileStorage: FileStorage
+  ) {}
 
   async execute(
     cityHallId: string,
@@ -32,6 +36,8 @@ export class DeleteCityHallService {
       await this.cityHallRepository.update(cityHallId, { deleted_at: new Date() })
       return success(undefined)
     }
+
+    await this.fileStorage.destroyFolder(`city-halls/${cityHall.id}`)
 
     return success(await this.cityHallRepository.delete(cityHallId))
   }

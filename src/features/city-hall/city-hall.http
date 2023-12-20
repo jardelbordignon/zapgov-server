@@ -18,10 +18,10 @@ Content-Type: application/json
 
 
 @bg_image = #f2f2f2
-@email = tangamandapio.ayuntamiento2@email.com
-@name = Ayuntamiento de Tangamandapio
+@email = test@email.com
+@name = "City Hall DevTest"
 @phone = 01 (383) 518 32 57
-@slug = tangamandapio
+@slug = "city-hall-test"
 @txt_color = #222222
 
 # @name register_city_hall
@@ -30,41 +30,33 @@ Content-Type: multipart/form-data; boundary=boundary
 Authorization: {{authorization}}
 
 --boundary
-Content-Disposition: form-data; name="file"; filename="jardel.png"
+Content-Disposition: form-data; name="file"; filename="software-testing.jpg"
 Content-Type: image/jpeg
 
-< ./Users/jardelbordignon/Downloads/jardel.png
-
---boundary
-Content-Disposition: form-data; name="bg_image"
-
-{{bg_image}}
-
+# < ./Users/jardelbordignon/Downloads/jardel.png
+< ./Users/jardelbordignon/Desktop/myapps/zapgov-server/test/software-testing.jpg
 --boundary
 Content-Disposition: form-data; name="name"
 
 {{name}}
-
 --boundary
 Content-Disposition: form-data; name="email"
 
 {{email}}
-
 --boundary
 Content-Disposition: form-data; name="phone"
 
 {{phone}}
-
 --boundary
 Content-Disposition: form-data; name="slug"
 
 {{slug}}
-
 --boundary
 Content-Disposition: form-data; name="txt_color"
 
 {{txt_color}}
 --boundary--
+###
 
 # POST  {{cityHallsUrl}}
 # Content-Type: application/json

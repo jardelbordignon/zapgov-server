@@ -22,7 +22,10 @@ import {
   ZodValidationError,
   ZodValidationPipe,
 } from 'src/infra/pipes/zod-validation.pipe'
-import { File, FileInterceptor } from 'src/infra/providers/storage/storage.decorators'
+import {
+  File,
+  FileInterceptor,
+} from 'src/infra/providers/file-storage/file-storage.decorators'
 
 import { CITY_HALLS_URL } from '../constants'
 import { CityHallAlreadyExistsError } from '../errors'
