@@ -80,8 +80,6 @@ export class UpdateUserService {
       }
     }
 
-    delete data.currentPassword
-
     const updatedUser = await this.userRepository.update(userId, data)
 
     return success(updatedUser)

@@ -14,7 +14,10 @@ export class PrismaNeighborhoodRepository
   implements NeighborhoodRepository
 {
   async create(data: CreateNeighborhoodData): Promise<void> {
-    await this.neighborhood.create({ data })
+    const { cep, city_hall_id, locality, name, observation, sub_city_hall_id } = data
+    await this.neighborhood.create({
+      data: { cep, city_hall_id, locality, name, observation, sub_city_hall_id },
+    })
   }
 
   async delete(id: string): Promise<void> {
@@ -88,7 +91,26 @@ export class PrismaNeighborhoodRepository
   }
 
   async update(id: string, data: UpdateNeighborhoodData): Promise<Neighborhood> {
-    console.log('-------------------------------- data\n', data)
-    return this.neighborhood.update({ data, where: { id } })
+    const {
+      cep,
+      city_hall_id,
+      deleted_at,
+      locality,
+      name,
+      observation,
+      sub_city_hall_id,
+    } = data
+    return this.neighborhood.update({
+      data: {
+        cep,
+        city_hall_id,
+        deleted_at,
+        locality,
+        name,
+        observation,
+        sub_city_hall_id,
+      },
+      where: { id },
+    })
   }
 }

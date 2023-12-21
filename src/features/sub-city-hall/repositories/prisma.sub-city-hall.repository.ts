@@ -22,7 +22,10 @@ export class PrismaSubCityHallRepository
   implements SubCityHallRepository
 {
   async create(data: CreateSubCityHallData): Promise<void> {
-    await this.subCityHall.create({ data })
+    const { city_hall_id, email, name, observation, phone } = data
+    await this.subCityHall.create({
+      data: { city_hall_id, email, name, observation, phone },
+    })
   }
 
   async delete(id: string): Promise<void> {
@@ -142,6 +145,10 @@ export class PrismaSubCityHallRepository
   }
 
   async update(id: string, data: UpdateSubCityHallData): Promise<SubCityHall> {
-    return this.subCityHall.update({ data, where: { id } })
+    const { city_hall_id, deleted_at, email, name, observation, phone } = data
+    return this.subCityHall.update({
+      data: { city_hall_id, deleted_at, email, name, observation, phone },
+      where: { id },
+    })
   }
 }

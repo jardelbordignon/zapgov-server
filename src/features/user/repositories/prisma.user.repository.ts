@@ -8,7 +8,8 @@ import { UserRepository } from './user.repository'
 
 export class PrismaUserRepository extends PrismaService implements UserRepository {
   async create(data: CreateUserData): Promise<void> {
-    await this.user.create({ data })
+    const { email, name, password, roles } = data
+    await this.user.create({ data: { email, name, password, roles } })
   }
 
   async delete(id: string): Promise<void> {
@@ -93,6 +94,10 @@ export class PrismaUserRepository extends PrismaService implements UserRepositor
   }
 
   async update(id: string, data: UpdateUserData): Promise<User> {
-    return this.user.update({ data, where: { id } })
+    const { deleted_at, email, name, password, roles } = data
+    return this.user.update({
+      data: { deleted_at, email, name, password, roles },
+      where: { id },
+    })
   }
 }

@@ -15,7 +15,8 @@ export class PrismaCityHallRepository
   implements CityHallRepository
 {
   async create(data: CreateCityHallData): Promise<CityHall> {
-    return this.cityHall.create({ data })
+    const { email, name, phone, slug, txt_color } = data
+    return this.cityHall.create({ data: { email, name, phone, slug, txt_color } })
   }
 
   async delete(id: string): Promise<void> {
@@ -106,6 +107,10 @@ export class PrismaCityHallRepository
   }
 
   async update(id: string, data: UpdateCityHallData): Promise<CityHall> {
-    return this.cityHall.update({ data, where: { id } })
+    const { deleted_at, email, name, phone, slug, txt_color } = data
+    return this.cityHall.update({
+      data: { deleted_at, email, name, phone, slug, txt_color },
+      where: { id },
+    })
   }
 }
