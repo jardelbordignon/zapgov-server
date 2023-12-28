@@ -1,10 +1,10 @@
 import { InMemoryCityHallRepository } from 'src/features/city-hall/repositories/in-memory.city-hall.repository'
-import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/use-cases/test-helper'
+import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/shared/test-helper'
 import { InMemorySubCityHallRepository } from 'src/features/sub-city-hall/repositories/in-memory.sub-city-hall.repository'
-import { CREATE_SUB_CITY_HALL_DATA } from 'src/features/sub-city-hall/use-cases/test-helper'
+import { CREATE_SUB_CITY_HALL_DATA } from 'src/features/sub-city-hall/shared/test-helper'
 
 import { InMemoryNeighborhoodRepository } from '../../repositories/in-memory.neighborhood.repository'
-import { CREATE_NEIGHBORHOOD_DATA } from '../test-helper'
+import { CREATE_NEIGHBORHOOD_DATA } from '../../shared/test-helper'
 
 import { ListNeighborhoodsService } from './list-neighborhoods.service'
 

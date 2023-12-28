@@ -1,4 +1,5 @@
 import { FakeHasher } from 'src/infra/providers/cryptography/hasher/fake-hasher'
+import { I18n } from 'src/infra/providers/i18n/i18n'
 
 import { InMemoryUserRepository } from '../../repositories/in-memory.user.repository'
 import {
@@ -11,6 +12,7 @@ import { UpdateUserService } from './update-user.service'
 
 let userRepository: InMemoryUserRepository
 let hasher: FakeHasher
+let i18n: I18n
 let updateUserService: UpdateUserService
 
 let hashedPassword: string
@@ -21,7 +23,8 @@ describe('Update user', () => {
   beforeAll(async () => {
     userRepository = new InMemoryUserRepository()
     hasher = new FakeHasher()
-    updateUserService = new UpdateUserService(userRepository, hasher)
+    i18n = new I18n()
+    updateUserService = new UpdateUserService(userRepository, hasher, i18n)
 
     hashedPassword = await hasher.hash(password)
   })
@@ -46,7 +49,7 @@ describe('Update user', () => {
     const name = 'John Doe Updated'
     const result = await updateUserService.execute(user!.id, { name })
     expect(result.isSuccess()).toBe(true)
-    expect(result.value.name).toBe(name)
+    expect(result.value).toEqual(expect.objectContaining({ name }))
   })
 
   it('should be able to update email and/or password by correctly entering the current password', async () => {

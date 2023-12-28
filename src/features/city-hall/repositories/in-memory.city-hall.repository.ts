@@ -3,7 +3,11 @@ import { randomUUID } from 'node:crypto'
 import type { CityHall, Neighborhood, SubCityHall } from '@prisma/client'
 
 import type { CreateCityHallData, UpdateCityHallData } from 'src/contracts/city-halls'
-import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
+import {
+  PaginatedResponse,
+  PaginationParams,
+  inMemoryPaginator,
+} from 'src/infra/providers/pagination'
 
 import {
   CityHallInclude,
@@ -86,15 +90,12 @@ export class InMemoryCityHallRepository implements CityHallRepository {
     return this.handleShowCityHall(cityHall, include)
   }
 
-  private async findCityHalls(
-    page: number,
-    perPage: number,
-    deleted: boolean,
-    searchTerm?: string
-  ): Promise<PaginatedResponse<CityHall>> {
-    const start = (page - 1) * perPage
-    const end = start + perPage
-
+  async findAll({
+    deleted,
+    page,
+    perPage,
+    searchTerm,
+  }: PaginationParams): Promise<PaginatedResponse<CityHall>> {
     let cityHalls = this.cityHalls.filter(({ deleted_at }) =>
       deleted ? deleted_at : !deleted_at
     )
@@ -109,39 +110,7 @@ export class InMemoryCityHallRepository implements CityHallRepository {
       )
     }
 
-    const data = cityHalls.slice(start, end)
-    const totalItems = cityHalls.length
-    const totalPages = Math.ceil(totalItems / perPage)
-    const hasPrevious = start > 0
-    const hasNext = end < totalItems
-
-    return {
-      data,
-      meta: {
-        hasNext,
-        hasPrevious,
-        page,
-        perPage,
-        totalItems,
-        totalPages,
-      },
-    }
-  }
-
-  async findAll({
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<CityHall>> {
-    return this.findCityHalls(page, perPage, false, searchTerm)
-  }
-
-  async findAllDeleted({
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<CityHall>> {
-    return this.findCityHalls(page, perPage, true, searchTerm)
+    return inMemoryPaginator(cityHalls, page, perPage)
   }
 
   async update(id: string, data: UpdateCityHallData): Promise<CityHall> {

@@ -1,5 +1,5 @@
 import { CreateCityHallData } from 'src/contracts/city-halls'
-import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
+import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
 import { CITY_HALLS_URL } from './constants'
 
@@ -23,14 +23,12 @@ export const getCityHallId = async (api: any) => {
     .field('phone', CREATE_CITY_HALL_DATA.phone!)
     .field('slug', CREATE_CITY_HALL_DATA.slug)
     .field('txt_color', CREATE_CITY_HALL_DATA.txt_color)
-    .attach('file', '/test/software-testing.jpg')
+  //.attach('file', '/test/software-testing.jpg')
 
   const getCityHalls = await api
     .get(CITY_HALLS_URL)
     .set('Authorization', authorization)
     .send()
-
-  console.log('getCityHalls', getCityHalls)
 
   return getCityHalls.body.data[0].id
 }

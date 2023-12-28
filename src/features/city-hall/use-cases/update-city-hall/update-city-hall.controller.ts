@@ -24,7 +24,7 @@ import {
 } from 'src/infra/providers/file-storage/file-storage.decorators'
 
 import { CityHallEntity } from '../../city-hall.entity'
-import { CITY_HALLS_URL } from '../constants'
+import { CITY_HALLS_URL } from '../../shared/constants'
 import { CityHallAlreadyExistsError, CityHallNotFoundError } from '../errors'
 
 import { UpdateCityHallService } from './update-city-hall.service'

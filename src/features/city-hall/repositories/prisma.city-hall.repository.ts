@@ -1,7 +1,11 @@
 import type { CityHall } from '@prisma/client'
 
 import { CreateCityHallData, UpdateCityHallData } from 'src/contracts/city-halls'
-import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
+import {
+  PaginatedResponse,
+  PaginationParams,
+  paginator,
+} from 'src/infra/providers/pagination'
 import { PrismaService } from 'src/infra/providers/prisma/prisma.service'
 
 import {
@@ -44,15 +48,12 @@ export class PrismaCityHallRepository
     return this.cityHall.findUnique({ include, where: { slug } })
   }
 
-  private async findCityHalls(
-    page: number,
-    perPage: number,
-    deleted: boolean,
-    searchTerm?: string
-  ): Promise<PaginatedResponse<CityHall>> {
-    const take = Number(perPage)
-    const skip = (Number(page) - 1) * take
-
+  async findAll({
+    deleted,
+    page,
+    perPage,
+    searchTerm,
+  }: PaginationParams): Promise<PaginatedResponse<CityHall>> {
     const deletedCondition = deleted
       ? { NOT: { deleted_at: null } }
       : { deleted_at: null }
@@ -68,42 +69,7 @@ export class PrismaCityHallRepository
         : undefined,
     } as any
 
-    const [data, totalItems] = await this.$transaction([
-      this.cityHall.findMany({ skip, take, where }),
-      this.cityHall.count({ where }),
-    ])
-
-    const hasPrevious = skip > 0
-    const hasNext = skip + take < totalItems
-    const totalPages = Math.ceil(totalItems / take)
-
-    return {
-      data,
-      meta: {
-        hasNext,
-        hasPrevious,
-        page,
-        perPage,
-        totalItems,
-        totalPages,
-      },
-    }
-  }
-
-  async findAll({
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<CityHall>> {
-    return this.findCityHalls(page, perPage, false, searchTerm)
-  }
-
-  async findAllDeleted({
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<CityHall>> {
-    return this.findCityHalls(page, perPage, true, searchTerm)
+    return paginator(this.cityHall, { page, perPage, where })
   }
 
   async update(id: string, data: UpdateCityHallData): Promise<CityHall> {

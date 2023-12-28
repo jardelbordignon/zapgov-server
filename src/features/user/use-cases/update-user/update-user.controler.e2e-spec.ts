@@ -1,15 +1,11 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import supertest from 'supertest'
+import { Supertest, supertest } from 'test/e2e.helper'
 
-import { AppModule } from 'src/app.module'
 import { AuthUserData, CreateUserData, UpdateUserData } from 'src/contracts/account'
 
-import { AUTH_URL, USERS_URL } from '../constants'
+import { AUTH_URL, USERS_URL } from '../../shared/constants'
 
 describe('Update user (E2E)', () => {
-  let api: supertest.SuperTest<supertest.Test>
-  let app: INestApplication
+  let api: Supertest
 
   let authorization: string
   const adminEmail = 'admin@email.com'
@@ -40,14 +36,7 @@ describe('Update user (E2E)', () => {
   }
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    api = supertest(app.getHttpServer())
-
-    await app.init()
+    api = await supertest()
   })
 
   beforeEach(async () => {
@@ -93,14 +82,15 @@ describe('Update user (E2E)', () => {
     const updateUserData: UpdateUserData = { email: 'new-address@email.com' }
 
     const response = await api
-      .put(USERS_URL)
+      .put(`${USERS_URL}?lang=en`)
       .set('Authorization', authorization)
       .send(updateUserData)
 
     expect(response.statusCode).toBe(401)
     expect(response.body).toEqual({
       error: 'Unauthorized',
-      message: 'Property currentPassword is required to change email or password.',
+      message:
+        'The property currentPassword is required to change email or password.',
       statusCode: 401,
     })
   })

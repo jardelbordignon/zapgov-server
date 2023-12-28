@@ -16,7 +16,7 @@ import type { UpdateNeighborhoodData } from 'src/contracts/neighborhoods'
 import { ZodObj } from 'src/infra/pipes/zod-validation.pipe'
 
 import { NeighborhoodEntity } from '../../neighborhood.entity'
-import { NEIGHBORHOODS_URL } from '../constants'
+import { NEIGHBORHOODS_URL } from '../../shared/constants'
 import { NeighborhoodAlreadyExistsError, NeighborhoodNotFoundError } from '../errors'
 
 import { UpdateNeighborhoodService } from './update-neighborhood.service'

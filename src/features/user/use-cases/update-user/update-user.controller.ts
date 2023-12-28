@@ -19,8 +19,8 @@ import { ZodObj } from 'src/infra/pipes/zod-validation.pipe'
 import { CurrentUser } from 'src/infra/providers/auth/current-user.decorator'
 import { omitObjectProperties } from 'src/infra/utils/omit-object-properties'
 
+import { USERS_URL } from '../../shared/constants'
 import { UserEntity } from '../../user.entity'
-import { USERS_URL } from '../constants'
 import {
   UnauthorizedToUpdateUserError,
   UserAlreadyExistsError,

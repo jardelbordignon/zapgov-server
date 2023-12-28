@@ -1,9 +1,12 @@
+import { I18n } from 'src/infra/providers/i18n/i18n'
+
 import { InMemoryUserRepository } from '../../repositories/in-memory.user.repository'
 import { UserNotFoundError } from '../errors'
 
 import { ShowUserService } from './show-user.service'
 
 let userRepository: InMemoryUserRepository
+let i18n: I18n
 let showUserService: ShowUserService
 
 const email = 'johndoe@email.com'
@@ -11,7 +14,8 @@ const email = 'johndoe@email.com'
 describe('Show user', () => {
   beforeAll(() => {
     userRepository = new InMemoryUserRepository()
-    showUserService = new ShowUserService(userRepository)
+    i18n = new I18n()
+    showUserService = new ShowUserService(userRepository, i18n)
   })
 
   beforeEach(async () => {

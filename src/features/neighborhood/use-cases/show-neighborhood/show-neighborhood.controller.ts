@@ -8,7 +8,7 @@ import {
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { NeighborhoodEntity } from '../../neighborhood.entity'
-import { NEIGHBORHOODS_URL } from '../constants'
+import { NEIGHBORHOODS_URL } from '../../shared/constants'
 import { NeighborhoodNotFoundError } from '../errors'
 
 import {

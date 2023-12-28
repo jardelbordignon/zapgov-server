@@ -15,7 +15,7 @@ import type { CreateSubCityHallData } from 'src/contracts/sub-city-halls'
 import { CityHallNotFoundError } from 'src/features/city-hall/use-cases/errors'
 import { ZodObj, ZodValidationPipe } from 'src/infra/pipes/zod-validation.pipe'
 
-import { SUB_CITY_HALLS_URL } from '../constants'
+import { SUB_CITY_HALLS_URL } from '../../shared/constants'
 import { SubCityHallAlreadyExistsError } from '../errors'
 
 import { CreateSubCityHallService } from './create-sub-city-hall.service'

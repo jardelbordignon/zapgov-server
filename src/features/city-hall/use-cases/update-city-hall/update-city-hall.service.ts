@@ -3,6 +3,7 @@ import type { CityHall } from '@prisma/client'
 
 import type { UpdateCityHallData } from 'src/contracts/city-halls'
 import { FileStorage } from 'src/infra/providers/file-storage/file-storage'
+import { I18n } from 'src/infra/providers/i18n/i18n'
 import {
   FailureOrSuccess,
   failure,
@@ -10,6 +11,7 @@ import {
 } from 'src/infra/utils/failure-or-success-service-execute'
 
 import { CityHallRepository } from '../../repositories/city-hall.repository'
+import { CityHallLocaleType } from '../../shared/locales/type'
 import { CityHallAlreadyExistsError, CityHallNotFoundError } from '../errors'
 
 export type UpdateCityHallServiceResponse = FailureOrSuccess<
@@ -21,7 +23,8 @@ export type UpdateCityHallServiceResponse = FailureOrSuccess<
 export class UpdateCityHallService {
   constructor(
     private repository: CityHallRepository,
-    private fileStorage: FileStorage
+    private fileStorage: FileStorage,
+    private i18n: I18n
   ) {}
 
   async execute(
@@ -41,7 +44,7 @@ export class UpdateCityHallService {
       if (cityHallWithSameEmail) {
         return failure(
           new CityHallAlreadyExistsError(
-            `City hall with ${data.email} email address already exists.`
+            this.i18n.t<CityHallLocaleType>('cityHallWithSameEmail', data.email)
           )
         )
       }

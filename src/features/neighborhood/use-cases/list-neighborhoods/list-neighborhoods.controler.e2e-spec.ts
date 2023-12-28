@@ -3,11 +3,11 @@ import { Test } from '@nestjs/testing'
 import supertest from 'supertest'
 
 import { AppModule } from 'src/app.module'
-import { getCityHallId } from 'src/features/city-hall/use-cases/test-helper'
-import { getSubCityHallId } from 'src/features/sub-city-hall/use-cases/test-helper'
-import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
+import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
+import { getSubCityHallId } from 'src/features/sub-city-hall/shared/test-helper'
+import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
-import { CREATE_NEIGHBORHOOD_DATA, NEIGHBORHOODS_URL } from '../test-helper'
+import { CREATE_NEIGHBORHOOD_DATA, NEIGHBORHOODS_URL } from '../../shared/test-helper'
 
 describe('List neighborhoods (E2E)', () => {
   let api: supertest.SuperTest<supertest.Test>

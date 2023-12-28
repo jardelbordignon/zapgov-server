@@ -1,19 +1,23 @@
 import { CityHall } from '@prisma/client'
 
+import { I18n } from 'src/infra/providers/i18n/i18n'
+
 import { InMemoryCityHallRepository } from '../../repositories/in-memory.city-hall.repository'
+import { CREATE_CITY_HALL_DATA } from '../../shared/test-helper'
 import { CityHallNotFoundError } from '../errors'
-import { CREATE_CITY_HALL_DATA } from '../test-helper'
 
 import { ShowCityHallService } from './show-city-hall.service'
 
 let cityHall: CityHall
 let repository: InMemoryCityHallRepository
+let i18n: I18n
 let showCityHallService: ShowCityHallService
 
 describe('Show city hall', () => {
   beforeAll(async () => {
     repository = new InMemoryCityHallRepository()
-    showCityHallService = new ShowCityHallService(repository)
+    i18n = new I18n()
+    showCityHallService = new ShowCityHallService(repository, i18n)
 
     cityHall = await repository.create(CREATE_CITY_HALL_DATA)
   })

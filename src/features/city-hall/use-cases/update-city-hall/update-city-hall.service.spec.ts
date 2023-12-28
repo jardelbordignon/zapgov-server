@@ -1,16 +1,23 @@
+import { FakeFileStorage } from 'src/infra/providers/file-storage/fake-file-storage'
+import { I18n } from 'src/infra/providers/i18n/i18n'
+
 import { InMemoryCityHallRepository } from '../../repositories/in-memory.city-hall.repository'
+import { CREATE_CITY_HALL_DATA } from '../../shared/test-helper'
 import { CityHallAlreadyExistsError, CityHallNotFoundError } from '../errors'
-import { CREATE_CITY_HALL_DATA } from '../test-helper'
 
 import { UpdateCityHallService } from './update-city-hall.service'
 
 let repository: InMemoryCityHallRepository
+let fileStorage: FakeFileStorage
+let i18n: I18n
 let updateCityHallService: UpdateCityHallService
 
 describe('Update user', () => {
   beforeAll(async () => {
     repository = new InMemoryCityHallRepository()
-    updateCityHallService = new UpdateCityHallService(repository)
+    fileStorage = new FakeFileStorage()
+    i18n = new I18n()
+    updateCityHallService = new UpdateCityHallService(repository, fileStorage, i18n)
   })
 
   beforeEach(async () => {
@@ -26,7 +33,7 @@ describe('Update user', () => {
   })
 
   it('should be able to update a city hall', async () => {
-    const item = await repository.findByEmail(CREATE_CITY_HALL_DATA.email)
+    const item = await repository.findByEmail(CREATE_CITY_HALL_DATA.email!)
     const name = `Updated ${CREATE_CITY_HALL_DATA.name}`
     const result = await updateCityHallService.execute(item!.id, { name })
     expect(result.isSuccess()).toBe(true)

@@ -1,20 +1,31 @@
 import { CityHall } from '@prisma/client'
 
+import { FakeFileStorage } from 'src/infra/providers/file-storage/fake-file-storage'
+import { I18n } from 'src/infra/providers/i18n/i18n'
+
 import { CityHallRepository } from '../../repositories/city-hall.repository'
 import { InMemoryCityHallRepository } from '../../repositories/in-memory.city-hall.repository'
+import { CREATE_CITY_HALL_DATA } from '../../shared/test-helper'
 import { CityHallNotFoundError } from '../errors'
-import { CREATE_CITY_HALL_DATA } from '../test-helper'
 
 import { DeleteCityHallService } from './delete-city-hall.service'
 
 let cityHall: CityHall
 let cityHallRepository: CityHallRepository
+let fileStorage: FakeFileStorage
+let i18n: I18n
 let deleteCityHallService: DeleteCityHallService
 
 describe('Delete city hall', () => {
   beforeAll(async () => {
     cityHallRepository = new InMemoryCityHallRepository()
-    deleteCityHallService = new DeleteCityHallService(cityHallRepository)
+    fileStorage = new FakeFileStorage()
+    i18n = new I18n()
+    deleteCityHallService = new DeleteCityHallService(
+      cityHallRepository,
+      fileStorage,
+      i18n
+    )
   })
 
   beforeEach(async () => {
@@ -45,7 +56,8 @@ describe('Delete city hall', () => {
     const getCityHalls = await cityHallRepository.findAll({ page: 1, perPage: 100 })
     expect(getCityHalls.data.length).toBe(0)
 
-    const getDeletedCityHalls = await cityHallRepository.findAllDeleted({
+    const getDeletedCityHalls = await cityHallRepository.findAll({
+      deleted: true,
       page: 1,
       perPage: 100,
     })

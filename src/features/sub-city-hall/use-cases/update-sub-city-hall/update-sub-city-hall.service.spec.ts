@@ -1,40 +1,51 @@
 import { InMemoryCityHallRepository } from 'src/features/city-hall/repositories/in-memory.city-hall.repository'
-import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/use-cases/test-helper'
+import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/shared/test-helper'
+import { I18n } from 'src/infra/providers/i18n/i18n'
 
 import { InMemorySubCityHallRepository } from '../../repositories/in-memory.sub-city-hall.repository'
+import { CREATE_SUB_CITY_HALL_DATA } from '../../shared/test-helper'
+import { SubCityHallEntity } from '../../sub-city-hall.entity'
 import { SubCityHallAlreadyExistsError, SubCityHallNotFoundError } from '../errors'
-import { CREATE_SUB_CITY_HALL_DATA } from '../test-helper'
 
 import { UpdateSubCityHallService } from './update-sub-city-hall.service'
 
 let cityHallRepository: InMemoryCityHallRepository
 let city_hall_id: string
 
+let i18n: I18n
 let subCityHallRepository: InMemorySubCityHallRepository
 let updateSubCityHallService: UpdateSubCityHallService
+let subCityHall: SubCityHallEntity
 
 describe('Update user', () => {
   beforeAll(async () => {
     cityHallRepository = new InMemoryCityHallRepository()
+    i18n = new I18n()
     subCityHallRepository = new InMemorySubCityHallRepository()
-    updateSubCityHallService = new UpdateSubCityHallService(subCityHallRepository)
 
-    await cityHallRepository.create(CREATE_CITY_HALL_DATA)
-    const cityHall = await cityHallRepository.findByEmail(CREATE_CITY_HALL_DATA.email)
+    updateSubCityHallService = new UpdateSubCityHallService(
+      subCityHallRepository,
+      i18n
+    )
+
+    const cityHall = await cityHallRepository.create(CREATE_CITY_HALL_DATA)
     city_hall_id = cityHall.id
   })
 
   beforeEach(async () => {
-    await subCityHallRepository.create({
+    subCityHall = await subCityHallRepository.create({
       ...CREATE_SUB_CITY_HALL_DATA,
       city_hall_id,
     })
   })
 
   afterEach(async () => {
-    const pg = { page: 1, perPage: 100 }
-    const getItems = await subCityHallRepository.findAll(pg)
-    const getDeletedItems = await subCityHallRepository.findAllDeleted(pg)
+    const getItems = await subCityHallRepository.findAll({ page: 1, perPage: 100 })
+    const getDeletedItems = await subCityHallRepository.findAll({
+      deleted: true,
+      page: 1,
+      perPage: 100,
+    })
     const allItems = [...getItems.data, ...getDeletedItems.data]
     for (const item of allItems) {
       await subCityHallRepository.delete(item.id)
@@ -42,11 +53,8 @@ describe('Update user', () => {
   })
 
   it('should be able to update a sub city hall', async () => {
-    const item = await subCityHallRepository.findByEmail(
-      CREATE_SUB_CITY_HALL_DATA.email
-    )
     const name = `Updated ${CREATE_SUB_CITY_HALL_DATA.name}`
-    const result = await updateSubCityHallService.execute(item!.id, { name })
+    const result = await updateSubCityHallService.execute(subCityHall.id, { name })
     expect(result.isSuccess()).toBe(true)
     expect(result.value).toEqual(expect.objectContaining({ name }))
   })

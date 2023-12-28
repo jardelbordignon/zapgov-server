@@ -1,14 +1,16 @@
-import { Controller, Get, Query } from '@nestjs/common'
+import { Controller, Get } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { AllowUnauthenticated } from 'src/infra/providers/auth/authentication.guard'
 import {
   ApiPaginatedResponse,
   PaginatedResponse,
-} from 'src/infra/providers/pagination/pagination.decorator'
+  PaginationParams,
+  PaginationQuery,
+} from 'src/infra/providers/pagination'
 
 import { CityHallEntity } from '../../city-hall.entity'
-import { CITY_HALLS_URL } from '../constants'
+import { CITY_HALLS_URL } from '../../shared/constants'
 
 import { ListCityHallsService } from './list-city-halls.service'
 
@@ -23,17 +25,9 @@ export class ListCityHallsController {
   })
   @Get()
   async handle(
-    @Query('deleted') deleted: boolean = false,
-    @Query('page') page: number = 1,
-    @Query('perPage') perPage: number = 20,
-    @Query('search') searchTerm: string
+    @PaginationQuery() params: PaginationParams
   ): Promise<PaginatedResponse<CityHallEntity>> {
-    const result = await this.listCityHallsService.execute({
-      deleted,
-      page,
-      perPage,
-      searchTerm,
-    })
+    const result = await this.listCityHallsService.execute(params)
 
     if (!result.value) return new PaginatedResponse()
 

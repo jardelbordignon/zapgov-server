@@ -1,20 +1,19 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import supertest from 'supertest'
+import { Supertest, supertest } from 'test/e2e.helper'
 
-import { AppModule } from 'src/app.module'
-import { getCityHallId } from 'src/features/city-hall/use-cases/test-helper'
-import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
+import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
+import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
+import {
+  CREATE_SUB_CITY_HALL_DATA,
+  SUB_CITY_HALLS_URL,
+} from '../../shared/test-helper'
 import { SubCityHallEntity } from '../../sub-city-hall.entity'
-import { CREATE_SUB_CITY_HALL_DATA, SUB_CITY_HALLS_URL } from '../test-helper'
 
 describe('Update user (E2E)', () => {
-  let api: supertest.SuperTest<supertest.Test>
-  let app: INestApplication
-
+  let api: Supertest
   let authorization: string
   let city_hall_id: string
+  let sub_city_hall_id: string
 
   const getAll = async (deleted = false): Promise<SubCityHallEntity[]> => {
     let url = `${SUB_CITY_HALLS_URL}?page=1&perPage=1000`
@@ -24,15 +23,7 @@ describe('Update user (E2E)', () => {
   }
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    api = supertest(app.getHttpServer())
-
-    await app.init()
-
+    api = await supertest()
     authorization = await getUserAuthorization(api)
     city_hall_id = await getCityHallId(api)
   })
@@ -45,6 +36,8 @@ describe('Update user (E2E)', () => {
         ...CREATE_SUB_CITY_HALL_DATA,
         city_hall_id,
       })
+    const subSubCityHalls = await getAll()
+    sub_city_hall_id = subSubCityHalls[0].id
   })
 
   afterEach(async () => {
@@ -60,12 +53,9 @@ describe('Update user (E2E)', () => {
   })
 
   test(`[PUT] ${SUB_CITY_HALLS_URL} - success`, async () => {
-    const items = await getAll()
-    const item = items.find(item => item.email === CREATE_SUB_CITY_HALL_DATA.email)
-
     const updatedName = `Updated ${CREATE_SUB_CITY_HALL_DATA.name}`
     const response = await api
-      .put(`${SUB_CITY_HALLS_URL}/${item.id}`)
+      .put(`${SUB_CITY_HALLS_URL}/${sub_city_hall_id}`)
       .set('Authorization', authorization)
       .send({ name: updatedName })
 
@@ -88,7 +78,7 @@ describe('Update user (E2E)', () => {
     const newSubCityHall = items.find(item => item.email === email)
 
     const response = await api
-      .put(`${SUB_CITY_HALLS_URL}/${newSubCityHall.id}`)
+      .put(`${SUB_CITY_HALLS_URL}/${newSubCityHall!.id}?lang=en`)
       .set('Authorization', authorization)
       .send({ email: CREATE_SUB_CITY_HALL_DATA.email })
 

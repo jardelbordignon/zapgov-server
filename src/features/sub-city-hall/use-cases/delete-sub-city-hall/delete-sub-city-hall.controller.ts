@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
 
-import { SUB_CITY_HALLS_URL } from '../constants'
+import { SUB_CITY_HALLS_URL } from '../../shared/constants'
 import { SubCityHallNotFoundError } from '../errors'
 
 import { DeleteSubCityHallService } from './delete-sub-city-hall.service'

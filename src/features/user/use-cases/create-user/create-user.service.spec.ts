@@ -1,4 +1,5 @@
 import { FakeHasher } from 'src/infra/providers/cryptography/hasher/fake-hasher'
+import { I18n } from 'src/infra/providers/i18n/i18n'
 
 import { InMemoryUserRepository } from '../../repositories/in-memory.user.repository'
 import { UserAlreadyExistsError } from '../errors'
@@ -7,6 +8,7 @@ import { CreateUserService } from './create-user.service'
 
 let userRepository: InMemoryUserRepository
 let hasher: FakeHasher
+let i18n: I18n
 let createUserService: CreateUserService
 
 let hashedPassword: string
@@ -17,7 +19,8 @@ describe('Create user', () => {
   beforeAll(async () => {
     userRepository = new InMemoryUserRepository()
     hasher = new FakeHasher()
-    createUserService = new CreateUserService(userRepository, hasher)
+    i18n = new I18n()
+    createUserService = new CreateUserService(userRepository, hasher, i18n)
 
     hashedPassword = await hasher.hash(password)
   })

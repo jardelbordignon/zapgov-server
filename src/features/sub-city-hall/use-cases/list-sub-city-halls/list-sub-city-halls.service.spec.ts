@@ -1,9 +1,9 @@
 import { InMemoryCityHallRepository } from 'src/features/city-hall/repositories/in-memory.city-hall.repository'
-import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/use-cases/test-helper'
+import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/shared/test-helper'
 import { slugify } from 'src/infra/utils/text-formatters'
 
 import { InMemorySubCityHallRepository } from '../../repositories/in-memory.sub-city-hall.repository'
-import { CREATE_SUB_CITY_HALL_DATA } from '../test-helper'
+import { CREATE_SUB_CITY_HALL_DATA } from '../../shared/test-helper'
 
 import { ListSubCityHallsService } from './list-sub-city-halls.service'
 
@@ -21,8 +21,7 @@ describe('List sub-city-halls', () => {
     subCityHallRepository = new InMemorySubCityHallRepository()
     service = new ListSubCityHallsService(subCityHallRepository)
 
-    await cityHallRepository.create(CREATE_CITY_HALL_DATA)
-    const cityHall = await cityHallRepository.findByEmail(CREATE_CITY_HALL_DATA.email)
+    const cityHall = await cityHallRepository.create(CREATE_CITY_HALL_DATA)
     city_hall_id = cityHall.id
 
     for (const name of subCityHallNames) {
@@ -69,8 +68,8 @@ describe('List sub-city-halls', () => {
     })
 
     expect(result.isSuccess()).toBe(true)
-    expect(result.value.data.length).toBe(1)
-    expect(result.value.data).toEqual(
+    expect(result.value?.data.length).toBe(1)
+    expect(result.value?.data).toEqual(
       expect.arrayContaining([expect.objectContaining({ name: 'SCH B' })])
     )
   })

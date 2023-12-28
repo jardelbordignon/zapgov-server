@@ -3,7 +3,11 @@ import { randomUUID } from 'node:crypto'
 import type { User } from '@prisma/client'
 
 import type { CreateUserData, UpdateUserData } from 'src/contracts/account'
-import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
+import {
+  PaginatedResponse,
+  PaginationParams,
+  inMemoryPaginator,
+} from 'src/infra/providers/pagination'
 
 import { UserRepository } from './user.repository'
 
@@ -33,15 +37,12 @@ export class InMemoryUserRepository implements UserRepository {
   //   return this.users.filter(user => user.deleted_at === null)
   // }
 
-  private async findUsers(
-    page: number,
-    perPage: number,
-    deleted: boolean,
-    searchTerm?: string
-  ): Promise<PaginatedResponse<User>> {
-    const start = (page - 1) * perPage
-    const end = start + perPage
-
+  async findAll({
+    deleted,
+    page,
+    perPage,
+    searchTerm,
+  }: PaginationParams): Promise<PaginatedResponse<User>> {
     let users = this.users.filter(({ deleted_at }) =>
       deleted ? deleted_at : !deleted_at
     )
@@ -54,39 +55,28 @@ export class InMemoryUserRepository implements UserRepository {
       )
     }
 
-    const data = users.slice(start, end)
-    const totalItems = users.length
-    const totalPages = Math.ceil(totalItems / perPage)
-    const hasPrevious = start > 0
-    const hasNext = end < totalItems
+    return inMemoryPaginator(users, page, perPage)
 
-    return {
-      data,
-      meta: {
-        hasNext,
-        hasPrevious,
-        page,
-        perPage,
-        totalItems,
-        totalPages,
-      },
-    }
-  }
+    // const start = (page - 1) * perPage
+    // const end = start + perPage
 
-  async findAll({
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<User>> {
-    return this.findUsers(page, perPage, false, searchTerm)
-  }
+    // const data = users.slice(start, end)
+    // const totalItems = users.length
+    // const totalPages = Math.ceil(totalItems / perPage)
+    // const hasPrevious = start > 0
+    // const hasNext = end < totalItems
 
-  async findAllDeleted({
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<User>> {
-    return this.findUsers(page, perPage, true, searchTerm)
+    // return {
+    //   data,
+    //   meta: {
+    //     hasNext,
+    //     hasPrevious,
+    //     page,
+    //     perPage,
+    //     totalItems,
+    //     totalPages,
+    //   },
+    // }
   }
 
   async findByEmail(email: string): Promise<User | null> {

@@ -4,11 +4,11 @@ import supertest from 'supertest'
 
 import { AppModule } from 'src/app.module'
 import { CreateNeighborhoodData } from 'src/contracts/neighborhoods'
-import { getCityHallId } from 'src/features/city-hall/use-cases/test-helper'
-import { getSubCityHallId } from 'src/features/sub-city-hall/use-cases/test-helper'
-import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
+import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
+import { getSubCityHallId } from 'src/features/sub-city-hall/shared/test-helper'
+import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
-import { CREATE_NEIGHBORHOOD_DATA, NEIGHBORHOODS_URL } from '../test-helper'
+import { CREATE_NEIGHBORHOOD_DATA, NEIGHBORHOODS_URL } from '../../shared/test-helper'
 
 describe('Create city-hall (E2E)', () => {
   let api: supertest.SuperTest<supertest.Test>
@@ -50,7 +50,7 @@ describe('Create city-hall (E2E)', () => {
 
   test(`[POST] ${NEIGHBORHOODS_URL} - failure [non-existent city hall]`, async () => {
     const response = await api
-      .post(NEIGHBORHOODS_URL)
+      .post(`${NEIGHBORHOODS_URL}?lang=en`)
       .set('Authorization', authorization)
       .send({
         ...CREATE_NEIGHBORHOOD_DATA,
@@ -66,7 +66,7 @@ describe('Create city-hall (E2E)', () => {
 
   test(`[POST] ${NEIGHBORHOODS_URL} - failure [non-existent sub city hall]`, async () => {
     const response = await api
-      .post(NEIGHBORHOODS_URL)
+      .post(`${NEIGHBORHOODS_URL}?lang=en`)
       .set('Authorization', authorization)
       .send({
         ...CREATE_NEIGHBORHOOD_DATA,
@@ -87,7 +87,7 @@ describe('Create city-hall (E2E)', () => {
       .send(newNeighborhoodData)
 
     const response = await api
-      .post(NEIGHBORHOODS_URL)
+      .post(`${NEIGHBORHOODS_URL}?lang=en`)
       .set('Authorization', authorization)
       .send(newNeighborhoodData)
 

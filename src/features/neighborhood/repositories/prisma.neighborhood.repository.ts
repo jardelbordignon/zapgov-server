@@ -4,7 +4,11 @@ import {
   CreateNeighborhoodData,
   UpdateNeighborhoodData,
 } from 'src/contracts/neighborhoods'
-import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
+import {
+  PaginatedResponse,
+  PaginationParams,
+  paginator,
+} from 'src/infra/providers/pagination'
 import { PrismaService } from 'src/infra/providers/prisma/prisma.service'
 
 import { NeighborhoodRepository } from './neighborhood.repository'
@@ -13,9 +17,9 @@ export class PrismaNeighborhoodRepository
   extends PrismaService
   implements NeighborhoodRepository
 {
-  async create(data: CreateNeighborhoodData): Promise<void> {
+  async create(data: CreateNeighborhoodData): Promise<Neighborhood> {
     const { cep, city_hall_id, locality, name, observation, sub_city_hall_id } = data
-    await this.neighborhood.create({
+    return this.neighborhood.create({
       data: { cep, city_hall_id, locality, name, observation, sub_city_hall_id },
     })
   }
@@ -32,15 +36,12 @@ export class PrismaNeighborhoodRepository
     return this.neighborhood.findFirst({ where: { id } })
   }
 
-  private async findNeighborhoods(
-    page: number,
-    perPage: number,
-    deleted: boolean,
-    searchTerm?: string
-  ): Promise<PaginatedResponse<Neighborhood>> {
-    const take = Number(perPage)
-    const skip = (Number(page) - 1) * take
-
+  async findAll({
+    deleted,
+    page,
+    perPage,
+    searchTerm,
+  }: PaginationParams): Promise<PaginatedResponse<Neighborhood>> {
     const deletedCondition = deleted
       ? { NOT: { deleted_at: null } }
       : { deleted_at: null }
@@ -52,42 +53,7 @@ export class PrismaNeighborhoodRepository
         : undefined,
     } as any
 
-    const [data, totalItems] = await this.$transaction([
-      this.neighborhood.findMany({ skip, take, where }),
-      this.neighborhood.count({ where }),
-    ])
-
-    const hasPrevious = skip > 0
-    const hasNext = skip + take < totalItems
-    const totalPages = Math.ceil(totalItems / take)
-
-    return {
-      data,
-      meta: {
-        hasNext,
-        hasPrevious,
-        page,
-        perPage,
-        totalItems,
-        totalPages,
-      },
-    }
-  }
-
-  async findAll({
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<Neighborhood>> {
-    return this.findNeighborhoods(page, perPage, false, searchTerm)
-  }
-
-  async findAllDeleted({
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<Neighborhood>> {
-    return this.findNeighborhoods(page, perPage, true, searchTerm)
+    return paginator(this.neighborhood, { page, perPage, where })
   }
 
   async update(id: string, data: UpdateNeighborhoodData): Promise<Neighborhood> {

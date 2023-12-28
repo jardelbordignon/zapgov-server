@@ -28,8 +28,5 @@ export abstract class CityHallRepository {
     include?: CityHallInclude
   ): Promise<ShowCityHallResponse>
   abstract findAll(params: PaginationParams): Promise<PaginatedResponse<CityHall>>
-  abstract findAllDeleted(
-    params: PaginationParams
-  ): Promise<PaginatedResponse<CityHall>>
   abstract update(id: string, data: UpdateCityHallData): Promise<CityHall>
 }

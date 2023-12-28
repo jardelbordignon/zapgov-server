@@ -1,30 +1,19 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import supertest from 'supertest'
+import { Supertest, supertest } from 'test/e2e.helper'
 
-import { AppModule } from 'src/app.module'
 import { CreateCityHallData } from 'src/contracts/city-halls'
-import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
+import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 import { slugify } from 'src/infra/utils/text-formatters'
 
-import { CITY_HALLS_URL } from '../test-helper'
+import { CITY_HALLS_URL } from '../../shared/test-helper'
 
 describe('List city halls (E2E)', () => {
-  let api: supertest.SuperTest<supertest.Test>
-  let app: INestApplication
+  let api: Supertest
 
   let authorization: string
   const cityNames = ['Tangamandapio', 'Acapulco', 'Ciudad de México']
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    api = supertest(app.getHttpServer())
-
-    await app.init()
+    api = await supertest()
 
     authorization = await getUserAuthorization(api)
 
@@ -45,7 +34,7 @@ describe('List city halls (E2E)', () => {
         .field('phone', createUserData.phone!)
         .field('slug', createUserData.slug)
         .field('txt_color', createUserData.txt_color)
-        .attach('file', './test/software-testing.jpg')
+      //.attach('file', './test/software-testing.jpg')
     }
   })
 

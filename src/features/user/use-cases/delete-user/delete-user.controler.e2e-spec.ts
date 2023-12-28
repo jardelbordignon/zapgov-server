@@ -1,22 +1,17 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import supertest from 'supertest'
+import { Supertest, supertest } from 'test/e2e.helper'
 
-import { AppModule } from 'src/app.module'
 import type { AuthUserData, CreateUserData } from 'src/contracts/account'
 
-import { UserEntity } from '../../user.entity'
 import {
   AUTH_URL,
   CREATE_ADMIN_USER_DATA,
   CREATE_REGULAR_USER_DATA,
   USERS_URL,
-} from '../test-helper'
+} from '../../shared/test-helper'
+import { UserEntity } from '../../user.entity'
 
 describe('Delete user (E2E)', () => {
-  let api: supertest.SuperTest<supertest.Test>
-  let app: INestApplication
-
+  let api: Supertest
   let authorization: string
 
   const registerUser = async (data: CreateUserData) => {
@@ -34,14 +29,7 @@ describe('Delete user (E2E)', () => {
   }
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    api = supertest(app.getHttpServer())
-
-    await app.init()
+    api = await supertest()
   })
 
   beforeEach(async () => {
@@ -69,7 +57,7 @@ describe('Delete user (E2E)', () => {
     )
 
     const response = await api
-      .delete(`${USERS_URL}/${regularUser.id}`)
+      .delete(`${USERS_URL}/${regularUser!.id}`)
       .set('Authorization', authorization)
       .send()
 
@@ -93,7 +81,7 @@ describe('Delete user (E2E)', () => {
     )
 
     const response = await api
-      .delete(`${USERS_URL}/${defaultRegularUser.id}`)
+      .delete(`${USERS_URL}/${defaultRegularUser!.id}?lang=en`)
       .set('Authorization', authorization)
       .send()
 

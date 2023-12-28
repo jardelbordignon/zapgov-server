@@ -1,6 +1,7 @@
 import { Role } from '@prisma/client'
 
 import type { UserPayload } from 'src/infra/providers/auth/jwt-strategy'
+import { I18n } from 'src/infra/providers/i18n/i18n'
 
 import { InMemoryUserRepository } from '../../repositories/in-memory.user.repository'
 import {
@@ -12,6 +13,7 @@ import {
 import { DeleteUserService } from './delete-user.service'
 
 let userRepository: InMemoryUserRepository
+let i18n: I18n
 let deleteUserService: DeleteUserService
 
 let loggedJohnAdminData: UserPayload
@@ -21,7 +23,8 @@ const joeEmail = 'joesmith@email.com'
 describe('Delete user', () => {
   beforeAll(async () => {
     userRepository = new InMemoryUserRepository()
-    deleteUserService = new DeleteUserService(userRepository)
+    i18n = new I18n()
+    deleteUserService = new DeleteUserService(userRepository, i18n)
   })
 
   beforeEach(async () => {
@@ -32,7 +35,7 @@ describe('Delete user', () => {
     })
     const john = await userRepository.findByEmail(johnEmail)
     await userRepository.update(john!.id, { roles: [Role.ADMIN] })
-    loggedJohnAdminData = { roles: john.roles, sub: john.id }
+    loggedJohnAdminData = { roles: john!.roles, sub: john!.id }
 
     await userRepository.create({
       email: joeEmail,
@@ -51,7 +54,7 @@ describe('Delete user', () => {
   it('should be able to delete an user', async () => {
     const joe = await userRepository.findByEmail(joeEmail)
     const soft = false
-    const result = await deleteUserService.execute(loggedJohnAdminData, joe.id, soft)
+    const result = await deleteUserService.execute(loggedJohnAdminData, joe!.id, soft)
 
     expect(result.isSuccess()).toBe(true)
     const getUsers = await userRepository.findAll({ page: 1, perPage: 100 })
@@ -61,12 +64,13 @@ describe('Delete user', () => {
   it('should be able to soft delete an user', async () => {
     const joe = await userRepository.findByEmail(joeEmail)
     const soft = true
-    const result = await deleteUserService.execute(loggedJohnAdminData, joe.id, soft)
+    const result = await deleteUserService.execute(loggedJohnAdminData, joe!.id, soft)
 
     expect(result.isSuccess()).toBe(true)
     const getUsers = await userRepository.findAll({ page: 1, perPage: 100 })
     expect(getUsers.data.length).toBe(1)
-    const getDeletedUsers = await userRepository.findAllDeleted({
+    const getDeletedUsers = await userRepository.findAll({
+      deleted: true,
       page: 1,
       perPage: 100,
     })
@@ -124,7 +128,7 @@ describe('Delete user', () => {
 
     const james = await userRepository.findByEmail(jamesEmail)
     const joe = await userRepository.findByEmail(joeEmail)
-    const loggedJoeData = { roles: [], sub: joe.id }
+    const loggedJoeData = { roles: [], sub: joe!.id }
 
     const result = await deleteUserService.execute(loggedJoeData, james!.id, false)
     expect(result.isFailure()).toBe(true)

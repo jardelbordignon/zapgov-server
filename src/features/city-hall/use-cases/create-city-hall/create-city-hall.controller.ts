@@ -27,7 +27,7 @@ import {
   FileInterceptor,
 } from 'src/infra/providers/file-storage/file-storage.decorators'
 
-import { CITY_HALLS_URL } from '../constants'
+import { CITY_HALLS_URL } from '../../shared/constants'
 import { CityHallAlreadyExistsError } from '../errors'
 
 import { CreateCityHallService } from './create-city-hall.service'

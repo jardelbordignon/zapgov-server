@@ -1,30 +1,20 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import supertest from 'supertest'
+import { Supertest, supertest } from 'test/e2e.helper'
 
-import { AppModule } from 'src/app.module'
-import { getCityHallId } from 'src/features/city-hall/use-cases/test-helper'
-import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
+import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
+import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
-import { CREATE_SUB_CITY_HALL_DATA, SUB_CITY_HALLS_URL } from '../test-helper'
+import {
+  CREATE_SUB_CITY_HALL_DATA,
+  SUB_CITY_HALLS_URL,
+} from '../../shared/test-helper'
 
 describe('Show sub city hall (E2E)', () => {
-  let api: supertest.SuperTest<supertest.Test>
-  let app: INestApplication
-
+  let api: Supertest
   let authorization: string
   let city_hall_id: string
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    api = supertest(app.getHttpServer())
-
-    await app.init()
-
+    api = await supertest()
     authorization = await getUserAuthorization(api)
     city_hall_id = await getCityHallId(api)
 
@@ -64,7 +54,7 @@ describe('Show sub city hall (E2E)', () => {
 
   test(`[GET] ${SUB_CITY_HALLS_URL}/:id - failure`, async () => {
     const getUser = await api
-      .get(`${SUB_CITY_HALLS_URL}/invalid-sub-city-hall-id`)
+      .get(`${SUB_CITY_HALLS_URL}/invalid-sub-city-hall-id?lang=en`)
       .set('Authorization', authorization)
       .send()
 

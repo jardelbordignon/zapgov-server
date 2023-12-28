@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import type { Neighborhood } from '@prisma/client'
 
-import { PaginatedResponse } from 'src/infra/providers/pagination'
+import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
 import {
   FailureOrSuccess,
   success,
@@ -14,25 +14,12 @@ type ListNeighborhoodsServiceResponse = FailureOrSuccess<
   PaginatedResponse<Neighborhood>
 >
 
-type Props = {
-  deleted?: boolean
-  page: number
-  perPage: number
-  searchTerm?: string
-}
-
 @Injectable()
 export class ListNeighborhoodsService {
   constructor(private repository: NeighborhoodRepository) {}
 
-  async execute({
-    deleted,
-    page,
-    perPage,
-    searchTerm,
-  }: Props): Promise<ListNeighborhoodsServiceResponse> {
-    const method = deleted ? 'findAllDeleted' : 'findAll'
-    const result = await this.repository[method]({ page, perPage, searchTerm })
+  async execute(params: PaginationParams): Promise<ListNeighborhoodsServiceResponse> {
+    const result = await this.repository.findAll(params)
 
     return success(result)
   }

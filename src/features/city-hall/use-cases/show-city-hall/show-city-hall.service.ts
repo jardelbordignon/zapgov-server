@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import type { CityHall } from '@prisma/client'
 
+import { I18n } from 'src/infra/providers/i18n/i18n'
 import {
   FailureOrSuccess,
   failure,
@@ -11,6 +12,7 @@ import {
   CityHallInclude,
   CityHallRepository,
 } from '../../repositories/city-hall.repository'
+import { CityHallLocaleType } from '../../shared/locales/type'
 import { CityHallNotFoundError } from '../errors'
 
 export type ShowCityHallServiceResponse = FailureOrSuccess<
@@ -20,7 +22,10 @@ export type ShowCityHallServiceResponse = FailureOrSuccess<
 
 @Injectable()
 export class ShowCityHallService {
-  constructor(private repository: CityHallRepository) {}
+  constructor(
+    private repository: CityHallRepository,
+    private i18n: I18n
+  ) {}
 
   private async handleExecute(
     method: 'findBySlug' | 'findById',
@@ -48,7 +53,9 @@ export class ShowCityHallService {
     const cityHall = await this.repository[method](param, include)
 
     if (!cityHall) {
-      return failure(new CityHallNotFoundError())
+      return failure(
+        new CityHallNotFoundError(this.i18n.t<CityHallLocaleType>('cityHallNotFound'))
+      )
     }
 
     return success(cityHall)

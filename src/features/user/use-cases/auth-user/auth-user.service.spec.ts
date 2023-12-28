@@ -1,6 +1,7 @@
 import { InMemoryUserRepository } from 'src/features/user/repositories/in-memory.user.repository'
 import { FakeEncrypter } from 'src/infra/providers/cryptography/encrypter/fake-encrypter'
 import { FakeHasher } from 'src/infra/providers/cryptography/hasher/fake-hasher'
+import { I18n } from 'src/infra/providers/i18n/i18n'
 
 import { WrongCredentialsError } from '../errors'
 
@@ -9,6 +10,7 @@ import { AuthUserService } from './auth-user.service'
 let userRepository: InMemoryUserRepository
 let hasher: FakeHasher
 let encrypter: FakeEncrypter
+let i18n: I18n
 let authUserService: AuthUserService
 
 let hashedPassword: string
@@ -20,8 +22,9 @@ describe('Authenticate user', () => {
     userRepository = new InMemoryUserRepository()
     hasher = new FakeHasher()
     encrypter = new FakeEncrypter()
+    i18n = new I18n()
 
-    authUserService = new AuthUserService(userRepository, hasher, encrypter)
+    authUserService = new AuthUserService(userRepository, hasher, encrypter, i18n)
 
     hashedPassword = await hasher.hash(password)
   })

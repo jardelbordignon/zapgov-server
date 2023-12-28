@@ -9,8 +9,8 @@ import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { omitObjectProperties } from 'src/infra/utils/omit-object-properties'
 
+import { USERS_URL } from '../../shared/constants'
 import { UserEntity } from '../../user.entity'
-import { USERS_URL } from '../constants'
 import { UserNotFoundError } from '../errors'
 
 import { ShowUserService } from './show-user.service'

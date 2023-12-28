@@ -15,7 +15,7 @@ import type { AuthUserData, AuthUserResponse } from 'src/contracts/account'
 import { ZodObj, ZodValidationPipe } from 'src/infra/pipes/zod-validation.pipe'
 import { AllowUnauthenticated } from 'src/infra/providers/auth/authentication.guard'
 
-import { AUTH_URL } from '../constants'
+import { AUTH_URL } from '../../shared/constants'
 import { WrongCredentialsError } from '../errors'
 
 import { AuthUserService } from './auth-user.service'

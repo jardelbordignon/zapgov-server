@@ -1,20 +1,19 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import supertest from 'supertest'
+import { Supertest, supertest } from 'test/e2e.helper'
 
-import { AppModule } from 'src/app.module'
-import { getCityHallId } from 'src/features/city-hall/use-cases/test-helper'
-import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
+import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
+import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
+import {
+  CREATE_SUB_CITY_HALL_DATA,
+  SUB_CITY_HALLS_URL,
+} from '../../shared/test-helper'
 import { SubCityHallEntity } from '../../sub-city-hall.entity'
-import { CREATE_SUB_CITY_HALL_DATA, SUB_CITY_HALLS_URL } from '../test-helper'
 
 describe('Delete sub city hall (E2E)', () => {
-  let api: supertest.SuperTest<supertest.Test>
-  let app: INestApplication
-
+  let api: Supertest
   let authorization: string
   let city_hall_id: string
+  let sub_city_hall_id: string
 
   const getSubCityHalls = async (deleted = false): Promise<SubCityHallEntity[]> => {
     let url = `${SUB_CITY_HALLS_URL}?page=1&perPage=100`
@@ -24,15 +23,7 @@ describe('Delete sub city hall (E2E)', () => {
   }
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    api = supertest(app.getHttpServer())
-
-    await app.init()
-
+    api = await supertest()
     authorization = await getUserAuthorization(api)
     city_hall_id = await getCityHallId(api)
   })
@@ -45,6 +36,9 @@ describe('Delete sub city hall (E2E)', () => {
         ...CREATE_SUB_CITY_HALL_DATA,
         city_hall_id,
       })
+
+    const subSubCityHalls = await getSubCityHalls()
+    sub_city_hall_id = subSubCityHalls[0].id
   })
 
   afterEach(async () => {
@@ -60,20 +54,14 @@ describe('Delete sub city hall (E2E)', () => {
   })
 
   test(`[DELETE] ${SUB_CITY_HALLS_URL} - success`, async () => {
-    let subSubCityHalls = await getSubCityHalls()
-
-    const defaultSubCityHall = subSubCityHalls.find(
-      item => item.email === CREATE_SUB_CITY_HALL_DATA.email
-    )
-
     const response = await api
-      .delete(`${SUB_CITY_HALLS_URL}/${defaultSubCityHall.id}`)
+      .delete(`${SUB_CITY_HALLS_URL}/${sub_city_hall_id}`)
       .set('Authorization', authorization)
       .send()
 
     expect(response.statusCode).toBe(204)
 
-    subSubCityHalls = await getSubCityHalls()
+    const subSubCityHalls = await getSubCityHalls()
     expect(subSubCityHalls.length).toBe(0)
 
     const deleted = true
@@ -82,20 +70,14 @@ describe('Delete sub city hall (E2E)', () => {
   })
 
   test(`[DELETE] ${SUB_CITY_HALLS_URL} - success [soft]`, async () => {
-    let subSubCityHalls = await getSubCityHalls()
-
-    const defaultSubCityHall = subSubCityHalls.find(
-      item => item.email === CREATE_SUB_CITY_HALL_DATA.email
-    )
-
     const response = await api
-      .delete(`${SUB_CITY_HALLS_URL}/${defaultSubCityHall.id}?soft=true`)
+      .delete(`${SUB_CITY_HALLS_URL}/${sub_city_hall_id}?soft=true`)
       .set('Authorization', authorization)
       .send()
 
     expect(response.statusCode).toBe(204)
 
-    subSubCityHalls = await getSubCityHalls()
+    const subSubCityHalls = await getSubCityHalls()
     expect(subSubCityHalls.length).toBe(0)
 
     const deleted = true
@@ -105,7 +87,7 @@ describe('Delete sub city hall (E2E)', () => {
 
   test(`[DELETE] ${SUB_CITY_HALLS_URL} - failure`, async () => {
     const response = await api
-      .delete(`${SUB_CITY_HALLS_URL}/invalid-sub-city-hall-id`)
+      .delete(`${SUB_CITY_HALLS_URL}/invalid-sub-city-hall-id?lang=en`)
       .set('Authorization', authorization)
       .send()
 

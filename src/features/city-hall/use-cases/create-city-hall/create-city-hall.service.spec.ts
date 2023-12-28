@@ -2,23 +2,26 @@ import { Readable } from 'stream'
 
 import { CreateCityHallData } from 'src/contracts/city-halls'
 import { FakeFileStorage } from 'src/infra/providers/file-storage/fake-file-storage'
+import { I18n } from 'src/infra/providers/i18n/i18n'
 
 import { InMemoryCityHallRepository } from '../../repositories/in-memory.city-hall.repository'
+import { CREATE_CITY_HALL_DATA } from '../../shared/test-helper'
 import { CityHallAlreadyExistsError } from '../errors'
-import { CREATE_CITY_HALL_DATA } from '../test-helper'
 
 import { CreateCityHallService } from './create-city-hall.service'
 
 let mockFile: Express.Multer.File
-let fileStorage: FakeFileStorage
 let repository: InMemoryCityHallRepository
+let fileStorage: FakeFileStorage
+let i18n: I18n
 let service: CreateCityHallService
 
 describe('Create city hall', () => {
   beforeAll(async () => {
-    fileStorage = new FakeFileStorage()
     repository = new InMemoryCityHallRepository()
-    service = new CreateCityHallService(repository, fileStorage)
+    fileStorage = new FakeFileStorage()
+    i18n = new I18n()
+    service = new CreateCityHallService(repository, fileStorage, i18n)
     mockFile = {
       buffer: Buffer.from('test'),
       destination: './uploads/',

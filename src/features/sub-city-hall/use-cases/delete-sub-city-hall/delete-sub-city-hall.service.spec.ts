@@ -1,21 +1,30 @@
+import { I18n } from 'src/infra/providers/i18n/i18n'
+
 import { InMemorySubCityHallRepository } from '../../repositories/in-memory.sub-city-hall.repository'
 import { SubCityHallRepository } from '../../repositories/sub-city-hall.repository'
+import { CREATE_SUB_CITY_HALL_DATA } from '../../shared/test-helper'
+import { SubCityHallEntity } from '../../sub-city-hall.entity'
 import { SubCityHallNotFoundError } from '../errors'
-import { CREATE_SUB_CITY_HALL_DATA } from '../test-helper'
 
 import { DeleteSubCityHallService } from './delete-sub-city-hall.service'
 
 let subSubCityHallRepository: SubCityHallRepository
+let i18n: I18n
 let deleteSubCityHallService: DeleteSubCityHallService
+let subCityHall: SubCityHallEntity
 
 describe('Delete city hall', () => {
   beforeAll(async () => {
     subSubCityHallRepository = new InMemorySubCityHallRepository()
-    deleteSubCityHallService = new DeleteSubCityHallService(subSubCityHallRepository)
+    i18n = new I18n()
+    deleteSubCityHallService = new DeleteSubCityHallService(
+      subSubCityHallRepository,
+      i18n
+    )
   })
 
   beforeEach(async () => {
-    await subSubCityHallRepository.create(CREATE_SUB_CITY_HALL_DATA)
+    subCityHall = await subSubCityHallRepository.create(CREATE_SUB_CITY_HALL_DATA)
   })
 
   afterEach(async () => {
@@ -29,11 +38,8 @@ describe('Delete city hall', () => {
   })
 
   it('should be able to delete a sub city hall', async () => {
-    const defaultSubCityHall = await subSubCityHallRepository.findByEmail(
-      CREATE_SUB_CITY_HALL_DATA.email
-    )
     const soft = false
-    const result = await deleteSubCityHallService.execute(defaultSubCityHall.id, soft)
+    const result = await deleteSubCityHallService.execute(subCityHall.id, soft)
 
     expect(result.isSuccess()).toBe(true)
     const getSubCityHalls = await subSubCityHallRepository.findAll({
@@ -44,11 +50,8 @@ describe('Delete city hall', () => {
   })
 
   it('should be able to soft delete a sub city hall', async () => {
-    const defaultSubCityHall = await subSubCityHallRepository.findByEmail(
-      CREATE_SUB_CITY_HALL_DATA.email
-    )
     const soft = true
-    const result = await deleteSubCityHallService.execute(defaultSubCityHall.id, soft)
+    const result = await deleteSubCityHallService.execute(subCityHall.id, soft)
 
     expect(result.isSuccess()).toBe(true)
     const getSubCityHalls = await subSubCityHallRepository.findAll({
@@ -57,7 +60,8 @@ describe('Delete city hall', () => {
     })
     expect(getSubCityHalls.data.length).toBe(0)
 
-    const getDeletedSubCityHalls = await subSubCityHallRepository.findAllDeleted({
+    const getDeletedSubCityHalls = await subSubCityHallRepository.findAll({
+      deleted: true,
       page: 1,
       perPage: 100,
     })

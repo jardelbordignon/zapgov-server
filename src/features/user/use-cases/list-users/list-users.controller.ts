@@ -1,13 +1,15 @@
-import { Controller, Get, Query } from '@nestjs/common'
+import { Controller, Get } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
 import {
   ApiPaginatedResponse,
   PaginatedResponse,
-} from 'src/infra/providers/pagination/pagination.decorator'
+  PaginationParams,
+  PaginationQuery,
+} from 'src/infra/providers/pagination'
 
+import { USERS_URL } from '../../shared/constants'
 import { UserEntity } from '../../user.entity'
-import { USERS_URL } from '../constants'
 
 import { ListUsersService } from './list-users.service'
 
@@ -22,19 +24,9 @@ export class ListUsersController {
   })
   @Get()
   async handle(
-    @Query('deleted') deleted?: boolean,
-    @Query('page') page?: number,
-    @Query('perPage') perPage?: number,
-    @Query('search') searchTerm?: string
+    @PaginationQuery() params: PaginationParams
   ): Promise<PaginatedResponse<UserEntity>> {
-    page = Number(page || 1)
-    perPage = Number(perPage || 20)
-    const result = await this.listUsersService.execute({
-      deleted,
-      page,
-      perPage,
-      searchTerm,
-    })
+    const result = await this.listUsersService.execute(params)
 
     if (!result.value) return new PaginatedResponse()
 

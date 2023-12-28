@@ -1,6 +1,51 @@
-import { ApiProperty } from '@nestjs/swagger'
+import {
+  ExecutionContext,
+  Type,
+  applyDecorators,
+  createParamDecorator,
+} from '@nestjs/common'
+import {
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiProperty,
+  ApiResponseOptions,
+  getSchemaPath,
+} from '@nestjs/swagger'
+import { Prisma } from '@prisma/client'
 
-import { PaginationMetadata } from './pagination-meta'
+export class PaginationParams {
+  @ApiProperty({ example: 1 })
+  deleted?: boolean = false
+
+  @ApiProperty({ example: 1 })
+  page: number = 1
+
+  @ApiProperty({ example: 10 })
+  perPage: number = 20
+
+  @ApiProperty({ example: 'john' })
+  searchTerm?: string
+}
+
+class PaginationMetadata {
+  @ApiProperty({ example: false })
+  hasPrevious: boolean = false
+
+  @ApiProperty({ example: true })
+  hasNext: boolean = false
+
+  @ApiProperty({ example: 1 })
+  page: number = 0
+
+  @ApiProperty({ example: 1 })
+  perPage: number = 0
+
+  @ApiProperty({ example: 10 })
+  totalItems: number = 0
+
+  @ApiProperty({ example: 10 })
+  totalPages: number = 0
+}
 
 export class PaginatedResponse<T> {
   @ApiProperty({ isArray: true })
@@ -10,4 +55,95 @@ export class PaginatedResponse<T> {
   meta: PaginationMetadata = new PaginationMetadata()
 }
 
-export * from './pagination-params'
+type PaginatorParams = {
+  page: number
+  perPage: number
+  where: Prisma.UserWhereInput
+}
+
+export async function paginator<T>(
+  model: any,
+  { page, perPage, where }: PaginatorParams
+): Promise<PaginatedResponse<T>> {
+  page = Number(page)
+  const take = Number(perPage)
+  const skip = (page - 1) * take
+
+  const [data, totalItems] = await Promise.all([
+    model.findMany({ skip, take, where }),
+    model.count({ where }),
+  ])
+
+  return {
+    data,
+    meta: {
+      hasNext: skip + take < totalItems,
+      hasPrevious: skip > 0,
+      page,
+      perPage: take,
+      totalItems,
+      totalPages: Math.ceil(totalItems / take),
+    },
+  }
+}
+
+export async function inMemoryPaginator(items: any[], page: number, perPage: number) {
+  const start = (page - 1) * perPage
+  const end = start + perPage
+
+  const data = items.slice(start, end)
+  const totalItems = items.length
+  const totalPages = Math.ceil(totalItems / perPage)
+  const hasPrevious = start > 0
+  const hasNext = end < totalItems
+
+  return {
+    data,
+    meta: {
+      hasNext,
+      hasPrevious,
+      page,
+      perPage,
+      totalItems,
+      totalPages,
+    },
+  }
+}
+
+export const ApiPaginatedResponse = <TModel extends Type<any>>(
+  model: TModel,
+  apiResponseOptions?: Omit<ApiResponseOptions, 'isArray' | 'content'>
+) => {
+  return applyDecorators(
+    ApiExtraModels(PaginatedResponse<TModel>),
+    ApiOkResponse({
+      ...apiResponseOptions,
+      schema: {
+        allOf: [
+          { $ref: getSchemaPath(PaginatedResponse) },
+          {
+            properties: {
+              data: {
+                items: { $ref: getSchemaPath(model) },
+                type: 'array',
+              },
+            },
+          },
+        ],
+        title: `PaginatedResponse of ${model.name}`,
+      },
+    })
+  )
+}
+
+export const PaginationQuery = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest()
+    return {
+      deleted: request.query.deleted || false,
+      page: request.query.page || 1,
+      perPage: request.query.perPage || 20,
+      searchTerm: request.query.search || '',
+    } as PaginationParams
+  }
+)

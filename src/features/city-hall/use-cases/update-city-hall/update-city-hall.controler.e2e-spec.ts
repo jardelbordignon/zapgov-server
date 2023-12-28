@@ -1,16 +1,11 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import supertest from 'supertest'
+import { Supertest, supertest } from 'test/e2e.helper'
 
-import { AppModule } from 'src/app.module'
-import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
+import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
-import { CITY_HALLS_URL, CREATE_CITY_HALL_DATA } from '../test-helper'
+import { CITY_HALLS_URL, CREATE_CITY_HALL_DATA } from '../../shared/test-helper'
 
 describe('Update user (E2E)', () => {
-  let api: supertest.SuperTest<supertest.Test>
-  let app: INestApplication
-
+  let api: Supertest
   let authorization: string
 
   const getAll = async () => {
@@ -22,15 +17,7 @@ describe('Update user (E2E)', () => {
   }
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    api = supertest(app.getHttpServer())
-
-    await app.init()
-
+    api = await supertest()
     authorization = await getUserAuthorization(api)
 
     await api
@@ -87,7 +74,7 @@ describe('Update user (E2E)', () => {
     const item = items.find(item => item.email === cancunEmail)
 
     const response = await api
-      .put(`${CITY_HALLS_URL}/${item.id}`)
+      .put(`${CITY_HALLS_URL}/${item.id}?lang=en`)
       .set('Authorization', authorization)
       .send({ email: CREATE_CITY_HALL_DATA.email })
 
@@ -116,7 +103,7 @@ describe('Update user (E2E)', () => {
     const item = items.find(item => item.email === cancunEmail)
 
     const response = await api
-      .put(`${CITY_HALLS_URL}/${item.id}`)
+      .put(`${CITY_HALLS_URL}/${item.id}?lang=en`)
       .set('Authorization', authorization)
       .send({ slug: CREATE_CITY_HALL_DATA.slug })
 

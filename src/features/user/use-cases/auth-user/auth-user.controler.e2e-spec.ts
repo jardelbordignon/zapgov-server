@@ -1,38 +1,21 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import supertest from 'supertest'
+import { Supertest, supertest } from 'test/e2e.helper'
 
-import { AppModule } from 'src/app.module'
-import type { AuthUserData, CreateUserData } from 'src/contracts/account'
-
-import { AUTH_URL, USERS_URL } from '../constants'
+import { AUTH_URL, USERS_URL } from '../../shared/constants'
 
 describe('Auth user (E2E)', () => {
-  let api: supertest.SuperTest<supertest.Test>
-  let app: INestApplication
+  let api: Supertest
 
   const email = 'johndoe@email.com'
   const name = 'John Doe'
   const password = 'Pwd@123'
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    api = supertest(app.getHttpServer())
-
-    await app.init()
-
-    const createUserData: CreateUserData = { email, name, password }
-
-    await api.post(USERS_URL).send(createUserData)
+    api = await supertest()
+    await api.post(USERS_URL).send({ email, name, password })
   })
 
   test(`[POST] ${AUTH_URL} - success`, async () => {
-    const authUserData: AuthUserData = { email, password }
-    const authRes = await api.post(AUTH_URL).send(authUserData)
+    const authRes = await api.post(AUTH_URL).send({ email, password })
 
     expect(authRes.statusCode).toBe(200)
     expect(authRes.body).toEqual({
@@ -42,8 +25,9 @@ describe('Auth user (E2E)', () => {
   })
 
   test(`[POST] ${AUTH_URL} - failure (invalid credentials)`, async () => {
-    const authUserData: AuthUserData = { email, password: 'wrong' }
-    const authRes = await api.post(AUTH_URL).send(authUserData)
+    const authRes = await api
+      .post(`${AUTH_URL}?lang=en`)
+      .send({ email, password: 'wrong' })
 
     expect(authRes.statusCode).toBe(401)
     expect(authRes.body).toEqual({

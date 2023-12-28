@@ -16,7 +16,6 @@ describe('List city-halls', () => {
 
     for (const cityName of cityNames) {
       await repository.create({
-        bg_image: '#ffffff',
         email: `${slugify(cityName)}@email.com`,
         name: cityName,
         phone: `01 (744) 440 700${cityName.length}`,
@@ -35,7 +34,7 @@ describe('List city-halls', () => {
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(cityNames.length)
-    expect(result.value.data).toEqual(
+    expect(result.value?.data).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ name: 'Tangamandapio' }),
         expect.objectContaining({ name: 'Acapulco' }),
@@ -55,8 +54,8 @@ describe('List city-halls', () => {
     })
 
     expect(result.isSuccess()).toBe(true)
-    expect(result.value.data.length).toBe(2)
-    expect(result.value.data).toEqual(
+    expect(result.value?.data.length).toBe(2)
+    expect(result.value?.data).toEqual(
       expect.arrayContaining([
         //expect.objectContaining({ name: 'Tangamandapio' }),
         expect.objectContaining({ name: 'Acapulco' }),

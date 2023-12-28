@@ -1,7 +1,7 @@
 import { CreateNeighborhoodData } from 'src/contracts/neighborhoods'
-import { getCityHallId } from 'src/features/city-hall/use-cases/test-helper'
-import { getSubCityHallId } from 'src/features/sub-city-hall/use-cases/test-helper'
-import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
+import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
+import { getSubCityHallId } from 'src/features/sub-city-hall/shared/test-helper'
+import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
 import { NEIGHBORHOODS_URL } from './constants'
 

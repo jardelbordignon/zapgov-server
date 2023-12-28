@@ -1,27 +1,31 @@
 import { InMemoryCityHallRepository } from 'src/features/city-hall/repositories/in-memory.city-hall.repository'
-import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/use-cases/test-helper'
+import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/shared/test-helper'
+import { I18n } from 'src/infra/providers/i18n/i18n'
 
 import { InMemorySubCityHallRepository } from '../../repositories/in-memory.sub-city-hall.repository'
+import { CREATE_SUB_CITY_HALL_DATA } from '../../shared/test-helper'
+import { SubCityHallEntity } from '../../sub-city-hall.entity'
 import { SubCityHallNotFoundError } from '../errors'
-import { CREATE_SUB_CITY_HALL_DATA } from '../test-helper'
 
 import { ShowSubCityHallService } from './show-sub-city-hall.service'
 
 let cityHallRepository: InMemoryCityHallRepository
 
 let subCityHallRepository: InMemorySubCityHallRepository
+let i18n: I18n
 let showSubCityHallService: ShowSubCityHallService
+let subCityHall: SubCityHallEntity
 
 describe('Show sub city hall', () => {
   beforeAll(async () => {
     cityHallRepository = new InMemoryCityHallRepository()
     subCityHallRepository = new InMemorySubCityHallRepository()
-    showSubCityHallService = new ShowSubCityHallService(subCityHallRepository)
+    i18n = new I18n()
+    showSubCityHallService = new ShowSubCityHallService(subCityHallRepository, i18n)
 
-    await subCityHallRepository.create(CREATE_SUB_CITY_HALL_DATA)
+    subCityHall = await subCityHallRepository.create(CREATE_SUB_CITY_HALL_DATA)
 
-    await cityHallRepository.create(CREATE_CITY_HALL_DATA)
-    const cityHall = await cityHallRepository.findByEmail(CREATE_CITY_HALL_DATA.email)
+    const cityHall = await cityHallRepository.create(CREATE_CITY_HALL_DATA)
 
     await subCityHallRepository.create({
       ...CREATE_SUB_CITY_HALL_DATA,
@@ -30,10 +34,7 @@ describe('Show sub city hall', () => {
   })
 
   it('should be able to show a sub city hall', async () => {
-    const { id } = await subCityHallRepository.findByEmail(
-      CREATE_SUB_CITY_HALL_DATA.email
-    )
-    const result = await showSubCityHallService.execute(id)
+    const result = await showSubCityHallService.execute(subCityHall.id)
     expect(result.isSuccess()).toBe(true)
     expect(result.value).toEqual(
       expect.objectContaining({

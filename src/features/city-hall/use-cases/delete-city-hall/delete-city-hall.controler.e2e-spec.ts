@@ -1,17 +1,12 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import supertest from 'supertest'
+import { Supertest, supertest } from 'test/e2e.helper'
 
-import { AppModule } from 'src/app.module'
-import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
+import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
 import { CityHallEntity } from '../../city-hall.entity'
-import { CITY_HALLS_URL, CREATE_CITY_HALL_DATA } from '../test-helper'
+import { CITY_HALLS_URL, CREATE_CITY_HALL_DATA } from '../../shared/test-helper'
 
 describe('Delete city hall (E2E)', () => {
-  let api: supertest.SuperTest<supertest.Test>
-  let app: INestApplication
-
+  let api: Supertest
   let authorization: string
 
   const getCityHalls = async (deleted = false): Promise<CityHallEntity[]> => {
@@ -22,15 +17,7 @@ describe('Delete city hall (E2E)', () => {
   }
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    api = supertest(app.getHttpServer())
-
-    await app.init()
-
+    api = await supertest()
     authorization = await getUserAuthorization(api)
   })
 
@@ -61,7 +48,7 @@ describe('Delete city hall (E2E)', () => {
     )
 
     const response = await api
-      .delete(`${CITY_HALLS_URL}/${defaultCityHall!.id}`)
+      .delete(`${CITY_HALLS_URL}/${defaultCityHall!.id}?lang=en`)
       .set('Authorization', authorization)
       .send()
 
@@ -83,7 +70,7 @@ describe('Delete city hall (E2E)', () => {
     )
 
     const response = await api
-      .delete(`${CITY_HALLS_URL}/${defaultCityHall!.id}?soft=true`)
+      .delete(`${CITY_HALLS_URL}/${defaultCityHall!.id}?soft=true&lang=en`)
       .set('Authorization', authorization)
       .send()
 
@@ -99,7 +86,7 @@ describe('Delete city hall (E2E)', () => {
 
   test(`[DELETE] ${CITY_HALLS_URL} - failure`, async () => {
     const response = await api
-      .delete(`${CITY_HALLS_URL}/invalid-sub-city-hall-id`)
+      .delete(`${CITY_HALLS_URL}/invalid-sub-city-hall-id?lang=en`)
       .set('Authorization', authorization)
       .send()
 

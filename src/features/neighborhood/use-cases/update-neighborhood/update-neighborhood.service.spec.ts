@@ -1,11 +1,12 @@
 import { InMemoryCityHallRepository } from 'src/features/city-hall/repositories/in-memory.city-hall.repository'
-import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/use-cases/test-helper'
+import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/shared/test-helper'
 import { InMemorySubCityHallRepository } from 'src/features/sub-city-hall/repositories/in-memory.sub-city-hall.repository'
-import { CREATE_SUB_CITY_HALL_DATA } from 'src/features/sub-city-hall/use-cases/test-helper'
+import { CREATE_SUB_CITY_HALL_DATA } from 'src/features/sub-city-hall/shared/test-helper'
+import { I18n } from 'src/infra/providers/i18n/i18n'
 
 import { InMemoryNeighborhoodRepository } from '../../repositories/in-memory.neighborhood.repository'
+import { CREATE_NEIGHBORHOOD_DATA } from '../../shared/test-helper'
 import { NeighborhoodAlreadyExistsError, NeighborhoodNotFoundError } from '../errors'
-import { CREATE_NEIGHBORHOOD_DATA } from '../test-helper'
 
 import { UpdateNeighborhoodService } from './update-neighborhood.service'
 
@@ -15,6 +16,7 @@ let city_hall_id: string
 let sub_city_hall_id: string
 
 let neighborhoodRepository: InMemoryNeighborhoodRepository
+let i18n: I18n
 let updateNeighborhoodService: UpdateNeighborhoodService
 
 describe('Update neighborhood', () => {
@@ -22,16 +24,16 @@ describe('Update neighborhood', () => {
     cityHallRepository = new InMemoryCityHallRepository()
     subCityHallRepository = new InMemorySubCityHallRepository()
     neighborhoodRepository = new InMemoryNeighborhoodRepository()
-    updateNeighborhoodService = new UpdateNeighborhoodService(neighborhoodRepository)
+    i18n = new I18n()
+    updateNeighborhoodService = new UpdateNeighborhoodService(
+      neighborhoodRepository,
+      i18n
+    )
 
-    await cityHallRepository.create(CREATE_CITY_HALL_DATA)
-    const cityHall = await cityHallRepository.findByEmail(CREATE_CITY_HALL_DATA.email)
+    const cityHall = await cityHallRepository.create(CREATE_CITY_HALL_DATA)
     city_hall_id = cityHall.id
 
-    await subCityHallRepository.create(CREATE_SUB_CITY_HALL_DATA)
-    const subCityHall = await subCityHallRepository.findByEmail(
-      CREATE_SUB_CITY_HALL_DATA.email
-    )
+    const subCityHall = await subCityHallRepository.create(CREATE_SUB_CITY_HALL_DATA)
     sub_city_hall_id = subCityHall.id
   })
 
@@ -44,9 +46,12 @@ describe('Update neighborhood', () => {
   })
 
   afterEach(async () => {
-    const pg = { page: 1, perPage: 100 }
-    const getItems = await neighborhoodRepository.findAll(pg)
-    const getDeletedItems = await neighborhoodRepository.findAllDeleted(pg)
+    const getItems = await neighborhoodRepository.findAll({ page: 1, perPage: 100 })
+    const getDeletedItems = await neighborhoodRepository.findAll({
+      deleted: true,
+      page: 1,
+      perPage: 100,
+    })
     const allItems = [...getItems.data, ...getDeletedItems.data]
     for (const item of allItems) {
       await neighborhoodRepository.delete(item.id)

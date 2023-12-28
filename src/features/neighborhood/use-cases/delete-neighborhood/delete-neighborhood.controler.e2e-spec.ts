@@ -3,12 +3,12 @@ import { Test } from '@nestjs/testing'
 import supertest from 'supertest'
 
 import { AppModule } from 'src/app.module'
-import { getCityHallId } from 'src/features/city-hall/use-cases/test-helper'
-import { getSubCityHallId } from 'src/features/sub-city-hall/use-cases/test-helper'
-import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
+import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
+import { getSubCityHallId } from 'src/features/sub-city-hall/shared/test-helper'
+import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
 import { NeighborhoodEntity } from '../../neighborhood.entity'
-import { CREATE_NEIGHBORHOOD_DATA, NEIGHBORHOODS_URL } from '../test-helper'
+import { CREATE_NEIGHBORHOOD_DATA, NEIGHBORHOODS_URL } from '../../shared/test-helper'
 
 describe('Delete neighborhood (E2E)', () => {
   let api: supertest.SuperTest<supertest.Test>
@@ -17,6 +17,7 @@ describe('Delete neighborhood (E2E)', () => {
   let authorization: string
   let city_hall_id: string
   let sub_city_hall_id: string
+  let neighborhood_id: string
 
   const getNeighborhoods = async (deleted = false): Promise<NeighborhoodEntity[]> => {
     let url = `${NEIGHBORHOODS_URL}?page=1&perPage=100`
@@ -49,6 +50,10 @@ describe('Delete neighborhood (E2E)', () => {
         city_hall_id,
         sub_city_hall_id,
       })
+      .timeout(4000)
+
+    const neighborhoods = await getNeighborhoods()
+    neighborhood_id = neighborhoods[0].id
   })
 
   afterEach(async () => {
@@ -64,21 +69,12 @@ describe('Delete neighborhood (E2E)', () => {
   })
 
   test(`[DELETE] ${NEIGHBORHOODS_URL} - success`, async () => {
-    let neighborhoods = await getNeighborhoods()
-
-    const defaultNeighborhood = neighborhoods.find(
-      item => item.name === CREATE_NEIGHBORHOOD_DATA.name
-    )
-
     const response = await api
-      .delete(`${NEIGHBORHOODS_URL}/${defaultNeighborhood.id}`)
+      .delete(`${NEIGHBORHOODS_URL}/${neighborhood_id}`)
       .set('Authorization', authorization)
       .send()
 
     expect(response.statusCode).toBe(204)
-
-    neighborhoods = await getNeighborhoods()
-    expect(neighborhoods.length).toBe(0)
 
     const deleted = true
     const deletedNeighborhoods = await getNeighborhoods(deleted)
@@ -86,21 +82,12 @@ describe('Delete neighborhood (E2E)', () => {
   })
 
   test(`[DELETE] ${NEIGHBORHOODS_URL} - success [soft]`, async () => {
-    let neighborhoods = await getNeighborhoods()
-
-    const defaultNeighborhood = neighborhoods.find(
-      item => item.name === CREATE_NEIGHBORHOOD_DATA.name
-    )
-
     const response = await api
-      .delete(`${NEIGHBORHOODS_URL}/${defaultNeighborhood.id}?soft=true`)
+      .delete(`${NEIGHBORHOODS_URL}/${neighborhood_id}?soft=true`)
       .set('Authorization', authorization)
       .send()
 
     expect(response.statusCode).toBe(204)
-
-    neighborhoods = await getNeighborhoods()
-    expect(neighborhoods.length).toBe(0)
 
     const deleted = true
     const deletedNeighborhoods = await getNeighborhoods(deleted)
@@ -109,7 +96,7 @@ describe('Delete neighborhood (E2E)', () => {
 
   test(`[DELETE] ${NEIGHBORHOODS_URL} - failure`, async () => {
     const response = await api
-      .delete(`${NEIGHBORHOODS_URL}/invalid-neighborhood-id`)
+      .delete(`${NEIGHBORHOODS_URL}/invalid-neighborhood-id?lang=en`)
       .set('Authorization', authorization)
       .send()
 

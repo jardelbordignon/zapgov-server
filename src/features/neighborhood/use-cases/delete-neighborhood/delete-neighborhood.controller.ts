@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
 
-import { NEIGHBORHOODS_URL } from '../constants'
+import { NEIGHBORHOODS_URL } from '../../shared/constants'
 import { NeighborhoodNotFoundError } from '../errors'
 
 import { DeleteNeighborhoodService } from './delete-neighborhood.service'

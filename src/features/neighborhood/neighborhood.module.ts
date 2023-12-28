@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 
+import { I18nModule } from 'src/infra/providers/i18n/i18n.module'
 import { PrismaModule } from 'src/infra/providers/prisma/prisma.module'
 
 import { CityHallRepository } from '../city-hall/repositories/city-hall.repository'
@@ -28,7 +29,7 @@ import { UpdateNeighborhoodService } from './use-cases/update-neighborhood/updat
     ShowNeighborhoodController,
     UpdateNeighborhoodController,
   ],
-  imports: [PrismaModule],
+  imports: [PrismaModule, I18nModule],
   providers: [
     {
       provide: CityHallRepository,

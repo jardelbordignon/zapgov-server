@@ -7,19 +7,12 @@ import {
 import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
 
 export abstract class SubCityHallRepository {
-  abstract create(data: CreateSubCityHallData): Promise<void>
+  abstract create(data: CreateSubCityHallData): Promise<SubCityHall>
   abstract delete(id: string): Promise<void>
   abstract findByEmail(email: string): Promise<SubCityHall | null>
   abstract findById(id: string): Promise<SubCityHall | null>
   abstract findAll(params: PaginationParams): Promise<PaginatedResponse<SubCityHall>>
-  abstract findAllDeleted(
-    params: PaginationParams
-  ): Promise<PaginatedResponse<SubCityHall>>
   abstract findAllByCityHallId(
-    cityHallId: string,
-    searchTerm: string
-  ): Promise<SubCityHall[]>
-  abstract findAllDeletedByCityHallId(
     cityHallId: string,
     searchTerm: string
   ): Promise<SubCityHall[]>

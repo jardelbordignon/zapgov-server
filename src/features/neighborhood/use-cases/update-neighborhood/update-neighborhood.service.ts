@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import type { Neighborhood } from '@prisma/client'
 
 import type { UpdateNeighborhoodData } from 'src/contracts/neighborhoods'
+import { I18n } from 'src/infra/providers/i18n/i18n'
 import {
   FailureOrSuccess,
   failure,
@@ -18,7 +19,10 @@ export type UpdateNeighborhoodServiceResponse = FailureOrSuccess<
 
 @Injectable()
 export class UpdateNeighborhoodService {
-  constructor(private neighborhoodRepository: NeighborhoodRepository) {}
+  constructor(
+    private neighborhoodRepository: NeighborhoodRepository,
+    private i18n: I18n
+  ) {}
 
   async execute(
     neighborhoodId: string,
@@ -27,7 +31,9 @@ export class UpdateNeighborhoodService {
     const neighborhood = await this.neighborhoodRepository.findById(neighborhoodId)
 
     if (!neighborhood) {
-      return failure(new NeighborhoodNotFoundError())
+      return failure(
+        new NeighborhoodNotFoundError(this.i18n.t('neighborhoodNotFound'))
+      )
     }
 
     if (data.name && data.name !== neighborhood.name) {
@@ -43,7 +49,7 @@ export class UpdateNeighborhoodService {
       ) {
         return failure(
           new NeighborhoodAlreadyExistsError(
-            `Neighborhood with ${data.name} name already exists in the sub city hall.`
+            this.i18n.t('neighborhoodWithSameName', data.name)
           )
         )
       }

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
+import { I18n } from 'src/infra/providers/i18n/i18n'
 import {
   FailureOrSuccess,
   failure,
@@ -16,7 +17,10 @@ export type DeleteNeighborhoodServiceResponse = FailureOrSuccess<
 
 @Injectable()
 export class DeleteNeighborhoodService {
-  constructor(private neighborhoodRepository: NeighborhoodRepository) {}
+  constructor(
+    private neighborhoodRepository: NeighborhoodRepository,
+    private i18n: I18n
+  ) {}
 
   async execute(
     neighborhoodId: string,
@@ -25,7 +29,9 @@ export class DeleteNeighborhoodService {
     const neighborhood = await this.neighborhoodRepository.findById(neighborhoodId)
 
     if (!neighborhood) {
-      return failure(new NeighborhoodNotFoundError())
+      return failure(
+        new NeighborhoodNotFoundError(this.i18n.t('neighborhoodNotFound'))
+      )
     }
 
     if (soft) {

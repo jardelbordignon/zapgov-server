@@ -1,29 +1,17 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import supertest from 'supertest'
+import { Supertest, supertest } from 'test/e2e.helper'
 
-import { AppModule } from 'src/app.module'
 import { AuthUserData, CreateUserData } from 'src/contracts/account'
 
-import { USERS_URL } from '../constants'
+import { USERS_URL } from '../../shared/constants'
 
 describe('List users (E2E)', () => {
-  let api: supertest.SuperTest<supertest.Test>
-  let app: INestApplication
-
+  let api: Supertest
   let authorization: string
   const password = 'Pwd@123'
   const names = ['John', 'Joe', 'James']
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    api = supertest(app.getHttpServer())
-
-    await app.init()
+    api = await supertest()
 
     for (const name of names) {
       const createUserData: CreateUserData = {

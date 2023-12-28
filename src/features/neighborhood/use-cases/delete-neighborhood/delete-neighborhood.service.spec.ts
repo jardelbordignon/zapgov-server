@@ -1,21 +1,30 @@
+import { I18n } from 'src/infra/providers/i18n/i18n'
+
+import { NeighborhoodEntity } from '../../neighborhood.entity'
 import { InMemoryNeighborhoodRepository } from '../../repositories/in-memory.neighborhood.repository'
 import { NeighborhoodRepository } from '../../repositories/neighborhood.repository'
+import { CREATE_NEIGHBORHOOD_DATA } from '../../shared/test-helper'
 import { NeighborhoodNotFoundError } from '../errors'
-import { CREATE_NEIGHBORHOOD_DATA } from '../test-helper'
 
 import { DeleteNeighborhoodService } from './delete-neighborhood.service'
 
 let neighborhoodRepository: NeighborhoodRepository
+let i18n: I18n
 let deleteNeighborhoodService: DeleteNeighborhoodService
+let neighborhood: NeighborhoodEntity
 
 describe('Delete neighborhood', () => {
   beforeAll(async () => {
     neighborhoodRepository = new InMemoryNeighborhoodRepository()
-    deleteNeighborhoodService = new DeleteNeighborhoodService(neighborhoodRepository)
+    i18n = new I18n()
+    deleteNeighborhoodService = new DeleteNeighborhoodService(
+      neighborhoodRepository,
+      i18n
+    )
   })
 
   beforeEach(async () => {
-    await neighborhoodRepository.create(CREATE_NEIGHBORHOOD_DATA)
+    neighborhood = await neighborhoodRepository.create(CREATE_NEIGHBORHOOD_DATA)
   })
 
   afterEach(async () => {
@@ -29,14 +38,8 @@ describe('Delete neighborhood', () => {
   })
 
   it('should be able to delete a neighborhood', async () => {
-    const defaultNeighborhood = await neighborhoodRepository.findByName(
-      CREATE_NEIGHBORHOOD_DATA.name
-    )
     const soft = false
-    const result = await deleteNeighborhoodService.execute(
-      defaultNeighborhood.id,
-      soft
-    )
+    const result = await deleteNeighborhoodService.execute(neighborhood.id, soft)
 
     expect(result.isSuccess()).toBe(true)
     const getNeighborhoods = await neighborhoodRepository.findAll({
@@ -47,14 +50,8 @@ describe('Delete neighborhood', () => {
   })
 
   it('should be able to soft delete a neighborhood', async () => {
-    const defaultNeighborhood = await neighborhoodRepository.findByName(
-      CREATE_NEIGHBORHOOD_DATA.name
-    )
     const soft = true
-    const result = await deleteNeighborhoodService.execute(
-      defaultNeighborhood.id,
-      soft
-    )
+    const result = await deleteNeighborhoodService.execute(neighborhood.id, soft)
 
     expect(result.isSuccess()).toBe(true)
     const getNeighborhoods = await neighborhoodRepository.findAll({
@@ -63,7 +60,8 @@ describe('Delete neighborhood', () => {
     })
     expect(getNeighborhoods.data.length).toBe(0)
 
-    const getDeletedNeighborhoods = await neighborhoodRepository.findAllDeleted({
+    const getDeletedNeighborhoods = await neighborhoodRepository.findAll({
+      deleted: true,
       page: 1,
       perPage: 100,
     })

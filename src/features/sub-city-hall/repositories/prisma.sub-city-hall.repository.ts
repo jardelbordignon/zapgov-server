@@ -4,7 +4,11 @@ import {
   CreateSubCityHallData,
   UpdateSubCityHallData,
 } from 'src/contracts/sub-city-halls'
-import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
+import {
+  PaginatedResponse,
+  PaginationParams,
+  paginator,
+} from 'src/infra/providers/pagination'
 import { PrismaService } from 'src/infra/providers/prisma/prisma.service'
 
 import { SubCityHallRepository } from './sub-city-hall.repository'
@@ -21,9 +25,9 @@ export class PrismaSubCityHallRepository
   extends PrismaService
   implements SubCityHallRepository
 {
-  async create(data: CreateSubCityHallData): Promise<void> {
+  async create(data: CreateSubCityHallData): Promise<SubCityHall> {
     const { city_hall_id, email, name, observation, phone } = data
-    await this.subCityHall.create({
+    return this.subCityHall.create({
       data: { city_hall_id, email, name, observation, phone },
     })
   }
@@ -47,9 +51,6 @@ export class PrismaSubCityHallRepository
     perPage,
     searchTerm,
   }: Props): Promise<PaginatedResponse<SubCityHall>> {
-    const take = Number(perPage)
-    const skip = (Number(page) - 1) * take
-
     const conditions = deleted ? { NOT: { deleted_at: null } } : { deleted_at: null }
 
     if (cityHallId) {
@@ -66,50 +67,18 @@ export class PrismaSubCityHallRepository
         : undefined,
     } as any
 
-    const [data, totalItems] = await this.$transaction([
-      this.subCityHall.findMany({ skip, take, where }),
-      this.subCityHall.count({ where }),
-    ])
-
-    const hasPrevious = skip > 0
-    const hasNext = skip + take < totalItems
-    const totalPages = Math.ceil(totalItems / take)
-
-    return {
-      data,
-      meta: {
-        hasNext,
-        hasPrevious,
-        page,
-        perPage,
-        totalItems,
-        totalPages,
-      },
-    }
+    return paginator(this.subCityHall, { page, perPage, where })
   }
 
   async findAll({
+    deleted = false,
     page,
     perPage,
     searchTerm,
   }: PaginationParams): Promise<PaginatedResponse<SubCityHall>> {
     return this.findSubCityHalls({
       cityHallId: undefined,
-      deleted: false,
-      page,
-      perPage,
-      searchTerm,
-    })
-  }
-
-  async findAllDeleted({
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<SubCityHall>> {
-    return this.findSubCityHalls({
-      cityHallId: undefined,
-      deleted: true,
+      deleted,
       page,
       perPage,
       searchTerm,
@@ -123,20 +92,6 @@ export class PrismaSubCityHallRepository
     const result = await this.findSubCityHalls({
       cityHallId,
       deleted: false,
-      page: 1,
-      perPage: 1000,
-      searchTerm,
-    })
-    return result.data
-  }
-
-  async findAllDeletedByCityHallId(
-    cityHallId: string,
-    searchTerm: string
-  ): Promise<SubCityHall[]> {
-    const result = await this.findSubCityHalls({
-      cityHallId,
-      deleted: true,
       page: 1,
       perPage: 1000,
       searchTerm,

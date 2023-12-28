@@ -1,12 +1,13 @@
 import { CreateSubCityHallData } from 'src/contracts/sub-city-halls'
 import { CityHallEntity } from 'src/features/city-hall/city-hall.entity'
 import { InMemoryCityHallRepository } from 'src/features/city-hall/repositories/in-memory.city-hall.repository'
+import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/shared/test-helper'
 import { CityHallNotFoundError } from 'src/features/city-hall/use-cases/errors'
-import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/use-cases/test-helper'
+import { I18n } from 'src/infra/providers/i18n/i18n'
 
 import { InMemorySubCityHallRepository } from '../../repositories/in-memory.sub-city-hall.repository'
+import { CREATE_SUB_CITY_HALL_DATA } from '../../shared/test-helper'
 import { SubCityHallAlreadyExistsError } from '../errors'
-import { CREATE_SUB_CITY_HALL_DATA } from '../test-helper'
 
 import { CreateSubCityHallService } from './create-sub-city-hall.service'
 
@@ -14,16 +15,21 @@ let cityHallRepository: InMemoryCityHallRepository
 let cityHall: CityHallEntity
 
 let subCityHallRepository: InMemorySubCityHallRepository
+let i18n: I18n
 let service: CreateSubCityHallService
 
 describe('Create sub city hall', () => {
   beforeAll(async () => {
     cityHallRepository = new InMemoryCityHallRepository()
     subCityHallRepository = new InMemorySubCityHallRepository()
-    service = new CreateSubCityHallService(subCityHallRepository, cityHallRepository)
+    i18n = new I18n()
+    service = new CreateSubCityHallService(
+      subCityHallRepository,
+      cityHallRepository,
+      i18n
+    )
 
-    await cityHallRepository.create(CREATE_CITY_HALL_DATA)
-    cityHall = await cityHallRepository.findByEmail(CREATE_CITY_HALL_DATA.email)
+    cityHall = await cityHallRepository.create(CREATE_CITY_HALL_DATA)
   })
 
   beforeEach(async () => {
@@ -35,7 +41,8 @@ describe('Create sub city hall', () => {
 
   afterEach(async () => {
     const getAll = await subCityHallRepository.findAll({ page: 1, perPage: 100 })
-    const getAllDeleted = await subCityHallRepository.findAllDeleted({
+    const getAllDeleted = await subCityHallRepository.findAll({
+      deleted: true,
       page: 1,
       perPage: 100,
     })

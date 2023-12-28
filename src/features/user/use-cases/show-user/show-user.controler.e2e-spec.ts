@@ -1,37 +1,19 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import supertest from 'supertest'
+import { Supertest, supertest } from 'test/e2e.helper'
 
-import { AppModule } from 'src/app.module'
-import { AuthUserData, CreateUserData } from 'src/contracts/account'
-
-import { USERS_URL } from '../constants'
+import { USERS_URL } from '../../shared/constants'
 
 describe('Show user (E2E)', () => {
-  let api: supertest.SuperTest<supertest.Test>
-  let app: INestApplication
-
+  let api: Supertest
   let authorization: string
   const email = 'johndoe@email.com'
   const name = 'John Doe'
   const password = 'Pwd@123'
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
+    api = await supertest()
 
-    app = moduleRef.createNestApplication()
-    api = supertest(app.getHttpServer())
-
-    await app.init()
-
-    const createUserData: CreateUserData = { email, name, password }
-
-    await api.post(USERS_URL).send(createUserData)
-
-    const authUserData: AuthUserData = { email, password }
-    const authRes = await api.post('/auth').send(authUserData)
+    await api.post(USERS_URL).send({ email, name, password })
+    const authRes = await api.post('/auth').send({ email, password })
     authorization = `Bearer ${authRes.body.accessToken}`
   })
 
@@ -54,7 +36,7 @@ describe('Show user (E2E)', () => {
 
   test(`[GET] ${USERS_URL}/:id - failure`, async () => {
     const getUser = await api
-      .get(`${USERS_URL}/invalid-user-id`)
+      .get(`${USERS_URL}/invalid-user-id?lang=en`)
       .set('Authorization', authorization)
       .send()
 

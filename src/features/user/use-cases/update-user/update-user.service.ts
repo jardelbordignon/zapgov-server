@@ -3,6 +3,7 @@ import type { User } from '@prisma/client'
 
 import type { UpdateUserData } from 'src/contracts/account'
 import { Hasher } from 'src/infra/providers/cryptography/hasher/hasher'
+import { I18n } from 'src/infra/providers/i18n/i18n'
 import {
   FailureOrSuccess,
   failure,
@@ -10,6 +11,7 @@ import {
 } from 'src/infra/utils/failure-or-success-service-execute'
 
 import { UserRepository } from '../../repositories/user.repository'
+import type { UserLocaleType } from '../../shared/locales/type'
 import {
   UnauthorizedToUpdateUserError,
   UserAlreadyExistsError,
@@ -25,7 +27,8 @@ export type UpdateUserServiceResponse = FailureOrSuccess<
 export class UpdateUserService {
   constructor(
     private userRepository: UserRepository,
-    private hasher: Hasher
+    private hasher: Hasher,
+    private i18n: I18n
   ) {}
 
   async execute(
@@ -46,7 +49,7 @@ export class UpdateUserService {
         if (!currentPassword) {
           return failure(
             new UnauthorizedToUpdateUserError(
-              'Property currentPassword is required to change email or password.'
+              this.i18n.t<UserLocaleType>('currentPasswordRequired')
             )
           )
         }
@@ -58,7 +61,9 @@ export class UpdateUserService {
 
         if (!matchPassword) {
           return failure(
-            new UnauthorizedToUpdateUserError('Incorrect current password')
+            new UnauthorizedToUpdateUserError(
+              this.i18n.t<UserLocaleType>('incorrectCurrentPassword')
+            )
           )
         }
       }
@@ -69,7 +74,7 @@ export class UpdateUserService {
         if (userWithSameEmail) {
           return failure(
             new UserAlreadyExistsError(
-              `User with ${email} email address already exists.`
+              this.i18n.t<UserLocaleType>('userWithSameEmail', email)
             )
           )
         }

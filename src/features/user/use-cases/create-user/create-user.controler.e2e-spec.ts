@@ -1,34 +1,22 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import supertest from 'supertest'
+import { Supertest, supertest } from 'test/e2e.helper'
 
-import { AppModule } from 'src/app.module'
 import type { AuthUserData, CreateUserData } from 'src/contracts/account'
 
-import { AUTH_URL, USERS_URL } from '../constants'
+import { AUTH_URL, USERS_URL } from '../../shared/constants'
 
 describe('Create user (E2E)', () => {
-  let api: supertest.SuperTest<supertest.Test>
-  let app: INestApplication
+  let api: Supertest
 
   const email = 'johndoe@email.com'
   const name = 'John Doe'
   const password = 'Pwd@123'
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    api = supertest(app.getHttpServer())
-
-    await app.init()
+    api = await supertest()
   })
 
   test(`[POST] ${USERS_URL} - success`, async () => {
-    const createUserData: CreateUserData = { email, name, password }
-    const response = await api.post(USERS_URL).send(createUserData)
+    const response = await api.post(USERS_URL).send({ email, name, password })
     expect(response.statusCode).toBe(201)
   })
 
@@ -56,7 +44,7 @@ describe('Create user (E2E)', () => {
   test(`[POST] ${USERS_URL} - failure (same e-mail)`, async () => {
     const createUserData: CreateUserData = { email, name, password }
     await api.post(USERS_URL).send(createUserData)
-    const response = await api.post(USERS_URL).send(createUserData)
+    const response = await api.post(`${USERS_URL}?lang=en`).send(createUserData)
     expect(response.statusCode).toBe(409)
     expect(response.body).toEqual({
       error: 'Conflict',

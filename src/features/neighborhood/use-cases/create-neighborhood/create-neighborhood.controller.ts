@@ -16,7 +16,7 @@ import { CityHallNotFoundError } from 'src/features/city-hall/use-cases/errors'
 import { SubCityHallNotFoundError } from 'src/features/sub-city-hall/use-cases/errors'
 import { ZodObj, ZodValidationPipe } from 'src/infra/pipes/zod-validation.pipe'
 
-import { NEIGHBORHOODS_URL } from '../constants'
+import { NEIGHBORHOODS_URL } from '../../shared/constants'
 import { NeighborhoodAlreadyExistsError } from '../errors'
 
 import { CreateNeighborhoodService } from './create-neighborhood.service'

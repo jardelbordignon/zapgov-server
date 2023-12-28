@@ -1,7 +1,11 @@
 import type { User } from '@prisma/client'
 
 import { CreateUserData, UpdateUserData } from 'src/contracts/account'
-import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
+import {
+  PaginatedResponse,
+  PaginationParams,
+  paginator,
+} from 'src/infra/providers/pagination'
 import { PrismaService } from 'src/infra/providers/prisma/prisma.service'
 
 import { UserRepository } from './user.repository'
@@ -16,23 +20,12 @@ export class PrismaUserRepository extends PrismaService implements UserRepositor
     await this.user.delete({ where: { id } })
   }
 
-  // async findAll(): Promise<User[]> {
-  //   return this.user.findMany({ where: { deleted_at: null } })
-  // }
-
-  // async findAllDeleted(): Promise<User[]> {
-  //   return this.user.findMany({ where: { NOT: { deleted_at: null } } })
-  // }
-
-  private async findUsers(
-    page: number,
-    perPage: number,
-    deleted: boolean,
-    searchTerm?: string
-  ): Promise<PaginatedResponse<User>> {
-    const take = Number(perPage)
-    const skip = (Number(page) - 1) * take
-
+  async findAll({
+    deleted,
+    page,
+    perPage,
+    searchTerm,
+  }: PaginationParams): Promise<PaginatedResponse<User>> {
     const deletedCondition = deleted
       ? { NOT: { deleted_at: null } }
       : { deleted_at: null }
@@ -47,42 +40,7 @@ export class PrismaUserRepository extends PrismaService implements UserRepositor
         : undefined,
     } as any
 
-    const [data, totalItems] = await this.$transaction([
-      this.user.findMany({ skip, take, where }),
-      this.user.count({ where }),
-    ])
-
-    const hasPrevious = skip > 0
-    const hasNext = skip + take < totalItems
-    const totalPages = Math.ceil(totalItems / take)
-
-    return {
-      data,
-      meta: {
-        hasNext,
-        hasPrevious,
-        page,
-        perPage,
-        totalItems,
-        totalPages,
-      },
-    }
-  }
-
-  async findAll({
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<User>> {
-    return this.findUsers(page, perPage, false, searchTerm)
-  }
-
-  async findAllDeleted({
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<User>> {
-    return this.findUsers(page, perPage, true, searchTerm)
+    return paginator(this.user, { page, perPage, where })
   }
 
   async findByEmail(email: string): Promise<User | null> {

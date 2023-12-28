@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 
 import { FileStorageModule } from 'src/infra/providers/file-storage/file-storage.module'
+import { I18nModule } from 'src/infra/providers/i18n/i18n.module'
 import { PrismaModule } from 'src/infra/providers/prisma/prisma.module'
 
 import { CityHallRepository } from './repositories/city-hall.repository'
@@ -24,7 +25,7 @@ import { UpdateCityHallService } from './use-cases/update-city-hall/update-city-
     ShowCityHallController,
     UpdateCityHallController,
   ],
-  imports: [PrismaModule, FileStorageModule],
+  imports: [PrismaModule, FileStorageModule, I18nModule],
   providers: [
     {
       provide: CityHallRepository,

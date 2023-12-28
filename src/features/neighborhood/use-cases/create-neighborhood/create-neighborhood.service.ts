@@ -5,6 +5,7 @@ import { CityHallRepository } from 'src/features/city-hall/repositories/city-hal
 import { CityHallNotFoundError } from 'src/features/city-hall/use-cases/errors'
 import { SubCityHallRepository } from 'src/features/sub-city-hall/repositories/sub-city-hall.repository'
 import { SubCityHallNotFoundError } from 'src/features/sub-city-hall/use-cases/errors'
+import { I18n } from 'src/infra/providers/i18n/i18n'
 import {
   FailureOrSuccess,
   failure,
@@ -24,7 +25,8 @@ export class CreateNeighborhoodService {
   constructor(
     private neighborhoodRepository: NeighborhoodRepository,
     private cityHallRepository: CityHallRepository,
-    private subCityHallRepository: SubCityHallRepository
+    private subCityHallRepository: SubCityHallRepository,
+    private i18n: I18n
   ) {}
 
   async execute(
@@ -35,13 +37,13 @@ export class CreateNeighborhoodService {
     const cityHall = await this.cityHallRepository.findById(city_hall_id)
 
     if (!cityHall) {
-      return failure(new CityHallNotFoundError())
+      return failure(new CityHallNotFoundError(this.i18n.t('cityHallNotFound')))
     }
 
     const subCityHall = await this.subCityHallRepository.findById(sub_city_hall_id)
 
     if (!subCityHall) {
-      return failure(new SubCityHallNotFoundError())
+      return failure(new SubCityHallNotFoundError(this.i18n.t('subCityHallNotFound')))
     }
 
     const neighborhoodWithSameName =
@@ -53,11 +55,13 @@ export class CreateNeighborhoodService {
     ) {
       return failure(
         new NeighborhoodAlreadyExistsError(
-          `Neighborhood with ${name} name already exists in the sub city hall.`
+          this.i18n.t('neighborhoodWithSameName', name)
         )
       )
     }
 
-    return success(await this.neighborhoodRepository.create(data))
+    await this.neighborhoodRepository.create(data)
+
+    return success(undefined)
   }
 }

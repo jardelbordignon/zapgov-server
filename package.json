@@ -19,6 +19,7 @@
     "test:cov": "vitest run --coverage",
     "test:debug": "vitest --inspect-brk --inspect --logHeapUsage --threads=false",
     "test:e2e": "PUBLIC_DIRECTORY='./test/public' vitest run --config ./vitest.config.e2e.ts",
+    "nm": "rm -rf node_modules && yarn start && yarn add sharp --ignore-engines",
     "crud": "plop --experimental-modules --plopfile plop/server/crud/plop/index.mjs"
   },
   "dependencies": {

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import type { SubCityHall } from '@prisma/client'
 
 import type { UpdateSubCityHallData } from 'src/contracts/sub-city-halls'
+import { I18n } from 'src/infra/providers/i18n/i18n'
 import {
   FailureOrSuccess,
   failure,
@@ -9,6 +10,7 @@ import {
 } from 'src/infra/utils/failure-or-success-service-execute'
 
 import { SubCityHallRepository } from '../../repositories/sub-city-hall.repository'
+import type { SubCityHallLocaleType } from '../../shared/locales/type'
 import { SubCityHallAlreadyExistsError, SubCityHallNotFoundError } from '../errors'
 
 export type UpdateSubCityHallServiceResponse = FailureOrSuccess<
@@ -18,7 +20,10 @@ export type UpdateSubCityHallServiceResponse = FailureOrSuccess<
 
 @Injectable()
 export class UpdateSubCityHallService {
-  constructor(private repository: SubCityHallRepository) {}
+  constructor(
+    private repository: SubCityHallRepository,
+    private i18n: I18n
+  ) {}
 
   async execute(
     subCityHallId: string,
@@ -27,7 +32,11 @@ export class UpdateSubCityHallService {
     const subCityHall = await this.repository.findById(subCityHallId)
 
     if (!subCityHall) {
-      return failure(new SubCityHallNotFoundError())
+      return failure(
+        new SubCityHallNotFoundError(
+          this.i18n.t<SubCityHallLocaleType>('subCityHallNotFound')
+        )
+      )
     }
 
     if (data.email && data.email !== subCityHall.email) {
@@ -36,7 +45,7 @@ export class UpdateSubCityHallService {
       if (cityHallWithSameEmail) {
         return failure(
           new SubCityHallAlreadyExistsError(
-            `Sub city hall with ${data.email} email address already exists.`
+            this.i18n.t<SubCityHallLocaleType>('subCityHallWithSameEmail', data.email)
           )
         )
       }

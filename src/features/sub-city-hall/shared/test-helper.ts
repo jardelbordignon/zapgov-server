@@ -1,6 +1,8 @@
+import supertest from 'supertest'
+
 import { CreateSubCityHallData } from 'src/contracts/sub-city-halls'
-import { getCityHallId } from 'src/features/city-hall/use-cases/test-helper'
-import { getUserAuthorization } from 'src/features/user/use-cases/test-helper'
+import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
+import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
 import { SUB_CITY_HALLS_URL } from './constants'
 
@@ -14,7 +16,10 @@ export const CREATE_SUB_CITY_HALL_DATA: CreateSubCityHallData = {
   phone: '54 3333 3333',
 }
 
-export const getSubCityHallId = async (api: any) => {
+export const getSubCityHallId = async (api: supertest.SuperTest<supertest.Test>) => {
+  if (!api) {
+    console.error('No super test')
+  }
   const authorization = await getUserAuthorization(api)
   const city_hall_id = await getCityHallId(api)
 
