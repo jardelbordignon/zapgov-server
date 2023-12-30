@@ -39,6 +39,7 @@ model CityHall {
   deleted_at     DateTime?
   sub_city_halls SubCityHall[]
   neighborhoods  Neighborhood[]
+  wa_accounts    WaAccount[]
 
   @@map("city_halls")
 }
@@ -74,4 +75,18 @@ model Neighborhood {
   deleted_at       DateTime?
 
   @@map("neighborhoods")
+}
+
+model WaAccount {
+  id           String    @id @default(uuid())
+  city_hall_id String
+  city_hall    CityHall  @relation(fields: [city_hall_id], references: [id])
+  acronym      String
+  phone        String    @unique
+  contacts_qty Int       @default(0)
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  deleted_at   DateTime?
+
+  @@map("wa_accounts")
 }

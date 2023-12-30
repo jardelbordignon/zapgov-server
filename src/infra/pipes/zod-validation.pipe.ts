@@ -40,9 +40,7 @@ export class ZodValidationPipe implements PipeTransform {
     if (!value) return
 
     // If it is a file, return it without validation
-    if (value && typeof value === 'object' && 'fieldname' in value) {
-      return value
-    }
+    if (typeof value === 'object' && 'fieldname' in value) return value
 
     try {
       return this.schema.parse(value)
