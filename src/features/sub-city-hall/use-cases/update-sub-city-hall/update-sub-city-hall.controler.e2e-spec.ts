@@ -9,7 +9,7 @@ import {
 } from '../../shared/test-helper'
 import { SubCityHallEntity } from '../../sub-city-hall.entity'
 
-describe('Update user (E2E)', () => {
+describe('Update sub city hall (E2E)', () => {
   let api: Supertest
   let authorization: string
   let city_hall_id: string

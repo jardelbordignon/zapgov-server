@@ -1,18 +1,15 @@
-import { randomUUID } from 'node:crypto'
-
 import { Supertest, supertest } from 'test/e2e.helper'
 
 import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
 import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
 import { CREATE_WA_ACCOUNT_DATA, WA_ACCOUNT_URL } from '../../shared/test-helper'
-import { WaAccountEntity } from '../../wa-account.entity'
 
 describe('Update whatsapp account (E2E)', () => {
   let api: Supertest
   let authorization: string
   let city_hall_id: string
-  let waAccount: WaAccountEntity
+  let wa_account_id: string
 
   const getAll = async () => {
     const response = await api
@@ -26,9 +23,7 @@ describe('Update whatsapp account (E2E)', () => {
     api = await supertest()
     authorization = await getUserAuthorization(api)
     city_hall_id = await getCityHallId(api)
-  })
 
-  beforeEach(async () => {
     await api
       .post(WA_ACCOUNT_URL)
       .set('Authorization', authorization)
@@ -38,16 +33,16 @@ describe('Update whatsapp account (E2E)', () => {
       })
 
     const getWaAccounts = await getAll()
-    waAccount = getWaAccounts[0]
+    wa_account_id = getWaAccounts[0].id
   })
 
   test(`[PUT] ${WA_ACCOUNT_URL} - success`, async () => {
     const response = await api
-      .put(`${WA_ACCOUNT_URL}/${waAccount.id}`)
+      .put(`${WA_ACCOUNT_URL}/${wa_account_id}`)
       .set('Authorization', authorization)
       .send({ acronym: 'TEST' })
 
-    console.log(response.body)
+    console.log('response.body', response.body)
 
     expect(response.statusCode).toBe(200)
     expect(response.body).toEqual(expect.objectContaining({ acronym: 'TEST' }))

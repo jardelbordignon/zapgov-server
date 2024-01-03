@@ -45,8 +45,6 @@ export class PrismaWaAccountRepository
       ? { NOT: { deleted_at: null } }
       : { deleted_at: null }
 
-    console.log('searchTerm', searchTerm)
-
     const where = {
       ...deletedCondition,
       OR: searchTerm
@@ -54,7 +52,7 @@ export class PrismaWaAccountRepository
         : undefined,
     } as any
 
-    return paginator(this.cityHall, { page, perPage, where })
+    return paginator(this.waAccount, { page, perPage, where })
   }
 
   async update(id: string, data: UpdateWaAccountData): Promise<WaAccountEntity> {

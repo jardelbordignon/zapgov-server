@@ -15,8 +15,8 @@ import { ZodObject, z } from 'zod'
 import type { UpdateSubCityHallData } from 'src/contracts/sub-city-halls'
 import { ZodObj } from 'src/infra/pipes/zod-validation.pipe'
 
-import { SubCityHallEntity } from '../../sub-city-hall.entity'
 import { SUB_CITY_HALLS_URL } from '../../shared/constants'
+import { SubCityHallEntity } from '../../sub-city-hall.entity'
 import { SubCityHallAlreadyExistsError, SubCityHallNotFoundError } from '../errors'
 
 import { UpdateSubCityHallService } from './update-sub-city-hall.service'

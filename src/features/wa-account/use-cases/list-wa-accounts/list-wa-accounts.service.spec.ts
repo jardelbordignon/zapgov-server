@@ -10,7 +10,7 @@ let repository: InMemoryWaAccountRepository
 let service: ListWaAccountsService
 let city_hall_id: string
 
-const itemNames = ['A', 'B', 'C']
+const itemNames = ['AB1', 'CD2', 'EF3']
 
 describe('List city-halls', () => {
   beforeAll(async () => {
@@ -37,9 +37,9 @@ describe('List city-halls', () => {
     expect(result.value?.data.length).toBe(itemNames.length)
     expect(result.value?.data).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ acronym: 'A' }),
-        expect.objectContaining({ acronym: 'B' }),
-        expect.objectContaining({ acronym: 'C' }),
+        expect.objectContaining({ acronym: 'AB1' }),
+        expect.objectContaining({ acronym: 'CD2' }),
+        expect.objectContaining({ acronym: 'EF3' }),
       ])
     )
   })
@@ -54,7 +54,7 @@ describe('List city-halls', () => {
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(1)
     expect(result.value?.data).toEqual(
-      expect.arrayContaining([expect.objectContaining({ acronym: 'A' })])
+      expect.arrayContaining([expect.objectContaining({ acronym: 'AB1' })])
     )
   })
 })
