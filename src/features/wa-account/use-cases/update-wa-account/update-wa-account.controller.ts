@@ -9,7 +9,7 @@ import {
   NotFoundException,
   Param,
   Put,
-  //  UsePipes,
+  UsePipes,
 } from '@nestjs/common'
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ZodObject, z } from 'zod'
@@ -19,7 +19,7 @@ import { CityHallNotFoundError } from 'src/features/city-hall/use-cases/errors'
 import {
   ZodObj,
   ZodValidationError,
-  //  ZodValidationPipe,
+  ZodValidationPipe,
 } from 'src/infra/pipes/zod-validation.pipe'
 
 import { WA_ACCOUNT_URL } from '../../shared/constants'
@@ -41,7 +41,7 @@ const updateWaAccountZodObject = z.object({
 const updateWaAccountOpenApiSchema = generateSchema(updateWaAccountZodObject)
 
 @Controller(WA_ACCOUNT_URL)
-//@UsePipes(new ZodValidationPipe(updateWaAccountZodObject))
+@UsePipes(new ZodValidationPipe(updateWaAccountZodObject))
 export class UpdateWaAccountController {
   constructor(private service: UpdateWaAccountService) {}
 

@@ -14,7 +14,11 @@ import { ZodObject, z } from 'zod'
 import type { CreateNeighborhoodData } from 'src/contracts/neighborhoods'
 import { CityHallNotFoundError } from 'src/features/city-hall/use-cases/errors'
 import { SubCityHallNotFoundError } from 'src/features/sub-city-hall/use-cases/errors'
-import { ZodObj, ZodValidationPipe } from 'src/infra/pipes/zod-validation.pipe'
+import {
+  ZodObj,
+  ZodValidationError,
+  ZodValidationPipe,
+} from 'src/infra/pipes/zod-validation.pipe'
 
 import { NEIGHBORHOODS_URL } from '../../shared/constants'
 import { NeighborhoodAlreadyExistsError } from '../errors'
@@ -45,6 +49,11 @@ export class CreateNeighborhoodController {
   @ApiBearerAuth()
   @ApiBody({ schema: createNeighborhoodOpenApiSchema as any })
   @ApiResponse({ description: 'Neighborhood registered successful', status: 201 })
+  @ApiResponse({
+    description: 'When the input data is invalid',
+    schema: { example: ZodValidationError.example('name') },
+    status: 400,
+  })
   @ApiResponse({
     description: 'When the linked city hall or sub city hall is not found',
     schema: { example: new CityHallNotFoundError() },

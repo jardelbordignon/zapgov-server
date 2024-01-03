@@ -1,4 +1,4 @@
-import { BadRequestException, PipeTransform } from '@nestjs/common'
+import { ArgumentMetadata, BadRequestException, PipeTransform } from '@nestjs/common'
 import { ZodError, ZodSchema, ZodType } from 'zod'
 
 export type ZodObj<T extends Record<PropertyKey, unknown>> = {
@@ -36,11 +36,13 @@ export class ZodValidationError extends BadRequestException {
 export class ZodValidationPipe implements PipeTransform {
   constructor(private schema: ZodSchema) {}
 
-  transform(value: unknown) {
+  transform(value: unknown, metadata: ArgumentMetadata) {
     if (!value) return
 
-    // If it is a file, return it without validation
-    if (typeof value === 'object' && 'fieldname' in value) return value
+    const isNotBodyParam = metadata.type !== 'body'
+    const isFile = typeof value === 'object' && 'fieldname' in value
+
+    if (isNotBodyParam || isFile) return value
 
     try {
       return this.schema.parse(value)

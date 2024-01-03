@@ -7,6 +7,7 @@ import {
   NotFoundException,
   Param,
   Put,
+  UsePipes,
   //UsePipes,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
@@ -16,6 +17,7 @@ import type { UpdateCityHallData } from 'src/contracts/city-halls'
 import {
   ZodObj,
   ZodValidationError,
+  ZodValidationPipe,
   //ZodValidationPipe,
 } from 'src/infra/pipes/zod-validation.pipe'
 import {
@@ -72,7 +74,7 @@ export class UpdateCityHallController {
     status: 409,
   })
   @FileInterceptor()
-  //@UsePipes(new ZodValidationPipe(updateCityHallZodObject))
+  @UsePipes(new ZodValidationPipe(updateCityHallZodObject))
   @Put('/:id')
   async handleUpdateByCityHallId(
     @Param('id') cityHallId: string,

@@ -1,4 +1,4 @@
-import { generateSchema } from '@anatine/zod-openapi'
+import { extendZodWithOpenApi, generateSchema } from '@anatine/zod-openapi'
 import {
   BadRequestException,
   Body,
@@ -13,7 +13,7 @@ import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ZodObject, z } from 'zod'
 
 import type { UpdateNeighborhoodData } from 'src/contracts/neighborhoods'
-import { ZodObj } from 'src/infra/pipes/zod-validation.pipe'
+import { ZodObj, ZodValidationError } from 'src/infra/pipes/zod-validation.pipe'
 
 import { NeighborhoodEntity } from '../../neighborhood.entity'
 import { NEIGHBORHOODS_URL } from '../../shared/constants'
@@ -23,7 +23,7 @@ import { UpdateNeighborhoodService } from './update-neighborhood.service'
 
 type UpdateNeighborhoodBodySchema = ZodObject<ZodObj<UpdateNeighborhoodData>>
 
-// extendZodWithOpenApi(z)
+extendZodWithOpenApi(z)
 
 const updateNeighborhoodZodObject = z.object({
   deleted_at: z.date().optional(),
@@ -32,18 +32,6 @@ const updateNeighborhoodZodObject = z.object({
   observation: z.string().optional().openapi({ example: 'Some observation' }),
   phone: z.string().optional().openapi({ example: '54 3333 3333' }),
 }) as UpdateNeighborhoodBodySchema
-
-// const updateNeighborhoodValidationPipe = new ZodValidationPipe(
-//   updateNeighborhoodZodObject.superRefine(({ currentPassword, email, password }, ctx) => {
-//     if ((email || password) && !currentPassword) {
-//       ctx.addIssue({
-//         code: 'custom',
-//         message: 'currentPassword if required to update email or password',
-//         path: ['currentPassword'],
-//       })
-//     }
-//   })
-// )
 
 const createNeighborhoodOpenApiSchema = generateSchema(updateNeighborhoodZodObject)
 
@@ -55,6 +43,11 @@ function UpdateNeighborhoodApiDecorators() {
       description: 'Sub city hall updated successful',
       status: 200,
       type: NeighborhoodEntity,
+    }),
+    ApiResponse({
+      description: 'When the input data is invalid',
+      schema: { example: ZodValidationError.example('email') },
+      status: 400,
     }),
     ApiResponse({
       description: 'When a neighborhood is not found',

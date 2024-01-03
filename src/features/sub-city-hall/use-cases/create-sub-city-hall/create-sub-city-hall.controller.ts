@@ -13,7 +13,11 @@ import { ZodObject, z } from 'zod'
 
 import type { CreateSubCityHallData } from 'src/contracts/sub-city-halls'
 import { CityHallNotFoundError } from 'src/features/city-hall/use-cases/errors'
-import { ZodObj, ZodValidationPipe } from 'src/infra/pipes/zod-validation.pipe'
+import {
+  ZodObj,
+  ZodValidationError,
+  ZodValidationPipe,
+} from 'src/infra/pipes/zod-validation.pipe'
 
 import { SUB_CITY_HALLS_URL } from '../../shared/constants'
 import { SubCityHallAlreadyExistsError } from '../errors'
@@ -43,6 +47,11 @@ export class CreateSubCityHallController {
   @ApiBearerAuth()
   @ApiBody({ schema: createSubCityHallOpenApiSchema as any })
   @ApiResponse({ description: 'Sub city hall registered successful', status: 201 })
+  @ApiResponse({
+    description: 'When the input data is invalid',
+    schema: { example: ZodValidationError.example('email') },
+    status: 400,
+  })
   @ApiResponse({
     description: 'When the linked city hall is not found',
     schema: { example: new CityHallNotFoundError() },

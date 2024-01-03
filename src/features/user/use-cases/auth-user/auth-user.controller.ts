@@ -12,7 +12,11 @@ import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ZodObject, z } from 'zod'
 
 import type { AuthUserData, AuthUserResponse } from 'src/contracts/account'
-import { ZodObj, ZodValidationPipe } from 'src/infra/pipes/zod-validation.pipe'
+import {
+  ZodObj,
+  ZodValidationError,
+  ZodValidationPipe,
+} from 'src/infra/pipes/zod-validation.pipe'
 import { AllowUnauthenticated } from 'src/infra/providers/auth/authentication.guard'
 
 import { AUTH_URL } from '../../shared/constants'
@@ -40,6 +44,11 @@ export class AuthUserController {
   @ApiTags('User')
   @ApiBody({ schema: authUserOpenApiSchema as any })
   @ApiResponse({ description: 'Authentication successful', status: 200 })
+  @ApiResponse({
+    description: 'When the input data is invalid',
+    schema: { example: ZodValidationError.example('email') },
+    status: 400,
+  })
   @ApiResponse({
     description: 'When wrong email and/or password',
     schema: { example: new WrongCredentialsError() },

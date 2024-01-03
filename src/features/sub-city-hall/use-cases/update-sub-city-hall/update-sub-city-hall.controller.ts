@@ -1,4 +1,4 @@
-import { generateSchema } from '@anatine/zod-openapi'
+import { extendZodWithOpenApi, generateSchema } from '@anatine/zod-openapi'
 import {
   BadRequestException,
   Body,
@@ -7,13 +7,14 @@ import {
   NotFoundException,
   Param,
   Put,
+  UsePipes,
   applyDecorators,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ZodObject, z } from 'zod'
 
 import type { UpdateSubCityHallData } from 'src/contracts/sub-city-halls'
-import { ZodObj } from 'src/infra/pipes/zod-validation.pipe'
+import { ZodObj, ZodValidationPipe } from 'src/infra/pipes/zod-validation.pipe'
 
 import { SUB_CITY_HALLS_URL } from '../../shared/constants'
 import { SubCityHallEntity } from '../../sub-city-hall.entity'
@@ -23,7 +24,7 @@ import { UpdateSubCityHallService } from './update-sub-city-hall.service'
 
 type UpdateSubCityHallBodySchema = ZodObject<ZodObj<UpdateSubCityHallData>>
 
-// extendZodWithOpenApi(z)
+extendZodWithOpenApi(z)
 
 const updateSubCityHallZodObject = z.object({
   deleted_at: z.date().optional(),
@@ -33,24 +34,12 @@ const updateSubCityHallZodObject = z.object({
   phone: z.string().optional().openapi({ example: '54 3333 3333' }),
 }) as UpdateSubCityHallBodySchema
 
-// const updateSubCityHallValidationPipe = new ZodValidationPipe(
-//   updateSubCityHallZodObject.superRefine(({ currentPassword, email, password }, ctx) => {
-//     if ((email || password) && !currentPassword) {
-//       ctx.addIssue({
-//         code: 'custom',
-//         message: 'currentPassword if required to update email or password',
-//         path: ['currentPassword'],
-//       })
-//     }
-//   })
-// )
-
-const createSubCityHallOpenApiSchema = generateSchema(updateSubCityHallZodObject)
+const updateSubCityHallOpenApiSchema = generateSchema(updateSubCityHallZodObject)
 
 function UpdateSubCityHallApiDecorators() {
   return applyDecorators(
     ApiBearerAuth(),
-    ApiBody({ schema: createSubCityHallOpenApiSchema as any }),
+    ApiBody({ schema: updateSubCityHallOpenApiSchema as any }),
     ApiResponse({
       description: 'Sub city hall updated successful',
       status: 200,
@@ -71,7 +60,7 @@ function UpdateSubCityHallApiDecorators() {
 
 @ApiTags('SubCityHall')
 @Controller(SUB_CITY_HALLS_URL)
-//@UsePipes(updateSubCityHallValidationPipe)
+@UsePipes(new ZodValidationPipe(updateSubCityHallZodObject))
 export class UpdateSubCityHallController {
   constructor(private updateSubCityHallService: UpdateSubCityHallService) {}
 

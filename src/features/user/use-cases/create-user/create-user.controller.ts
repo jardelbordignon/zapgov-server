@@ -12,7 +12,11 @@ import { Role } from '@prisma/client'
 import { ZodObject, z } from 'zod'
 
 import type { CreateUserData } from 'src/contracts/account'
-import { ZodObj, ZodValidationPipe } from 'src/infra/pipes/zod-validation.pipe'
+import {
+  ZodObj,
+  ZodValidationError,
+  ZodValidationPipe,
+} from 'src/infra/pipes/zod-validation.pipe'
 import { AllowUnauthenticated } from 'src/infra/providers/auth/authentication.guard'
 
 import { USERS_URL } from '../../shared/constants'
@@ -41,6 +45,11 @@ export class CreateUserController {
   @ApiTags('User')
   @ApiBody({ schema: createUserOpenApiSchema as any })
   @ApiResponse({ description: 'User created successful', status: 201 })
+  @ApiResponse({
+    description: 'When the input data is invalid',
+    schema: { example: ZodValidationError.example('email') },
+    status: 400,
+  })
   @ApiResponse({
     description: 'When an user with same email address already exists',
     schema: { example: new UserAlreadyExistsError() },

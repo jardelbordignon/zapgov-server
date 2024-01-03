@@ -8,6 +8,7 @@ import {
   Param,
   Put,
   UnauthorizedException,
+  UsePipes,
   applyDecorators,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
@@ -15,7 +16,11 @@ import { Role } from '@prisma/client'
 import { ZodObject, z } from 'zod'
 
 import type { UpdateUserData } from 'src/contracts/account'
-import { ZodObj } from 'src/infra/pipes/zod-validation.pipe'
+import {
+  ZodObj,
+  ZodValidationError,
+  ZodValidationPipe,
+} from 'src/infra/pipes/zod-validation.pipe'
 import { CurrentUser } from 'src/infra/providers/auth/current-user.decorator'
 import { omitObjectProperties } from 'src/infra/utils/omit-object-properties'
 
@@ -45,9 +50,11 @@ const updateUserZodObject = z.object({
 //   updateUserZodObject.superRefine(({ currentPassword, email, password }, ctx) => {
 //     if ((email || password) && !currentPassword) {
 //       ctx.addIssue({
-//         code: 'custom',
-//         message: 'currentPassword if required to update email or password',
+//         code: 'invalid_type',
+//         expected: 'string',
+//         message: 'currentPassword is required to update email or password',
 //         path: ['currentPassword'],
+//         received: typeof currentPassword,
 //       })
 //     }
 //   })
@@ -65,6 +72,11 @@ function UpdateUserApiDecorators() {
       type: UserEntity,
     }),
     ApiResponse({
+      description: 'When the input data is invalid',
+      schema: { example: ZodValidationError.example() },
+      status: 400,
+    }),
+    ApiResponse({
       description:
         'When trying to edit email and/or password without correctly entering currentPassword,',
       schema: { example: new UnauthorizedToUpdateUserError() },
@@ -79,13 +91,13 @@ function UpdateUserApiDecorators() {
       description: 'When an user with same email address already exists',
       schema: { example: new UserAlreadyExistsError() },
       status: 409,
-    })
+    }),
+    UsePipes(new ZodValidationPipe(updateUserZodObject))
   )
 }
 
 @ApiTags('User')
 @Controller(USERS_URL)
-//@UsePipes(updateUserValidationPipe)
 export class UpdateUserController {
   constructor(private updateUserService: UpdateUserService) {}
 

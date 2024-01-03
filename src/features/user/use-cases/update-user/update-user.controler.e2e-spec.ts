@@ -6,8 +6,8 @@ import { AUTH_URL, USERS_URL } from '../../shared/constants'
 
 describe('Update user (E2E)', () => {
   let api: Supertest
-
   let authorization: string
+
   const adminEmail = 'admin@email.com'
   const adminName = 'Admin User'
   const email = 'johndoe@email.com'
@@ -93,6 +93,20 @@ describe('Update user (E2E)', () => {
         'The property currentPassword is required to change email or password.',
       statusCode: 401,
     })
+    // expect(response.statusCode).toBe(400)
+    // expect(response.body).toEqual({
+    //   details: [
+    //     {
+    //       code: 'invalid_type',
+    //       expected: 'string',
+    //       field: 'currentPassword',
+    //       message: 'currentPassword is required to update email or password',
+    //       received: 'undefined',
+    //     },
+    //   ],
+    //   error: 'InputData',
+    //   statusCode: 400,
+    // })
   })
 
   test(`[PUT] ${USERS_URL}/:userId - success (ADMIN)`, async () => {
