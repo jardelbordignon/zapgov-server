@@ -50,24 +50,10 @@ export class InMemoryWaAccountRepository implements WaAccountRepository {
     return item || null
   }
 
-  async findAll({
-    deleted,
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<WaAccountEntity>> {
-    let waAccounts = this.waAccounts.filter(({ deleted_at }) =>
-      deleted ? deleted_at : !deleted_at
-    )
-
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase()
-      waAccounts = waAccounts.filter(({ acronym }) =>
-        acronym.toLowerCase().includes(term)
-      )
-    }
-
-    return inMemoryPaginator(waAccounts, page, perPage)
+  async findAll(
+    params?: PaginationParams
+  ): Promise<PaginatedResponse<WaAccountEntity>> {
+    return inMemoryPaginator(this.waAccounts, params)
   }
 
   async update(id: string, data: UpdateWaAccountData): Promise<WaAccountEntity> {

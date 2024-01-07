@@ -10,7 +10,7 @@ export abstract class WaAccountRepository {
   abstract findByAcronym(acronym: string): Promise<WaAccountEntity | null>
   abstract findByPhone(phone: string): Promise<WaAccountEntity | null>
   abstract findAll(
-    params: PaginationParams
+    params?: PaginationParams
   ): Promise<PaginatedResponse<WaAccountEntity>>
   abstract update(id: string, data: UpdateWaAccountData): Promise<WaAccountEntity>
 }

@@ -18,7 +18,7 @@ type ListWaAccountsServiceResponse = FailureOrSuccess<
 export class ListWaAccountsService {
   constructor(private repository: WaAccountRepository) {}
 
-  async execute(params: PaginationParams): Promise<ListWaAccountsServiceResponse> {
+  async execute(params?: PaginationParams): Promise<ListWaAccountsServiceResponse> {
     const result = await this.repository.findAll(params)
 
     return success(result)

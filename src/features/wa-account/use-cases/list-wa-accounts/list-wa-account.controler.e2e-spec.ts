@@ -61,9 +61,9 @@ describe('List whatsapp account (E2E)', () => {
     )
   })
 
-  test(`[GET] ${WA_ACCOUNT_URL} search term`, async () => {
+  test(`[GET] ${WA_ACCOUNT_URL} filtered`, async () => {
     const getWaAccounts = await api
-      .get(`${WA_ACCOUNT_URL}?page=1&perPage=3&search=a`)
+      .get(`${WA_ACCOUNT_URL}?filter=acronym,city_hall_id=a,b,test`)
       .set('Authorization', authorization)
       .send()
 
@@ -76,7 +76,7 @@ describe('List whatsapp account (E2E)', () => {
           hasNext: false,
           hasPrevious: false,
           page: 1,
-          perPage: 3,
+          perPage: 20,
           totalItems: 1,
           totalPages: 1,
         },
