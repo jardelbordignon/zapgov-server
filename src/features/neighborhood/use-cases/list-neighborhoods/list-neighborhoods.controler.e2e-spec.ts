@@ -79,7 +79,7 @@ describe('List neighborhoods (E2E)', () => {
 
   test(`[GET] ${NEIGHBORHOODS_URL} search term`, async () => {
     const getNeighborhoods = await api
-      .get(`${NEIGHBORHOODS_URL}?page=1&perPage=3&search=c`)
+      .get(`${NEIGHBORHOODS_URL}?page=1&perPage=3&filter=name=c`)
       .send()
 
     expect(getNeighborhoods.statusCode).toBe(200)

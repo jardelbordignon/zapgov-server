@@ -28,10 +28,7 @@ describe('Delete neighborhood', () => {
   })
 
   afterEach(async () => {
-    const getNeighborhoods = await neighborhoodRepository.findAll({
-      page: 1,
-      perPage: 100,
-    })
+    const getNeighborhoods = await neighborhoodRepository.findAll()
     for (const subNeighborhood of getNeighborhoods.data) {
       await neighborhoodRepository.delete(subNeighborhood.id)
     }
@@ -42,10 +39,7 @@ describe('Delete neighborhood', () => {
     const result = await deleteNeighborhoodService.execute(neighborhood.id, soft)
 
     expect(result.isSuccess()).toBe(true)
-    const getNeighborhoods = await neighborhoodRepository.findAll({
-      page: 1,
-      perPage: 100,
-    })
+    const getNeighborhoods = await neighborhoodRepository.findAll()
     expect(getNeighborhoods.data.length).toBe(0)
   })
 
@@ -54,16 +48,11 @@ describe('Delete neighborhood', () => {
     const result = await deleteNeighborhoodService.execute(neighborhood.id, soft)
 
     expect(result.isSuccess()).toBe(true)
-    const getNeighborhoods = await neighborhoodRepository.findAll({
-      page: 1,
-      perPage: 100,
-    })
+    const getNeighborhoods = await neighborhoodRepository.findAll({ deleted: 'no' })
     expect(getNeighborhoods.data.length).toBe(0)
 
     const getDeletedNeighborhoods = await neighborhoodRepository.findAll({
-      deleted: true,
-      page: 1,
-      perPage: 100,
+      deleted: 'yes',
     })
     expect(getDeletedNeighborhoods.data.length).toBe(1)
     expect(getDeletedNeighborhoods.data).toEqual(

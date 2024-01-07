@@ -48,22 +48,8 @@ export class InMemoryNeighborhoodRepository implements NeighborhoodRepository {
     return item
   }
 
-  async findAll({
-    deleted,
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<Neighborhood>> {
-    let items = this.items.filter(({ deleted_at }) =>
-      deleted ? deleted_at : !deleted_at
-    )
-
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase()
-      items = items.filter(({ name }) => name.toLowerCase().includes(term))
-    }
-
-    return inMemoryPaginator(items, page, perPage)
+  async findAll(params: PaginationParams): Promise<PaginatedResponse<Neighborhood>> {
+    return inMemoryPaginator(this.items, params)
   }
 
   async update(id: string, data: UpdateNeighborhoodData): Promise<Neighborhood> {

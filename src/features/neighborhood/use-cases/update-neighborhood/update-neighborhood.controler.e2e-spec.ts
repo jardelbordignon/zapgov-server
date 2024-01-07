@@ -18,9 +18,9 @@ describe('Update user (E2E)', () => {
   let city_hall_id: string
   let sub_city_hall_id: string
 
-  const getAll = async (deleted = false): Promise<NeighborhoodEntity[]> => {
+  const getAll = async (deleted?: boolean): Promise<NeighborhoodEntity[]> => {
     let url = `${NEIGHBORHOODS_URL}?page=1&perPage=1000`
-    if (deleted) url += '&deleted=true'
+    if (deleted !== undefined) url += `&deleted=${deleted ? 'yes' : 'no'}`
     const response = await api.get(url).set('Authorization', authorization).send()
     return response.body.data
   }
@@ -78,7 +78,7 @@ describe('Update user (E2E)', () => {
 
     const name = `Updated ${CREATE_NEIGHBORHOOD_DATA.name}`
     const response = await api
-      .put(`${NEIGHBORHOODS_URL}/${item.id}`)
+      .put(`${NEIGHBORHOODS_URL}/${item?.id}`)
       .set('Authorization', authorization)
       .send({
         ...CREATE_NEIGHBORHOOD_DATA,

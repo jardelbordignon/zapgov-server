@@ -52,13 +52,7 @@ describe('Create neighborhood', () => {
 
   afterEach(async () => {
     const getAll = await neighborhoodRepository.findAll({ page: 1, perPage: 100 })
-    const getAllDeleted = await neighborhoodRepository.findAll({
-      deleted: true,
-      page: 1,
-      perPage: 100,
-    })
-    const allItems = [...getAll.data, ...getAllDeleted.data]
-    for (const item of allItems) {
+    for (const item of getAll.data) {
       await neighborhoodRepository.delete(item.id)
     }
   })

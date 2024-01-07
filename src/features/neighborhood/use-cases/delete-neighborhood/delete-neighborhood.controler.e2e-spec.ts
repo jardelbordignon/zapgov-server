@@ -19,9 +19,11 @@ describe('Delete neighborhood (E2E)', () => {
   let sub_city_hall_id: string
   let neighborhood_id: string
 
-  const getNeighborhoods = async (deleted = false): Promise<NeighborhoodEntity[]> => {
+  const getNeighborhoods = async (
+    deleted?: boolean
+  ): Promise<NeighborhoodEntity[]> => {
     let url = `${NEIGHBORHOODS_URL}?page=1&perPage=100`
-    if (deleted) url += '&deleted=true'
+    if (deleted !== undefined) url += `&deleted=${deleted ? 'yes' : 'no'}`
     const res = await api.get(url).set('Authorization', authorization).send()
     return res.body.data
   }
@@ -76,8 +78,7 @@ describe('Delete neighborhood (E2E)', () => {
 
     expect(response.statusCode).toBe(204)
 
-    const deleted = true
-    const deletedNeighborhoods = await getNeighborhoods(deleted)
+    const deletedNeighborhoods = await getNeighborhoods(true)
     expect(deletedNeighborhoods.length).toBe(0)
   })
 
@@ -89,8 +90,7 @@ describe('Delete neighborhood (E2E)', () => {
 
     expect(response.statusCode).toBe(204)
 
-    const deleted = true
-    const deletedNeighborhoods = await getNeighborhoods(deleted)
+    const deletedNeighborhoods = await getNeighborhoods(true)
     expect(deletedNeighborhoods.length).toBe(1)
   })
 

@@ -7,7 +7,7 @@ import {
 import {
   PaginatedResponse,
   PaginationParams,
-  paginator,
+  prismaPaginator,
 } from 'src/infra/providers/pagination'
 import { PrismaService } from 'src/infra/providers/prisma/prisma.service'
 
@@ -36,24 +36,8 @@ export class PrismaNeighborhoodRepository
     return this.neighborhood.findFirst({ where: { id } })
   }
 
-  async findAll({
-    deleted,
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<Neighborhood>> {
-    const deletedCondition = deleted
-      ? { NOT: { deleted_at: null } }
-      : { deleted_at: null }
-
-    const where = {
-      ...deletedCondition,
-      OR: searchTerm
-        ? [{ name: { contains: searchTerm, mode: 'insensitive' } }]
-        : undefined,
-    } as any
-
-    return paginator(this.neighborhood, { page, perPage, where })
+  async findAll(params: PaginationParams): Promise<PaginatedResponse<Neighborhood>> {
+    return prismaPaginator(this.neighborhood, params)
   }
 
   async update(id: string, data: UpdateNeighborhoodData): Promise<Neighborhood> {

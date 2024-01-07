@@ -26,14 +26,10 @@ describe('List neighborhoods', () => {
     neighborhoodRepository = new InMemoryNeighborhoodRepository()
     service = new ListNeighborhoodsService(neighborhoodRepository)
 
-    await cityHallRepository.create(CREATE_CITY_HALL_DATA)
-    const cityHall = await cityHallRepository.findByEmail(CREATE_CITY_HALL_DATA.email)
+    const cityHall = await cityHallRepository.create(CREATE_CITY_HALL_DATA)
     city_hall_id = cityHall.id
 
-    await subCityHallRepository.create(CREATE_SUB_CITY_HALL_DATA)
-    const subCityHall = await subCityHallRepository.findByEmail(
-      CREATE_SUB_CITY_HALL_DATA.email
-    )
+    const subCityHall = await subCityHallRepository.create(CREATE_SUB_CITY_HALL_DATA)
     sub_city_hall_id = subCityHall.id
 
     for (const name of neighborhoodNames) {
@@ -72,16 +68,12 @@ describe('List neighborhoods', () => {
     })
   })
 
-  it('should be able to list the searched neighborhoods', async () => {
-    const result = await service.execute({
-      page: 1,
-      perPage: 10,
-      searchTerm: 'c',
-    })
+  it('should be able to list the filtered neighborhoods', async () => {
+    const result = await service.execute({ filter: 'name=c' })
 
     expect(result.isSuccess()).toBe(true)
-    expect(result.value.data.length).toBe(1)
-    expect(result.value.data).toEqual(
+    expect(result.value?.data.length).toBe(1)
+    expect(result.value?.data).toEqual(
       expect.arrayContaining([expect.objectContaining({ name: 'Neighborhood C' })])
     )
   })
