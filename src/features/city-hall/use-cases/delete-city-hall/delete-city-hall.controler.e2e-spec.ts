@@ -9,9 +9,9 @@ describe('Delete city hall (E2E)', () => {
   let api: Supertest
   let authorization: string
 
-  const getCityHalls = async (deleted = false): Promise<CityHallEntity[]> => {
+  const getCityHalls = async (deleted?: boolean): Promise<CityHallEntity[]> => {
     let url = `${CITY_HALLS_URL}?page=1&perPage=100`
-    if (deleted) url += '&deleted=true'
+    if (deleted !== undefined) url += `&deleted=${deleted ? 'yes' : 'no'}`
     const res = await api.get(url).set('Authorization', authorization).send()
     return res.body.data
   }
@@ -76,11 +76,10 @@ describe('Delete city hall (E2E)', () => {
 
     expect(response.statusCode).toBe(204)
 
-    cityHalls = await getCityHalls()
+    cityHalls = await getCityHalls(false)
     expect(cityHalls.length).toBe(0)
 
-    const deleted = true
-    const deletedCityHalls = await getCityHalls(deleted)
+    const deletedCityHalls = await getCityHalls(true)
     expect(deletedCityHalls.length).toBe(1)
   })
 

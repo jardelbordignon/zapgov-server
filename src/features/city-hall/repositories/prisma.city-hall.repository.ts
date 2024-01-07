@@ -4,7 +4,7 @@ import { CreateCityHallData, UpdateCityHallData } from 'src/contracts/city-halls
 import {
   PaginatedResponse,
   PaginationParams,
-  paginator,
+  prismaPaginator,
 } from 'src/infra/providers/pagination'
 import { PrismaService } from 'src/infra/providers/prisma/prisma.service'
 
@@ -48,28 +48,8 @@ export class PrismaCityHallRepository
     return this.cityHall.findUnique({ include, where: { slug } })
   }
 
-  async findAll({
-    deleted,
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<CityHall>> {
-    const deletedCondition = deleted
-      ? { NOT: { deleted_at: null } }
-      : { deleted_at: null }
-
-    const where = {
-      ...deletedCondition,
-      OR: searchTerm
-        ? [
-            { name: { contains: searchTerm, mode: 'insensitive' } },
-            { email: { contains: searchTerm, mode: 'insensitive' } },
-            { slug: { contains: searchTerm, mode: 'insensitive' } },
-          ]
-        : undefined,
-    } as any
-
-    return paginator(this.cityHall, { page, perPage, where })
+  async findAll(params?: PaginationParams): Promise<PaginatedResponse<CityHall>> {
+    return prismaPaginator(this.cityHall, params)
   }
 
   async update(id: string, data: UpdateCityHallData): Promise<CityHall> {

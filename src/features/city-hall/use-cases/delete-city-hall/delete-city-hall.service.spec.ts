@@ -33,7 +33,7 @@ describe('Delete city hall', () => {
   })
 
   afterEach(async () => {
-    const getCityHalls = await cityHallRepository.findAll({ page: 1, perPage: 100 })
+    const getCityHalls = await cityHallRepository.findAll()
     for (const cityHall of getCityHalls.data) {
       await cityHallRepository.delete(cityHall.id)
     }
@@ -44,7 +44,7 @@ describe('Delete city hall', () => {
     const result = await deleteCityHallService.execute(cityHall.id, soft)
 
     expect(result.isSuccess()).toBe(true)
-    const getCityHalls = await cityHallRepository.findAll({ page: 1, perPage: 100 })
+    const getCityHalls = await cityHallRepository.findAll()
     expect(getCityHalls.data.length).toBe(0)
   })
 
@@ -53,14 +53,10 @@ describe('Delete city hall', () => {
     const result = await deleteCityHallService.execute(cityHall.id, soft)
 
     expect(result.isSuccess()).toBe(true)
-    const getCityHalls = await cityHallRepository.findAll({ page: 1, perPage: 100 })
+    const getCityHalls = await cityHallRepository.findAll({ deleted: 'no' })
     expect(getCityHalls.data.length).toBe(0)
 
-    const getDeletedCityHalls = await cityHallRepository.findAll({
-      deleted: true,
-      page: 1,
-      perPage: 100,
-    })
+    const getDeletedCityHalls = await cityHallRepository.findAll({ deleted: 'yes' })
     expect(getDeletedCityHalls.data.length).toBe(1)
     expect(getDeletedCityHalls.data).toEqual(
       expect.arrayContaining([

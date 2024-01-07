@@ -46,12 +46,8 @@ describe('List city-halls', () => {
     )
   })
 
-  it('should be able to list the searched city-halls', async () => {
-    const result = await service.execute({
-      page: 1,
-      perPage: 10,
-      searchTerm: 'u',
-    })
+  it('should be able to list the filtered city-halls', async () => {
+    const result = await service.execute({ filter: 'email,name,slug=u' })
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(2)

@@ -90,27 +90,8 @@ export class InMemoryCityHallRepository implements CityHallRepository {
     return this.handleShowCityHall(cityHall, include)
   }
 
-  async findAll({
-    deleted,
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<CityHall>> {
-    let cityHalls = this.cityHalls.filter(({ deleted_at }) =>
-      deleted ? deleted_at : !deleted_at
-    )
-
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase()
-      cityHalls = cityHalls.filter(
-        ({ email, name, slug }) =>
-          name.toLowerCase().includes(term) ||
-          slug.toLowerCase().includes(term) ||
-          email?.toLowerCase().includes(term)
-      )
-    }
-
-    return inMemoryPaginator(cityHalls, page, perPage)
+  async findAll(params?: PaginationParams): Promise<PaginatedResponse<CityHall>> {
+    return inMemoryPaginator(this.cityHalls, params)
   }
 
   async update(id: string, data: UpdateCityHallData): Promise<CityHall> {
