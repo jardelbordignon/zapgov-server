@@ -11,10 +11,6 @@ export abstract class SubCityHallRepository {
   abstract delete(id: string): Promise<void>
   abstract findByEmail(email: string): Promise<SubCityHall | null>
   abstract findById(id: string): Promise<SubCityHall | null>
-  abstract findAll(params: PaginationParams): Promise<PaginatedResponse<SubCityHall>>
-  abstract findAllByCityHallId(
-    cityHallId: string,
-    searchTerm: string
-  ): Promise<SubCityHall[]>
+  abstract findAll(params?: PaginationParams): Promise<PaginatedResponse<SubCityHall>>
   abstract update(id: string, data: UpdateSubCityHallData): Promise<SubCityHall>
 }

@@ -7,19 +7,19 @@ import {
 import {
   PaginatedResponse,
   PaginationParams,
-  paginator,
+  prismaPaginator,
 } from 'src/infra/providers/pagination'
 import { PrismaService } from 'src/infra/providers/prisma/prisma.service'
 
 import { SubCityHallRepository } from './sub-city-hall.repository'
 
-type Props = {
-  cityHallId?: string
-  deleted: boolean
-  page: number
-  perPage: number
-  searchTerm?: string
-}
+// type Props = {
+//   cityHallId?: string
+//   deleted: boolean
+//   page: number
+//   perPage: number
+//   searchTerm?: string
+// }
 
 export class PrismaSubCityHallRepository
   extends PrismaService
@@ -44,60 +44,64 @@ export class PrismaSubCityHallRepository
     return this.subCityHall.findFirst({ where: { id } })
   }
 
-  private async findSubCityHalls({
-    cityHallId,
-    deleted,
-    page,
-    perPage,
-    searchTerm,
-  }: Props): Promise<PaginatedResponse<SubCityHall>> {
-    const conditions = deleted ? { NOT: { deleted_at: null } } : { deleted_at: null }
-
-    if (cityHallId) {
-      Object.assign(conditions, { city_hall_id: cityHallId })
-    }
-
-    const where = {
-      ...conditions,
-      OR: searchTerm
-        ? [
-            { name: { contains: searchTerm, mode: 'insensitive' } },
-            { email: { contains: searchTerm, mode: 'insensitive' } },
-          ]
-        : undefined,
-    } as any
-
-    return paginator(this.subCityHall, { page, perPage, where })
+  async findAll(params?: PaginationParams): Promise<PaginatedResponse<SubCityHall>> {
+    return prismaPaginator(this.subCityHall, params)
   }
 
-  async findAll({
-    deleted = false,
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<SubCityHall>> {
-    return this.findSubCityHalls({
-      cityHallId: undefined,
-      deleted,
-      page,
-      perPage,
-      searchTerm,
-    })
-  }
+  // private async findSubCityHalls({
+  //   cityHallId,
+  //   deleted,
+  //   page,
+  //   perPage,
+  //   searchTerm,
+  // }: Props): Promise<PaginatedResponse<SubCityHall>> {
+  //   const conditions = deleted ? { NOT: { deleted_at: null } } : { deleted_at: null }
 
-  async findAllByCityHallId(
-    cityHallId: string,
-    searchTerm: string
-  ): Promise<SubCityHall[]> {
-    const result = await this.findSubCityHalls({
-      cityHallId,
-      deleted: false,
-      page: 1,
-      perPage: 1000,
-      searchTerm,
-    })
-    return result.data
-  }
+  //   if (cityHallId) {
+  //     Object.assign(conditions, { city_hall_id: cityHallId })
+  //   }
+
+  //   const where = {
+  //     ...conditions,
+  //     OR: searchTerm
+  //       ? [
+  //           { name: { contains: searchTerm, mode: 'insensitive' } },
+  //           { email: { contains: searchTerm, mode: 'insensitive' } },
+  //         ]
+  //       : undefined,
+  //   } as any
+
+  //   return prismaPaginator(this.subCityHall, { page, perPage, where })
+  // }
+
+  // async findAll({
+  //   deleted = false,
+  //   page,
+  //   perPage,
+  //   searchTerm,
+  // }: PaginationParams): Promise<PaginatedResponse<SubCityHall>> {
+  //   return this.findSubCityHalls({
+  //     cityHallId: undefined,
+  //     deleted,
+  //     page,
+  //     perPage,
+  //     searchTerm,
+  //   })
+  // }
+
+  // async findAllByCityHallId(
+  //   cityHallId: string,
+  //   searchTerm: string
+  // ): Promise<SubCityHall[]> {
+  //   const result = await this.findSubCityHalls({
+  //     cityHallId,
+  //     deleted: false,
+  //     page: 1,
+  //     perPage: 1000,
+  //     searchTerm,
+  //   })
+  //   return result.data
+  // }
 
   async update(id: string, data: UpdateSubCityHallData): Promise<SubCityHall> {
     const { city_hall_id, deleted_at, email, name, observation, phone } = data

@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
 
-import { SubCityHallEntity } from '../../sub-city-hall.entity'
 import { SUB_CITY_HALLS_URL } from '../../shared/constants'
+import { SubCityHallEntity } from '../../sub-city-hall.entity'
 import { SubCityHallNotFoundError } from '../errors'
 
 import {

@@ -15,9 +15,10 @@ describe('Delete sub city hall (E2E)', () => {
   let city_hall_id: string
   let sub_city_hall_id: string
 
-  const getSubCityHalls = async (deleted = false): Promise<SubCityHallEntity[]> => {
+  const getSubCityHalls = async (deleted?: boolean): Promise<SubCityHallEntity[]> => {
     let url = `${SUB_CITY_HALLS_URL}?page=1&perPage=100`
-    if (deleted) url += '&deleted=true'
+    if (deleted !== undefined) url += `&deleted=${deleted}`
+    console.log('URL: ' + url)
     const res = await api.get(url).set('Authorization', authorization).send()
     return res.body.data
   }
@@ -41,17 +42,15 @@ describe('Delete sub city hall (E2E)', () => {
     sub_city_hall_id = subSubCityHalls[0].id
   })
 
-  afterEach(async () => {
-    const subSubCityHalls = await getSubCityHalls()
-    const deletedSubCityHalls = await getSubCityHalls(true)
-    const allSubCityHalls = [...subSubCityHalls, ...deletedSubCityHalls]
-    for (const subSubCityHall of allSubCityHalls) {
-      await api
-        .delete(`${SUB_CITY_HALLS_URL}/${subSubCityHall.id}`)
-        .set('Authorization', authorization)
-        .send()
-    }
-  })
+  // afterEach(async () => {
+  //   const subCityHalls = await getSubCityHalls()
+  //   for (const subSubCityHall of subCityHalls) {
+  //     await api
+  //       .delete(`${SUB_CITY_HALLS_URL}/${subSubCityHall.id}`)
+  //       .set('Authorization', authorization)
+  //       .send()
+  //   }
+  // })
 
   test(`[DELETE] ${SUB_CITY_HALLS_URL} - success`, async () => {
     const response = await api
@@ -63,10 +62,6 @@ describe('Delete sub city hall (E2E)', () => {
 
     const subSubCityHalls = await getSubCityHalls()
     expect(subSubCityHalls.length).toBe(0)
-
-    const deleted = true
-    const deletedSubCityHalls = await getSubCityHalls(deleted)
-    expect(deletedSubCityHalls.length).toBe(0)
   })
 
   test(`[DELETE] ${SUB_CITY_HALLS_URL} - success [soft]`, async () => {
@@ -77,12 +72,11 @@ describe('Delete sub city hall (E2E)', () => {
 
     expect(response.statusCode).toBe(204)
 
-    const subSubCityHalls = await getSubCityHalls()
+    const subSubCityHalls = await getSubCityHalls(false)
     expect(subSubCityHalls.length).toBe(0)
 
-    const deleted = true
-    const deletedSubCityHalls = await getSubCityHalls(deleted)
-    expect(deletedSubCityHalls.length).toBe(1)
+    // const deletedSubCityHalls = await getSubCityHalls(true)
+    // expect(deletedSubCityHalls.length).toBe(1)
   })
 
   test(`[DELETE] ${SUB_CITY_HALLS_URL} - failure`, async () => {

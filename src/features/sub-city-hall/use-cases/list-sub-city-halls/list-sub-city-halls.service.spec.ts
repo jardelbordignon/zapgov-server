@@ -32,10 +32,41 @@ describe('List sub-city-halls', () => {
         name,
       })
     }
+
+    const deletedSubCityHall = await subCityHallRepository.create({
+      ...CREATE_SUB_CITY_HALL_DATA,
+      city_hall_id,
+      email: 'deleted-sub-city-hall@email.com',
+      name: 'Deleted Sub City Hall',
+    })
+    await subCityHallRepository.update(deletedSubCityHall.id, {
+      deleted_at: new Date(),
+    })
   })
 
-  it('should be able to list the sub-city-halls', async () => {
-    const result = await service.execute({ page: 1, perPage: 10 })
+  it('should be able to list the all sub-city-halls', async () => {
+    const result = await service.execute()
+
+    expect(result.isSuccess()).toBe(true)
+    expect(result.value?.data.length).toBe(4)
+    expect(result.value).toEqual({
+      data: expect.arrayContaining([
+        expect.objectContaining({ name: 'SCH A' }),
+        expect.objectContaining({ name: 'Deleted Sub City Hall' }),
+      ]),
+      meta: {
+        hasNext: false,
+        hasPrevious: false,
+        page: 1,
+        perPage: 20,
+        totalItems: 4,
+        totalPages: 1,
+      },
+    })
+  })
+
+  it('should be able to list the active sub-city-halls', async () => {
+    const result = await service.execute({ deleted: 'no' })
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(subCityHallNames.length)
@@ -53,19 +84,35 @@ describe('List sub-city-halls', () => {
         hasNext: false,
         hasPrevious: false,
         page: 1,
-        perPage: 10,
+        perPage: 20,
         totalItems: 3,
         totalPages: 1,
       },
     })
   })
 
-  it('should be able to list the searched sub-city-halls', async () => {
-    const result = await service.execute({
-      page: 1,
-      perPage: 10,
-      searchTerm: 'b',
+  it('should be able to list the deleted sub-city-halls', async () => {
+    const result = await service.execute({ deleted: 'yes' })
+
+    expect(result.isSuccess()).toBe(true)
+    expect(result.value?.data.length).toBe(1)
+    expect(result.value).toEqual({
+      data: expect.arrayContaining([
+        expect.objectContaining({ name: 'Deleted Sub City Hall' }),
+      ]),
+      meta: {
+        hasNext: false,
+        hasPrevious: false,
+        page: 1,
+        perPage: 20,
+        totalItems: 1,
+        totalPages: 1,
+      },
     })
+  })
+
+  it('should be able to list the filtered sub-city-halls', async () => {
+    const result = await service.execute({ deleted: 'no', filter: 'name=b' })
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(1)

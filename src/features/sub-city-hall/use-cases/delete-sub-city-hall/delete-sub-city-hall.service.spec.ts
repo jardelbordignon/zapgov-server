@@ -28,10 +28,7 @@ describe('Delete city hall', () => {
   })
 
   afterEach(async () => {
-    const getSubCityHalls = await subSubCityHallRepository.findAll({
-      page: 1,
-      perPage: 100,
-    })
+    const getSubCityHalls = await subSubCityHallRepository.findAll()
     for (const subSubCityHall of getSubCityHalls.data) {
       await subSubCityHallRepository.delete(subSubCityHall.id)
     }
@@ -42,10 +39,7 @@ describe('Delete city hall', () => {
     const result = await deleteSubCityHallService.execute(subCityHall.id, soft)
 
     expect(result.isSuccess()).toBe(true)
-    const getSubCityHalls = await subSubCityHallRepository.findAll({
-      page: 1,
-      perPage: 100,
-    })
+    const getSubCityHalls = await subSubCityHallRepository.findAll()
     expect(getSubCityHalls.data.length).toBe(0)
   })
 
@@ -54,16 +48,11 @@ describe('Delete city hall', () => {
     const result = await deleteSubCityHallService.execute(subCityHall.id, soft)
 
     expect(result.isSuccess()).toBe(true)
-    const getSubCityHalls = await subSubCityHallRepository.findAll({
-      page: 1,
-      perPage: 100,
-    })
+    const getSubCityHalls = await subSubCityHallRepository.findAll({ deleted: 'no' })
     expect(getSubCityHalls.data.length).toBe(0)
 
     const getDeletedSubCityHalls = await subSubCityHallRepository.findAll({
-      deleted: true,
-      page: 1,
-      perPage: 100,
+      deleted: 'yes',
     })
     expect(getDeletedSubCityHalls.data.length).toBe(1)
     expect(getDeletedSubCityHalls.data).toEqual(

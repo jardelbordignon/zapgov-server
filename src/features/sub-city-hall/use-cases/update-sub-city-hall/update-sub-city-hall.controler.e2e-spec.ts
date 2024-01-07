@@ -15,9 +15,9 @@ describe('Update sub city hall (E2E)', () => {
   let city_hall_id: string
   let sub_city_hall_id: string
 
-  const getAll = async (deleted = false): Promise<SubCityHallEntity[]> => {
+  const getAll = async (deleted?: boolean): Promise<SubCityHallEntity[]> => {
     let url = `${SUB_CITY_HALLS_URL}?page=1&perPage=1000`
-    if (deleted) url += '&deleted=true'
+    if (deleted !== undefined) url += `&deleted=${deleted ? 'yes' : 'no'}`
     const response = await api.get(url).set('Authorization', authorization).send()
     return response.body.data
   }
