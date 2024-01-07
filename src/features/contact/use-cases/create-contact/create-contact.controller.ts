@@ -8,7 +8,7 @@ import {
   Post,
   UsePipes,
 } from '@nestjs/common'
-import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ZodObject, z } from 'zod'
 
 import type { CreateContactInputData } from 'src/contracts/contacts'
@@ -18,6 +18,7 @@ import {
   ZodValidationError,
   ZodValidationPipe,
 } from 'src/infra/pipes/zod-validation.pipe'
+import { AllowUnauthenticated } from 'src/infra/providers/auth/authentication.guard'
 
 import { CONTACTS_URL } from '../../shared/constants'
 import { ContactAlreadyExistsError } from '../errors'
@@ -37,13 +38,13 @@ const createContactZodObject = z.object({
 
 const createContactOpenApiSchema = generateSchema(createContactZodObject)
 
+@AllowUnauthenticated()
 @Controller(CONTACTS_URL)
-@UsePipes(new ZodValidationPipe(createContactZodObject))
 export class CreateContactController {
   constructor(private createContactService: CreateContactService) {}
 
   @ApiTags('Contact')
-  @ApiBearerAuth()
+  //@ApiBearerAuth()
   @ApiBody({ schema: createContactOpenApiSchema as any })
   @ApiResponse({ description: 'Contact registered successful', status: 201 })
   @ApiResponse({
@@ -61,6 +62,7 @@ export class CreateContactController {
     schema: { example: new ContactAlreadyExistsError() },
     status: 409,
   })
+  @UsePipes(new ZodValidationPipe(createContactZodObject))
   @Post()
   async handle(@Body() body: CreateContactInputData): Promise<void> {
     const result = await this.createContactService.execute(body)
