@@ -11,20 +11,19 @@ import {
   ApiResponseOptions,
   getSchemaPath,
 } from '@nestjs/swagger'
-import { Prisma } from '@prisma/client'
 
 export class PaginationParams {
-  @ApiProperty({ example: 1 })
-  deleted?: boolean = false
+  @ApiProperty({ example: 'no' })
+  deleted?: 'yes' | 'no' = 'no'
 
-  @ApiProperty({ example: 1 })
-  page: number = 1
+  @ApiProperty({ example: '1' })
+  page?: string = '1'
 
-  @ApiProperty({ example: 10 })
-  perPage: number = 20
+  @ApiProperty({ example: '20' })
+  perPage?: string = '20'
 
-  @ApiProperty({ example: 'john' })
-  searchTerm?: string
+  @ApiProperty({ example: 'name,slug=data,data-x,abc' })
+  filter?: string
 }
 
 class PaginationMetadata {
@@ -53,61 +52,6 @@ export class PaginatedResponse<T> {
 
   @ApiProperty()
   meta: PaginationMetadata = new PaginationMetadata()
-}
-
-type PaginatorParams = {
-  page: number
-  perPage: number
-  where: Prisma.UserWhereInput
-}
-
-export async function paginator<T>(
-  model: any,
-  { page, perPage, where }: PaginatorParams
-): Promise<PaginatedResponse<T>> {
-  page = Number(page)
-  const take = Number(perPage)
-  const skip = (page - 1) * take
-
-  const [data, totalItems] = await Promise.all([
-    model.findMany({ skip, take, where }),
-    model.count({ where }),
-  ])
-
-  return {
-    data,
-    meta: {
-      hasNext: skip + take < totalItems,
-      hasPrevious: skip > 0,
-      page,
-      perPage: take,
-      totalItems,
-      totalPages: Math.ceil(totalItems / take),
-    },
-  }
-}
-
-export async function inMemoryPaginator(items: any[], page: number, perPage: number) {
-  const start = (page - 1) * perPage
-  const end = start + perPage
-
-  const data = items.slice(start, end)
-  const totalItems = items.length
-  const totalPages = Math.ceil(totalItems / perPage)
-  const hasPrevious = start > 0
-  const hasNext = end < totalItems
-
-  return {
-    data,
-    meta: {
-      hasNext,
-      hasPrevious,
-      page,
-      perPage,
-      totalItems,
-      totalPages,
-    },
-  }
 }
 
 export const ApiPaginatedResponse = <TModel extends Type<any>>(
@@ -140,10 +84,13 @@ export const PaginationQuery = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest()
     return {
-      deleted: request.query.deleted || false,
-      page: request.query.page || 1,
-      perPage: request.query.perPage || 20,
-      searchTerm: request.query.search || '',
+      deleted: request.query.deleted,
+      filter: request.query.filter,
+      page: request.query.page,
+      perPage: request.query.perPage,
     } as PaginationParams
   }
 )
+
+export * from './pagers/in-memory-paginator'
+export * from './pagers/prisma-paginator'
