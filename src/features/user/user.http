@@ -65,13 +65,13 @@ Content-Type: application/json
 
 # buscando os usuário ativos
 # @name list_users
-GET  {{usersUrl}}?page=1&perPage=20&search=admin
+GET  {{usersUrl}}?page=1&perPage=20&filter=name=admin
 Authorization: {{authorization}}
 ###
 
 # buscando e filtrando os usuário ativos
 # @name list_users
-GET  {{usersUrl}}?page=1&perPage=20&search=jo
+GET  {{usersUrl}}?page=1&perPage=20&filter=name=jo
 Authorization: {{authorization}}
 ###
 

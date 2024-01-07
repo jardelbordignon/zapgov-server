@@ -28,13 +28,12 @@ describe('Delete user', () => {
   })
 
   beforeEach(async () => {
-    await userRepository.create({
+    const john = await userRepository.create({
       email: johnEmail,
       name: 'John Doe',
       password: 'Pwd@123',
     })
-    const john = await userRepository.findByEmail(johnEmail)
-    await userRepository.update(john!.id, { roles: [Role.ADMIN] })
+    await userRepository.update(john.id, { roles: [Role.ADMIN] })
     loggedJohnAdminData = { roles: john!.roles, sub: john!.id }
 
     await userRepository.create({
@@ -45,7 +44,7 @@ describe('Delete user', () => {
   })
 
   afterEach(async () => {
-    const getUsers = await userRepository.findAll({ page: 1, perPage: 100 })
+    const getUsers = await userRepository.findAll()
     for (const user of getUsers.data) {
       await userRepository.delete(user.id)
     }
@@ -57,7 +56,7 @@ describe('Delete user', () => {
     const result = await deleteUserService.execute(loggedJohnAdminData, joe!.id, soft)
 
     expect(result.isSuccess()).toBe(true)
-    const getUsers = await userRepository.findAll({ page: 1, perPage: 100 })
+    const getUsers = await userRepository.findAll()
     expect(getUsers.data.length).toBe(1)
   })
 
@@ -67,13 +66,9 @@ describe('Delete user', () => {
     const result = await deleteUserService.execute(loggedJohnAdminData, joe!.id, soft)
 
     expect(result.isSuccess()).toBe(true)
-    const getUsers = await userRepository.findAll({ page: 1, perPage: 100 })
+    const getUsers = await userRepository.findAll({ deleted: 'no' })
     expect(getUsers.data.length).toBe(1)
-    const getDeletedUsers = await userRepository.findAll({
-      deleted: true,
-      page: 1,
-      perPage: 100,
-    })
+    const getDeletedUsers = await userRepository.findAll({ deleted: 'yes' })
     expect(getDeletedUsers.data.length).toBe(1)
     expect(getDeletedUsers.data).toEqual(
       expect.arrayContaining([

@@ -36,6 +36,8 @@ export class CreateUserService {
 
     data.password = await this.hasher.hash(data.password)
 
-    return success(await this.userRepository.create(data))
+    await this.userRepository.create(data)
+
+    return success(undefined)
   }
 }

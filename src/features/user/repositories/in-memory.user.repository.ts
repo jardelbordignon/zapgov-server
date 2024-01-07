@@ -14,7 +14,7 @@ import { UserRepository } from './user.repository'
 export class InMemoryUserRepository implements UserRepository {
   users: User[] = []
 
-  async create(data: CreateUserData): Promise<void> {
+  async create(data: CreateUserData): Promise<User> {
     const date = new Date()
 
     const user: User = {
@@ -27,56 +27,16 @@ export class InMemoryUserRepository implements UserRepository {
     }
 
     this.users.push(user)
+
+    return user
   }
 
   async delete(id: string): Promise<void> {
     this.users = this.users.filter(user => user.id !== id)
   }
 
-  // async findAll({ page: 1, perPage: 100 }): Promise<User[]> {
-  //   return this.users.filter(user => user.deleted_at === null)
-  // }
-
-  async findAll({
-    deleted,
-    page,
-    perPage,
-    searchTerm,
-  }: PaginationParams): Promise<PaginatedResponse<User>> {
-    let users = this.users.filter(({ deleted_at }) =>
-      deleted ? deleted_at : !deleted_at
-    )
-
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase()
-      users = users.filter(
-        ({ email, name }) =>
-          email.toLowerCase().includes(term) || name.toLowerCase().includes(term)
-      )
-    }
-
-    return inMemoryPaginator(users, page, perPage)
-
-    // const start = (page - 1) * perPage
-    // const end = start + perPage
-
-    // const data = users.slice(start, end)
-    // const totalItems = users.length
-    // const totalPages = Math.ceil(totalItems / perPage)
-    // const hasPrevious = start > 0
-    // const hasNext = end < totalItems
-
-    // return {
-    //   data,
-    //   meta: {
-    //     hasNext,
-    //     hasPrevious,
-    //     page,
-    //     perPage,
-    //     totalItems,
-    //     totalPages,
-    //   },
-    // }
+  async findAll(params?: PaginationParams): Promise<PaginatedResponse<User>> {
+    return inMemoryPaginator(this.users, params)
   }
 
   async findByEmail(email: string): Promise<User | null> {

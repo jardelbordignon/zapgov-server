@@ -22,15 +22,11 @@ describe('List users', () => {
   })
 
   it('should be able to list the users', async () => {
-    const result = await listUsersService.execute({
-      deleted: false,
-      page: 1,
-      perPage: 10,
-    })
+    const result = await listUsersService.execute({ deleted: 'no' })
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(names.length)
-    expect(result.value.data).toEqual(
+    expect(result.value?.data).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ name: 'John' }),
         expect.objectContaining({ name: 'Joe' }),
@@ -39,16 +35,12 @@ describe('List users', () => {
     )
   })
 
-  it('should be able to list the searched users', async () => {
-    const result = await listUsersService.execute({
-      page: 1,
-      perPage: 10,
-      searchTerm: 'jo',
-    })
+  it('should be able to list the filtered users', async () => {
+    const result = await listUsersService.execute({ filter: 'name,email=jo' })
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(2)
-    expect(result.value.data).toEqual(
+    expect(result.value?.data).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ name: 'John' }),
         expect.objectContaining({ name: 'Joe' }),
