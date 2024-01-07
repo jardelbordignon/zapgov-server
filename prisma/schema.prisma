@@ -87,6 +87,21 @@ model WaAccount {
   created_at   DateTime  @default(now())
   updated_at   DateTime  @updatedAt
   deleted_at   DateTime?
+  contacts     Contact[]
 
   @@map("wa_accounts")
+}
+
+model Contact {
+  id            String    @id @default(uuid())
+  wa_account_id String
+  wa_account    WaAccount @relation(fields: [wa_account_id], references: [id])
+  name          String
+  gender        String
+  phone         String    @unique
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  deleted_at    DateTime?
+
+  @@map("contacts")
 }

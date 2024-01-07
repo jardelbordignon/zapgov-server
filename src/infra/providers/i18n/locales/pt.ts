@@ -1,4 +1,5 @@
 import { ptCityHallLocale } from 'src/features/city-hall/shared/locales/pt'
+import { ptContactLocale } from 'src/features/contact/shared/locales/pt'
 import { ptNeighborhoodLocale } from 'src/features/neighborhood/shared/locales/pt'
 import { ptSubCityHallLocale } from 'src/features/sub-city-hall/shared/locales/pt'
 import { ptUserLocale } from 'src/features/user/shared/locales/pt'
@@ -12,4 +13,5 @@ export const pt: LocaleType = {
   ...ptSubCityHallLocale,
   ...ptNeighborhoodLocale,
   ...ptWaAccountLocale,
+  ...ptContactLocale,
 }

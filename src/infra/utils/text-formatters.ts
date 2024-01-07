@@ -24,3 +24,6 @@ export const toSnakeCase = (text: string): string =>
 
 export const toPascalCase = (text: string): string =>
   text.replace(/(?:^\w|[A-Z]|\b\w)/g, word => word.toUpperCase()).replace(/\s+/g, '')
+
+export const pluralize = (count: number, word: string, suffix = 's') =>
+  `${word}${count !== 1 ? suffix : ''}`
