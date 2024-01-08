@@ -1,7 +1,5 @@
 import { CreateNeighborhoodData } from 'src/contracts/neighborhoods'
-import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
 import { getSubCityHallId } from 'src/features/sub-city-hall/shared/test-helper'
-import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
 import { NEIGHBORHOODS_URL } from './constants'
 
@@ -17,9 +15,8 @@ export const CREATE_NEIGHBORHOOD_DATA: CreateNeighborhoodData = {
 }
 
 export const getNeighborhoodId = async (api: any) => {
-  const authorization = await getUserAuthorization(api)
-  const city_hall_id = await getCityHallId(api)
-  const sub_city_hall_id = await getSubCityHallId(api)
+  const { authorization, city_hall_id, sub_city_hall_id } =
+    await getSubCityHallId(api)
 
   await api
     .post(NEIGHBORHOODS_URL)

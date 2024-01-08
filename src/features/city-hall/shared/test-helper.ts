@@ -30,5 +30,7 @@ export const getCityHallId = async (api: any) => {
     .set('Authorization', authorization)
     .send()
 
-  return getCityHalls.body.data[0].id
+  const city_hall_id = getCityHalls.body.data[0].id
+
+  return { authorization, city_hall_id }
 }

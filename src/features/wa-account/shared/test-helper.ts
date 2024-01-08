@@ -1,6 +1,5 @@
 import { CreateWaAccountData } from 'src/contracts/wa-account'
 import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
-import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
 import { WA_ACCOUNT_URL } from './constants'
 
@@ -13,8 +12,7 @@ export const CREATE_WA_ACCOUNT_DATA: CreateWaAccountData = {
 }
 
 export const getWaAccountId = async (api: any) => {
-  const authorization = await getUserAuthorization(api)
-  const city_hall_id = await getCityHallId(api)
+  const { authorization, city_hall_id } = await getCityHallId(api)
   await api.post(WA_ACCOUNT_URL).set('Authorization', authorization).send()
 
   await api
@@ -30,5 +28,7 @@ export const getWaAccountId = async (api: any) => {
     .set('Authorization', authorization)
     .send()
 
-  return getWaAccounts.body.data[0].id
+  const wa_account_id = getWaAccounts.body.data[0].id
+
+  return { authorization, city_hall_id, wa_account_id }
 }

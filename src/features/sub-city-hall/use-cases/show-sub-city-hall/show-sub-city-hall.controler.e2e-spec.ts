@@ -1,7 +1,6 @@
 import { Supertest, supertest } from 'test/e2e.helper'
 
 import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
-import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
 import {
   CREATE_SUB_CITY_HALL_DATA,
@@ -15,8 +14,10 @@ describe('Show sub city hall (E2E)', () => {
 
   beforeAll(async () => {
     api = await supertest()
-    authorization = await getUserAuthorization(api)
-    city_hall_id = await getCityHallId(api)
+
+    const result = await getCityHallId(api)
+    authorization = result.authorization
+    city_hall_id = result.city_hall_id
 
     await api
       .post(SUB_CITY_HALLS_URL)

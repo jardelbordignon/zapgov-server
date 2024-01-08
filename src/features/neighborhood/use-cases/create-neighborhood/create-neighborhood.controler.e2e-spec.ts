@@ -4,9 +4,7 @@ import supertest from 'supertest'
 
 import { AppModule } from 'src/app.module'
 import { CreateNeighborhoodData } from 'src/contracts/neighborhoods'
-import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
 import { getSubCityHallId } from 'src/features/sub-city-hall/shared/test-helper'
-import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
 import { CREATE_NEIGHBORHOOD_DATA, NEIGHBORHOODS_URL } from '../../shared/test-helper'
 
@@ -29,9 +27,10 @@ describe('Create city-hall (E2E)', () => {
 
     await app.init()
 
-    authorization = await getUserAuthorization(api)
-    city_hall_id = await getCityHallId(api)
-    sub_city_hall_id = await getSubCityHallId(api)
+    const result = await getSubCityHallId(api)
+    authorization = result.authorization
+    city_hall_id = result.city_hall_id
+    sub_city_hall_id = result.sub_city_hall_id
 
     newNeighborhoodData = {
       ...CREATE_NEIGHBORHOOD_DATA,

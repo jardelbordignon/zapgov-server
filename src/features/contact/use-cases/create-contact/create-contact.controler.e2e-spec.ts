@@ -4,7 +4,6 @@ import { Supertest, supertest } from 'test/e2e.helper'
 
 import type { CreateWaAccountData } from 'src/contracts/wa-account'
 import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
-import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 import { WA_ACCOUNT_URL } from 'src/features/wa-account/shared/constants'
 
 import { CONTACTS_URL, CREATE_CONTACT_DATA } from '../../shared/test-helper'
@@ -16,8 +15,10 @@ describe('Create contact (E2E)', () => {
 
   beforeAll(async () => {
     api = await supertest()
-    authorization = await getUserAuthorization(api)
-    city_hall_id = await getCityHallId(api)
+
+    const result = await getCityHallId(api)
+    authorization = result.authorization
+    city_hall_id = result.city_hall_id
 
     const data: CreateWaAccountData = {
       acronym: 'AB1',

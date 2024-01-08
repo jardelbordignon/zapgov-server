@@ -1,7 +1,6 @@
 import { Supertest, supertest } from 'test/e2e.helper'
 
 import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
-import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 import { slugify } from 'src/infra/utils/text-formatters'
 
 import {
@@ -18,8 +17,10 @@ describe('List sub city halls (E2E)', () => {
 
   beforeAll(async () => {
     api = await supertest()
-    authorization = await getUserAuthorization(api)
-    city_hall_id = await getCityHallId(api)
+
+    const result = await getCityHallId(api)
+    authorization = result.authorization
+    city_hall_id = result.city_hall_id
 
     for (const name of subCityHallNames) {
       await api
