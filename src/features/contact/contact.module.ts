@@ -12,9 +12,11 @@ import { ContactRepository } from './repositories/contact.repository'
 import { PrismaContactRepository } from './repositories/prisma.contact.repository'
 import { CreateContactController } from './use-cases/create-contact/create-contact.controller'
 import { CreateContactService } from './use-cases/create-contact/create-contact.service'
+import { ListContactsController } from './use-cases/list-contacts/list-contacts.controller'
+import { ListContactsService } from './use-cases/list-contacts/list-contacts.service'
 
 @Module({
-  controllers: [CreateContactController],
+  controllers: [CreateContactController, ListContactsController],
   imports: [PrismaModule, I18nModule],
   providers: [
     {
@@ -30,6 +32,7 @@ import { CreateContactService } from './use-cases/create-contact/create-contact.
       useClass: PrismaWaAccountRepository,
     },
     CreateContactService,
+    ListContactsService,
   ],
 })
 export class ContactModule {}
