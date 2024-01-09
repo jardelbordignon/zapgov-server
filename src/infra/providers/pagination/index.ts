@@ -16,14 +16,17 @@ export class PaginationParams {
   @ApiProperty({ example: 'no' })
   deleted?: 'yes' | 'no' = 'no'
 
+  @ApiProperty({ example: 'name,slug=data,data-x,abc' })
+  filter?: string
+
+  @ApiProperty({ example: 'name.desc' })
+  order?: string
+
   @ApiProperty({ example: '1' })
   page?: string = '1'
 
   @ApiProperty({ example: '20' })
   perPage?: string = '20'
-
-  @ApiProperty({ example: 'name,slug=data,data-x,abc' })
-  filter?: string
 }
 
 class PaginationMetadata {
@@ -86,6 +89,7 @@ export const PaginationQuery = createParamDecorator(
     return {
       deleted: request.query.deleted,
       filter: request.query.filter,
+      order: request.query.order,
       page: request.query.page,
       perPage: request.query.perPage,
     } as PaginationParams

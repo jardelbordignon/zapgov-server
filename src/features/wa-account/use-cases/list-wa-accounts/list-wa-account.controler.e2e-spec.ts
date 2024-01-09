@@ -62,6 +62,30 @@ describe('List whatsapp account (E2E)', () => {
     )
   })
 
+  test(`[GET] ${WA_ACCOUNT_URL} sorted`, async () => {
+    let getWaAccounts = await api
+      .get(`${WA_ACCOUNT_URL}?order=acronym&perPage=1`)
+      .set('Authorization', authorization)
+      .send()
+
+    expect(getWaAccounts.body).toEqual(
+      expect.objectContaining({
+        data: expect.arrayContaining([expect.objectContaining({ acronym: 'AB1' })]),
+      })
+    )
+
+    getWaAccounts = await api
+      .get(`${WA_ACCOUNT_URL}?order=acronym.desc&perPage=1`)
+      .set('Authorization', authorization)
+      .send()
+
+    expect(getWaAccounts.body).toEqual(
+      expect.objectContaining({
+        data: expect.arrayContaining([expect.objectContaining({ acronym: 'EF3' })]),
+      })
+    )
+  })
+
   test(`[GET] ${WA_ACCOUNT_URL} filtered`, async () => {
     const getWaAccounts = await api
       .get(`${WA_ACCOUNT_URL}?filter=acronym,city_hall_id=a,b,test`)

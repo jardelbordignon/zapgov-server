@@ -4,7 +4,7 @@ import { PaginatedResponse, PaginationParams } from '..'
 
 export async function prismaPaginator<T>(
   model: any, // a prisma model
-  { deleted, filter, page = '1', perPage = '20' }: PaginationParams = {}
+  { deleted, filter, order, page = '1', perPage = '20' }: PaginationParams = {}
 ): Promise<PaginatedResponse<T>> {
   const take = Number(perPage)
   const skip = (Number(page) - 1) * take
@@ -18,6 +18,14 @@ export async function prismaPaginator<T>(
     )
   }
 
+  // https://stackoverflow.com/questions/71658510/how-can-i-get-the-all-fields-from-prisma-class
+  const Model = Prisma.dmmf.datamodel.models.find(m => m.name === model.name)
+
+  if (!Model) throw new Error(`Model ${model.name} not found.`)
+  //console.log('Model', Model)
+
+  const modelFields = Model.fields.map(field => field.name)
+
   if (typeof filter === 'string') {
     const [fieldsString, valuesString] = filter.split('=')
 
@@ -30,22 +38,16 @@ export async function prismaPaginator<T>(
 
       const OR: Record<string, any>[] = []
 
-      // https://stackoverflow.com/questions/71658510/how-can-i-get-the-all-fields-from-prisma-class
-      const Model = Prisma.dmmf.datamodel.models.find(m => m.name === model.name)
+      const notFilterableFields = ['id', 'created_at', 'updated_at', 'deleted_at']
 
-      if (!Model) throw new Error(`Model ${model.name} not found.`)
-      //console.log('Model', Model)
-
-      const excludedFields = ['id', 'created_at', 'updated_at', 'deleted_at']
-
-      const validFilterableFields = Model.fields
-        .filter(field => !excludedFields.includes(field.name))
-        .map(field => field.name)
+      const filterableFields = modelFields.filter(
+        field => !notFilterableFields.includes(field)
+      )
 
       values.forEach(value => {
         const fieldValuePairs: Record<string, any> = {}
         fields.forEach(field => {
-          if (validFilterableFields.includes(field)) {
+          if (filterableFields.includes(field)) {
             fieldValuePairs[field] = { contains: value, mode: 'insensitive' }
           }
           // else { throw new Error(`Field ${field} does not exist in the model.`) }
@@ -57,11 +59,24 @@ export async function prismaPaginator<T>(
     }
   }
 
-  // console.log('\nwhere:\n', JSON.stringify(where, null, 2))
+  console.log('\n\n\nORDER BY', order)
+
+  let orderBy: Record<string, 'asc' | 'desc'> = {}
+
+  if (order) {
+    const [field, sort] = order.split('.')
+
+    if (field !== 'id' && modelFields.includes(field)) {
+      orderBy = { [field]: sort === 'desc' ? 'desc' : 'asc' }
+    }
+  }
+
+  //console.log('\norderBy:\n', JSON.stringify(orderBy, null, 2))
+  //console.log('\nwhere:\n', JSON.stringify(where, null, 2))
 
   const [data, totalItems] = await Promise.all([
-    model.findMany({ skip, take, where }),
-    model.count({ where }),
+    model.findMany({ orderBy, skip, take, where }),
+    model.count({ orderBy, where }),
   ])
 
   return {

@@ -62,6 +62,30 @@ describe('List users (E2E)', () => {
     )
   })
 
+  test(`[GET] ${USERS_URL} (ordered)`, async () => {
+    let getUsers = await api
+      .get(`${USERS_URL}?order=name&perPage=1`)
+      .set('Authorization', authorization)
+      .send()
+
+    expect(getUsers.body).toEqual(
+      expect.objectContaining({
+        data: expect.arrayContaining([expect.objectContaining({ name: 'James' })]),
+      })
+    )
+
+    getUsers = await api
+      .get(`${USERS_URL}?order=name.desc&perPage=1`)
+      .set('Authorization', authorization)
+      .send()
+
+    expect(getUsers.body).toEqual(
+      expect.objectContaining({
+        data: expect.arrayContaining([expect.objectContaining({ name: 'John' })]),
+      })
+    )
+  })
+
   test(`[GET] ${USERS_URL} (filtered)`, async () => {
     const getUsers = await api
       .get(`${USERS_URL}?page=1&perPage=3&filter=name,email=jo`)

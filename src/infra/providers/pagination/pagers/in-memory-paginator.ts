@@ -2,7 +2,7 @@ import { PaginatedResponse, PaginationParams } from '..'
 
 export async function inMemoryPaginator<T>(
   items: any[],
-  { deleted, filter, page = '1', perPage = '20' }: PaginationParams = {}
+  { deleted, filter, order, page = '1', perPage = '20' }: PaginationParams = {}
 ): Promise<PaginatedResponse<T>> {
   const start = (Number(page) - 1) * Number(perPage)
   const end = start + Number(perPage)
@@ -43,6 +43,18 @@ export async function inMemoryPaginator<T>(
     }
 
     items = filteredItems
+  }
+
+  if (order) {
+    const [field, sort] = order.split('.')
+
+    if (field !== 'id' && items[0]?.hasOwnProperty(field)) {
+      items.sort((a, b) => {
+        return sort === 'desc'
+          ? b[field].localeCompare(a[field])
+          : a[field].localeCompare(b[field])
+      })
+    }
   }
 
   const data = items.slice(start, end)

@@ -35,6 +35,21 @@ describe('List users', () => {
     )
   })
 
+  it('should be able to list the ordered users', async () => {
+    let result = await listUsersService.execute({ order: 'name', perPage: '1' })
+
+    expect(result.value?.data.length).toBe(1)
+    expect(result.value?.data).toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: 'James' })])
+    )
+
+    result = await listUsersService.execute({ order: 'name.desc', perPage: '1' })
+
+    expect(result.value?.data).toEqual(
+      expect.arrayContaining([expect.objectContaining({ name: 'John' })])
+    )
+  })
+
   it('should be able to list the filtered users', async () => {
     const result = await listUsersService.execute({ filter: 'name,email=jo' })
 
