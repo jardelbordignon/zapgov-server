@@ -13,6 +13,9 @@ import {
 } from '@nestjs/swagger'
 
 export class PaginationParams {
+  @ApiProperty({ example: 'photos,comments' })
+  add?: string
+
   @ApiProperty({ example: 'no' })
   deleted?: 'yes' | 'no' = 'no'
 
@@ -87,6 +90,7 @@ export const PaginationQuery = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest()
     return {
+      add: request.query.add,
       deleted: request.query.deleted,
       filter: request.query.filter,
       order: request.query.order,

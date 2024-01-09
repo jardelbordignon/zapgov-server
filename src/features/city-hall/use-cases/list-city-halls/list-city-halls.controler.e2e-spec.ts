@@ -39,7 +39,9 @@ describe('List city halls (E2E)', () => {
   })
 
   test(`[GET] ${CITY_HALLS_URL}`, async () => {
-    const getCityHalls = await api.get(CITY_HALLS_URL).send()
+    const getCityHalls = await api
+      .get(`${CITY_HALLS_URL}?add=sub_city_halls,neighborhoods`)
+      .send()
 
     expect(getCityHalls.statusCode).toBe(200)
     expect(getCityHalls.body.data.length).toBe(3)
