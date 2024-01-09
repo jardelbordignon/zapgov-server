@@ -58,7 +58,7 @@ export class ShowCityHallController {
 
   @AllowUnauthenticated()
   @ShowCityHallApiDecorators()
-  @Get('/slug/:slug')
+  @Get('/by-slug/:slug')
   async handleBySlug(
     @Param('slug') cityHallSlug: string,
     @Query('add') add: string
