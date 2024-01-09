@@ -35,6 +35,7 @@ export class ShowCityHallService {
     const validIncludes: { [K in keyof Omit<CityHallInclude, '_count'>]?: K } = {
       neighborhoods: 'neighborhoods',
       sub_city_halls: 'sub_city_halls',
+      wa_accounts: 'wa_accounts',
     }
 
     let include: CityHallInclude = {}
