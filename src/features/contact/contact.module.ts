@@ -1,5 +1,10 @@
+import { BullModule } from '@nestjs/bull'
 import { Module } from '@nestjs/common'
 
+import {
+  AddGoogleContactConsumer,
+  AddGoogleContactProducer,
+} from 'src/infra/jobs/add-google-contact.job'
 import { I18nModule } from 'src/infra/providers/i18n/i18n.module'
 import { PrismaModule } from 'src/infra/providers/prisma/prisma.module'
 
@@ -17,7 +22,19 @@ import { ListContactsService } from './use-cases/list-contacts/list-contacts.ser
 
 @Module({
   controllers: [CreateContactController, ListContactsController],
-  imports: [PrismaModule, I18nModule],
+  imports: [
+    PrismaModule,
+    I18nModule,
+    BullModule.forRoot({
+      redis: {
+        host: 'localhost',
+        port: 6379,
+      },
+    }),
+    BullModule.registerQueue({
+      name: 'addGoogleContactsQueue',
+    }),
+  ],
   providers: [
     {
       provide: ContactRepository,
@@ -31,6 +48,8 @@ import { ListContactsService } from './use-cases/list-contacts/list-contacts.ser
       provide: WaAccountRepository,
       useClass: PrismaWaAccountRepository,
     },
+    AddGoogleContactConsumer,
+    AddGoogleContactProducer,
     CreateContactService,
     ListContactsService,
   ],

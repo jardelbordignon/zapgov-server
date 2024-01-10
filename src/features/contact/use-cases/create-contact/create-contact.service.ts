@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common'
 
-import type { CreateContactInputData } from 'src/contracts/contacts'
+import type {
+  CreateContactData,
+  CreateContactInputData,
+} from 'src/contracts/contacts'
 import { CityHallRepository } from 'src/features/city-hall/repositories/city-hall.repository'
 import { CityHallNotFoundError } from 'src/features/city-hall/use-cases/errors'
 import { WaAccountRepository } from 'src/features/wa-account/repositories/wa-account.repository'
 import { WaAccountNotFoundError } from 'src/features/wa-account/use-cases/errors'
+import { AddGoogleContactProducer } from 'src/infra/jobs/add-google-contact.job'
 import { I18n } from 'src/infra/providers/i18n/i18n'
 import {
   FailureOrSuccess,
@@ -23,7 +27,8 @@ export class CreateContactService {
     private contactRepository: ContactRepository,
     private cityHallRepository: CityHallRepository,
     private waAccountRepository: WaAccountRepository,
-    private i18n: I18n
+    private i18n: I18n,
+    private addGoogleContacts: AddGoogleContactProducer
   ) {}
 
   async execute(data: CreateContactInputData): Promise<CreateContactServiceResponse> {
@@ -53,10 +58,14 @@ export class CreateContactService {
 
     for (const waAccount of waAccounts.data) {
       if (waAccount.contacts_qty < 4000) {
-        await this.contactRepository.create({
+        const contactData: CreateContactData = {
           ...data,
           wa_account_id: waAccount.id,
-        })
+        }
+
+        await this.addGoogleContacts.send(contactData)
+
+        await this.contactRepository.create(contactData)
 
         const contacts_qty = ++waAccount.contacts_qty
 
