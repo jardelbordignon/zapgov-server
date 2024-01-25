@@ -8,7 +8,7 @@ import { CityHallRepository } from 'src/features/city-hall/repositories/city-hal
 import { CityHallNotFoundError } from 'src/features/city-hall/use-cases/errors'
 import { WaAccountRepository } from 'src/features/wa-account/repositories/wa-account.repository'
 import { WaAccountNotFoundError } from 'src/features/wa-account/use-cases/errors'
-import { AddGoogleContactProducer } from 'src/infra/jobs/add-google-contact.job'
+import { AddGoogleContactProducer } from 'src/infra/jobs/add-google-contact'
 import { I18n } from 'src/infra/providers/i18n/i18n'
 import {
   FailureOrSuccess,
@@ -28,7 +28,7 @@ export class CreateContactService {
     private cityHallRepository: CityHallRepository,
     private waAccountRepository: WaAccountRepository,
     private i18n: I18n,
-    private addGoogleContacts: AddGoogleContactProducer
+    private addGoogleContactProducer: AddGoogleContactProducer
   ) {}
 
   async execute(data: CreateContactInputData): Promise<CreateContactServiceResponse> {
@@ -63,13 +63,14 @@ export class CreateContactService {
           wa_account_id: waAccount.id,
         }
 
-        await this.addGoogleContacts.send(contactData)
+        await this.contactRepository.create(contactData).then(async () => {
+          await this.addGoogleContactProducer.send(contactData)
 
-        await this.contactRepository.create(contactData)
+          const contacts_qty = ++waAccount.contacts_qty
 
-        const contacts_qty = ++waAccount.contacts_qty
+          await this.waAccountRepository.update(waAccount.id, { contacts_qty })
+        })
 
-        await this.waAccountRepository.update(waAccount.id, { contacts_qty })
         break
       }
     }

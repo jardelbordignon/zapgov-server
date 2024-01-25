@@ -3,11 +3,11 @@ import { ApiTags } from '@nestjs/swagger'
 
 import { AllowUnauthenticated } from 'src/infra/providers/auth/authentication.guard'
 import {
-  ApiPaginatedResponse,
-  PaginatedResponse,
-  PaginationParams,
-  PaginationQuery,
-} from 'src/infra/providers/pagination'
+  ApiListResponse,
+  ListParams,
+  ListQuery,
+  ListResponse,
+} from 'src/infra/providers/list'
 
 import { CityHallEntity } from '../../city-hall.entity'
 import { CITY_HALLS_URL } from '../../shared/constants'
@@ -20,16 +20,16 @@ export class ListCityHallsController {
   constructor(private listCityHallsService: ListCityHallsService) {}
 
   @ApiTags('CityHall')
-  @ApiPaginatedResponse(CityHallEntity, {
+  @ApiListResponse(CityHallEntity, {
     description: 'A list of city-halls (active or deleted)',
   })
   @Get()
   async handle(
-    @PaginationQuery() params: PaginationParams
-  ): Promise<PaginatedResponse<CityHallEntity>> {
+    @ListQuery() params: ListParams
+  ): Promise<ListResponse<CityHallEntity>> {
     const result = await this.listCityHallsService.execute(params)
 
-    if (!result.value) return new PaginatedResponse()
+    if (!result.value) return new ListResponse()
 
     return result.value
   }

@@ -3,11 +3,11 @@ import { ApiTags } from '@nestjs/swagger'
 
 import { AllowUnauthenticated } from 'src/infra/providers/auth/authentication.guard'
 import {
-  ApiPaginatedResponse,
-  PaginatedResponse,
-  PaginationParams,
-  PaginationQuery,
-} from 'src/infra/providers/pagination'
+  ApiListResponse,
+  ListParams,
+  ListQuery,
+  ListResponse,
+} from 'src/infra/providers/list'
 
 import { ContactEntity } from '../../contact.entity'
 import { CONTACTS_URL } from '../../shared/constants'
@@ -20,16 +20,16 @@ export class ListContactsController {
   constructor(private listContactsService: ListContactsService) {}
 
   @ApiTags('Contact')
-  @ApiPaginatedResponse(ContactEntity, {
+  @ApiListResponse(ContactEntity, {
     description: 'A list of contacts (active or deleted)',
   })
   @Get()
   async handle(
-    @PaginationQuery() params: PaginationParams
-  ): Promise<PaginatedResponse<ContactEntity>> {
+    @ListQuery() params: ListParams
+  ): Promise<ListResponse<ContactEntity>> {
     const result = await this.listContactsService.execute(params)
 
-    if (!result.value) return new PaginatedResponse()
+    if (!result.value) return new ListResponse()
 
     return result.value
   }

@@ -8,7 +8,7 @@ import { CONTACTS_URL } from '../../shared/test-helper'
 describe('List contacts (E2E)', () => {
   let api: Supertest
 
-  const contactNames = ['John', 'Joe', 'James']
+  const contactNames = ['John', 'Jessie', 'Joe', 'Julie']
 
   beforeAll(async () => {
     api = await supertest()
@@ -34,7 +34,7 @@ describe('List contacts (E2E)', () => {
     const getContacts = await api.get(CONTACTS_URL).send()
 
     expect(getContacts.statusCode).toBe(200)
-    expect(getContacts.body.data.length).toBe(3)
+    expect(getContacts.body.data.length).toBe(4)
     expect(getContacts.body).toEqual(
       expect.objectContaining({
         data: expect.arrayContaining([
@@ -43,22 +43,23 @@ describe('List contacts (E2E)', () => {
             name: 'John',
             phone: '51 995432100',
           }),
-          expect.objectContaining({ nome: 'Joe' }),
-          expect.objectContaining({ name: 'James' }),
+          expect.objectContaining({ name: 'Jessie' }),
+          expect.objectContaining({ name: 'Joe' }),
+          expect.objectContaining({ name: 'Julie' }),
         ]),
         meta: {
           hasNext: false,
           hasPrevious: false,
           page: 1,
           perPage: 20,
-          totalItems: 3,
+          totalItems: 4,
           totalPages: 1,
         },
       })
     )
   })
 
-  test.only(`[GET] ${CONTACTS_URL} filter`, async () => {
+  test(`[GET] ${CONTACTS_URL} filter`, async () => {
     const getContacts = await api
       .get(`${CONTACTS_URL}?page=1&perPage=3&filter=name=jo`)
       .send()
@@ -70,7 +71,6 @@ describe('List contacts (E2E)', () => {
         data: expect.arrayContaining([
           expect.objectContaining({ name: 'John' }),
           expect.objectContaining({ name: 'Joe' }),
-          //expect.objectContaining({ name: 'James' }),
         ]),
         meta: {
           hasNext: false,

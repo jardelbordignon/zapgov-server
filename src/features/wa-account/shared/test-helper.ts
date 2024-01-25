@@ -1,3 +1,5 @@
+import { Supertest } from 'test/e2e.helper'
+
 import { CreateWaAccountData } from 'src/contracts/wa-account'
 import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
 
@@ -11,9 +13,8 @@ export const CREATE_WA_ACCOUNT_DATA: CreateWaAccountData = {
   phone: '51999999999',
 }
 
-export const getWaAccountId = async (api: any) => {
+export const getWaAccountId = async (api: Supertest) => {
   const { authorization, city_hall_id } = await getCityHallId(api)
-  await api.post(WA_ACCOUNT_URL).set('Authorization', authorization).send()
 
   await api
     .post(WA_ACCOUNT_URL)

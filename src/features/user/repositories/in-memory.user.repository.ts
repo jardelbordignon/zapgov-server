@@ -3,11 +3,7 @@ import { randomUUID } from 'node:crypto'
 import type { User } from '@prisma/client'
 
 import type { CreateUserData, UpdateUserData } from 'src/contracts/account'
-import {
-  PaginatedResponse,
-  PaginationParams,
-  inMemoryPaginator,
-} from 'src/infra/providers/pagination'
+import { ListParams, ListResponse, inMemoryList } from 'src/infra/providers/list'
 
 import { UserRepository } from './user.repository'
 
@@ -35,8 +31,8 @@ export class InMemoryUserRepository implements UserRepository {
     this.users = this.users.filter(user => user.id !== id)
   }
 
-  async findAll(params?: PaginationParams): Promise<PaginatedResponse<User>> {
-    return inMemoryPaginator(this.users, params)
+  async findAll(params?: ListParams): Promise<ListResponse<User>> {
+    return inMemoryList(this.users, params)
   }
 
   async findByEmail(email: string): Promise<User | null> {

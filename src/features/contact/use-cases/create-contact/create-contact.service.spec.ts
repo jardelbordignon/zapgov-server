@@ -6,6 +6,7 @@ import { InMemoryCityHallRepository } from 'src/features/city-hall/repositories/
 import { CREATE_CITY_HALL_DATA } from 'src/features/city-hall/shared/test-helper'
 import { CityHallNotFoundError } from 'src/features/city-hall/use-cases/errors'
 import { InMemoryWaAccountRepository } from 'src/features/wa-account/repositories/in-memory.wa-account.repository'
+import { FakeAddGoogleContactProducer } from 'src/infra/jobs/add-google-contact/producer'
 import { I18n } from 'src/infra/providers/i18n/i18n'
 
 import { InMemoryContactRepository } from '../../repositories/in-memory.contact.repository'
@@ -18,6 +19,7 @@ let contactRepository: InMemoryContactRepository
 let cityHallRepository: InMemoryCityHallRepository
 let waAccountRepository: InMemoryWaAccountRepository
 let i18n: I18n
+let addGoogleContactProducer: FakeAddGoogleContactProducer
 let service: CreateContactService
 
 let city_hall_id: string
@@ -29,12 +31,14 @@ describe('Create contact', () => {
     cityHallRepository = new InMemoryCityHallRepository()
     waAccountRepository = new InMemoryWaAccountRepository()
     i18n = new I18n()
+    addGoogleContactProducer = new FakeAddGoogleContactProducer()
 
     service = new CreateContactService(
       contactRepository,
       cityHallRepository,
       waAccountRepository,
-      i18n
+      i18n,
+      addGoogleContactProducer
     )
 
     const cityHall = await cityHallRepository.create(CREATE_CITY_HALL_DATA)

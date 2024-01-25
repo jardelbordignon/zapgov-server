@@ -1,11 +1,7 @@
 import type { CityHall } from '@prisma/client'
 
 import { CreateCityHallData, UpdateCityHallData } from 'src/contracts/city-halls'
-import {
-  PaginatedResponse,
-  PaginationParams,
-  prismaPaginator,
-} from 'src/infra/providers/pagination'
+import { ListParams, ListResponse, prismaList } from 'src/infra/providers/list'
 import { PrismaService } from 'src/infra/providers/prisma/prisma.service'
 
 import {
@@ -48,8 +44,8 @@ export class PrismaCityHallRepository
     return this.cityHall.findUnique({ include, where: { slug } })
   }
 
-  async findAll(params?: PaginationParams): Promise<PaginatedResponse<CityHall>> {
-    return prismaPaginator(this.cityHall, params)
+  async findAll(params?: ListParams): Promise<ListResponse<CityHall>> {
+    return prismaList(this.cityHall, params)
   }
 
   async update(id: string, data: UpdateCityHallData): Promise<CityHall> {

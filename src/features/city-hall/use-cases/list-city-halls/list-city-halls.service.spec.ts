@@ -26,11 +26,7 @@ describe('List city-halls', () => {
   })
 
   it('should be able to list the city-halls', async () => {
-    const result = await service.execute({
-      deleted: false,
-      page: 1,
-      perPage: 10,
-    })
+    const result = await service.execute()
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(cityNames.length)

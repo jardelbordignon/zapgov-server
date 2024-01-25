@@ -43,7 +43,7 @@ describe('List neighborhoods', () => {
   })
 
   it('should be able to list the neighborhoods', async () => {
-    const result = await service.execute({ page: 1, perPage: 10 })
+    const result = await service.execute()
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(neighborhoodNames.length)
@@ -61,7 +61,7 @@ describe('List neighborhoods', () => {
         hasNext: false,
         hasPrevious: false,
         page: 1,
-        perPage: 10,
+        perPage: 20,
         totalItems: 3,
         totalPages: 1,
       },

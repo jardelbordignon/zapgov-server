@@ -40,14 +40,8 @@ describe('Update user', () => {
   })
 
   afterEach(async () => {
-    const getItems = await subCityHallRepository.findAll({ page: 1, perPage: 100 })
-    const getDeletedItems = await subCityHallRepository.findAll({
-      deleted: true,
-      page: 1,
-      perPage: 100,
-    })
-    const allItems = [...getItems.data, ...getDeletedItems.data]
-    for (const item of allItems) {
+    const getItems = await subCityHallRepository.findAll()
+    for (const item of getItems.data) {
       await subCityHallRepository.delete(item.id)
     }
   })

@@ -7,7 +7,7 @@ import {
 } from '@prisma/client'
 
 import { CreateCityHallData, UpdateCityHallData } from 'src/contracts/city-halls'
-import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
+import { ListParams, ListResponse } from 'src/infra/providers/list'
 
 export type CityHallInclude = Omit<Prisma.CityHallInclude, '_count'>
 
@@ -34,6 +34,6 @@ export abstract class CityHallRepository {
     slug: string,
     include?: CityHallInclude
   ): Promise<ShowCityHallResponse>
-  abstract findAll(params?: PaginationParams): Promise<PaginatedResponse<CityHall>>
+  abstract findAll(params?: ListParams): Promise<ListResponse<CityHall>>
   abstract update(id: string, data: UpdateCityHallData): Promise<CityHall>
 }

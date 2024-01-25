@@ -4,11 +4,7 @@ import {
   CreateSubCityHallData,
   UpdateSubCityHallData,
 } from 'src/contracts/sub-city-halls'
-import {
-  PaginatedResponse,
-  PaginationParams,
-  prismaPaginator,
-} from 'src/infra/providers/pagination'
+import { ListParams, ListResponse, prismaList } from 'src/infra/providers/list'
 import { PrismaService } from 'src/infra/providers/prisma/prisma.service'
 
 import { SubCityHallRepository } from './sub-city-hall.repository'
@@ -44,8 +40,8 @@ export class PrismaSubCityHallRepository
     return this.subCityHall.findFirst({ where: { id } })
   }
 
-  async findAll(params?: PaginationParams): Promise<PaginatedResponse<SubCityHall>> {
-    return prismaPaginator(this.subCityHall, params)
+  async findAll(params?: ListParams): Promise<ListResponse<SubCityHall>> {
+    return prismaList(this.subCityHall, params)
   }
 
   // private async findSubCityHalls({
@@ -54,7 +50,7 @@ export class PrismaSubCityHallRepository
   //   page,
   //   perPage,
   //   searchTerm,
-  // }: Props): Promise<PaginatedResponse<SubCityHall>> {
+  // }: Props): Promise<ListResponse<SubCityHall>> {
   //   const conditions = deleted ? { NOT: { deleted_at: null } } : { deleted_at: null }
 
   //   if (cityHallId) {
@@ -71,7 +67,7 @@ export class PrismaSubCityHallRepository
   //       : undefined,
   //   } as any
 
-  //   return prismaPaginator(this.subCityHall, { page, perPage, where })
+  //   return prismaList(this.subCityHall, { page, perPage, where })
   // }
 
   // async findAll({
@@ -79,7 +75,7 @@ export class PrismaSubCityHallRepository
   //   page,
   //   perPage,
   //   searchTerm,
-  // }: PaginationParams): Promise<PaginatedResponse<SubCityHall>> {
+  // }: ListParams): Promise<ListResponse<SubCityHall>> {
   //   return this.findSubCityHalls({
   //     cityHallId: undefined,
   //     deleted,

@@ -4,7 +4,8 @@ import { Module } from '@nestjs/common'
 import {
   AddGoogleContactConsumer,
   AddGoogleContactProducer,
-} from 'src/infra/jobs/add-google-contact.job'
+  BullAddGoogleContactProducer,
+} from 'src/infra/jobs/add-google-contact'
 import { I18nModule } from 'src/infra/providers/i18n/i18n.module'
 import { PrismaModule } from 'src/infra/providers/prisma/prisma.module'
 
@@ -48,8 +49,8 @@ import { ListContactsService } from './use-cases/list-contacts/list-contacts.ser
       provide: WaAccountRepository,
       useClass: PrismaWaAccountRepository,
     },
+    { provide: AddGoogleContactProducer, useClass: BullAddGoogleContactProducer },
     AddGoogleContactConsumer,
-    AddGoogleContactProducer,
     CreateContactService,
     ListContactsService,
   ],

@@ -34,7 +34,7 @@ describe('Create user', () => {
   })
 
   afterEach(async () => {
-    const getUsers = await userRepository.findAll({ page: 1, perPage: 10 })
+    const getUsers = await userRepository.findAll()
     for (const user of getUsers.data) {
       await userRepository.delete(user.id)
     }
@@ -48,7 +48,7 @@ describe('Create user', () => {
     expect(result.isSuccess()).toBe(true)
     const createdUser = await userRepository.findByEmail(email)
     expect(createdUser?.name).toBe(name)
-    const getUsers = await userRepository.findAll({ page: 1, perPage: 10 })
+    const getUsers = await userRepository.findAll()
     expect(getUsers.data.length).toBe(2)
   })
 

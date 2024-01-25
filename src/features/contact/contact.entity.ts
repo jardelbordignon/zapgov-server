@@ -9,10 +9,10 @@ export class ContactEntity implements Contact {
   wa_account_id!: string
 
   @ApiProperty()
-  gender!: string
+  name!: string
 
   @ApiProperty()
-  name!: string
+  gender!: string
 
   @ApiProperty()
   phone!: string

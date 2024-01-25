@@ -1,11 +1,7 @@
 import type { Contact } from '@prisma/client'
 
 import { CreateContactData } from 'src/contracts/contacts'
-import {
-  PaginatedResponse,
-  PaginationParams,
-  prismaPaginator,
-} from 'src/infra/providers/pagination'
+import { ListParams, ListResponse, prismaList } from 'src/infra/providers/list'
 import { PrismaService } from 'src/infra/providers/prisma/prisma.service'
 
 import { ContactRepository } from './contact.repository'
@@ -31,8 +27,8 @@ export class PrismaContactRepository
     return this.contact.findFirst({ where: { id } })
   }
 
-  async findAll(params?: PaginationParams): Promise<PaginatedResponse<Contact>> {
-    return prismaPaginator(this.contact, params)
+  async findAll(params?: ListParams): Promise<ListResponse<Contact>> {
+    return prismaList(this.contact, params)
   }
 
   // async update(id: string, data: UpdateContactData): Promise<Contact> {

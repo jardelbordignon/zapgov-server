@@ -8,7 +8,6 @@ import {
   Param,
   Put,
   UsePipes,
-  //UsePipes,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ZodObject, z } from 'zod'
@@ -18,7 +17,6 @@ import {
   ZodObj,
   ZodValidationError,
   ZodValidationPipe,
-  //ZodValidationPipe,
 } from 'src/infra/pipes/zod-validation.pipe'
 import {
   File,

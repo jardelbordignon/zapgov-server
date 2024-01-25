@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
-import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
+import { ListParams, ListResponse } from 'src/infra/providers/list'
 import {
   FailureOrSuccess,
   success,
@@ -11,14 +11,14 @@ import { WaAccountEntity } from '../../wa-account.entity'
 
 type ListWaAccountsServiceResponse = FailureOrSuccess<
   null,
-  PaginatedResponse<WaAccountEntity>
+  ListResponse<WaAccountEntity>
 >
 
 @Injectable()
 export class ListWaAccountsService {
   constructor(private repository: WaAccountRepository) {}
 
-  async execute(params?: PaginationParams): Promise<ListWaAccountsServiceResponse> {
+  async execute(params?: ListParams): Promise<ListWaAccountsServiceResponse> {
     const result = await this.repository.findAll(params)
 
     return success(result)

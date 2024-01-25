@@ -1,11 +1,7 @@
 import { WaAccount } from '@prisma/client'
 
 import { CreateWaAccountData, UpdateWaAccountData } from 'src/contracts/wa-account'
-import {
-  PaginatedResponse,
-  PaginationParams,
-  prismaPaginator,
-} from 'src/infra/providers/pagination'
+import { ListParams, ListResponse, prismaList } from 'src/infra/providers/list'
 import { PrismaService } from 'src/infra/providers/prisma/prisma.service'
 
 import { WaAccountRepository } from './wa-account.repository'
@@ -35,8 +31,8 @@ export class PrismaWaAccountRepository
     return this.waAccount.findFirst({ where: { phone } })
   }
 
-  async findAll(params?: PaginationParams): Promise<PaginatedResponse<WaAccount>> {
-    return prismaPaginator(this.waAccount, params)
+  async findAll(params?: ListParams): Promise<ListResponse<WaAccount>> {
+    return prismaList(this.waAccount, params)
   }
 
   async update(id: string, data: UpdateWaAccountData): Promise<WaAccount> {

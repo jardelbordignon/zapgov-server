@@ -1,5 +1,5 @@
 import { CreateWaAccountData, UpdateWaAccountData } from 'src/contracts/wa-account'
-import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
+import { ListParams, ListResponse } from 'src/infra/providers/list'
 
 import { WaAccountEntity } from '../wa-account.entity'
 
@@ -9,8 +9,6 @@ export abstract class WaAccountRepository {
   abstract findById(id: string): Promise<WaAccountEntity | null>
   abstract findByAcronym(acronym: string): Promise<WaAccountEntity | null>
   abstract findByPhone(phone: string): Promise<WaAccountEntity | null>
-  abstract findAll(
-    params?: PaginationParams
-  ): Promise<PaginatedResponse<WaAccountEntity>>
+  abstract findAll(params?: ListParams): Promise<ListResponse<WaAccountEntity>>
   abstract update(id: string, data: UpdateWaAccountData): Promise<WaAccountEntity>
 }

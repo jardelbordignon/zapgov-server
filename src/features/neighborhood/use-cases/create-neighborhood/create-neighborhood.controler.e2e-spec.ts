@@ -1,16 +1,12 @@
-import { INestApplication } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
-import supertest from 'supertest'
+import { Supertest, supertest } from 'test/e2e.helper'
 
-import { AppModule } from 'src/app.module'
 import { CreateNeighborhoodData } from 'src/contracts/neighborhoods'
 import { getSubCityHallId } from 'src/features/sub-city-hall/shared/test-helper'
 
 import { CREATE_NEIGHBORHOOD_DATA, NEIGHBORHOODS_URL } from '../../shared/test-helper'
 
 describe('Create city-hall (E2E)', () => {
-  let api: supertest.SuperTest<supertest.Test>
-  let app: INestApplication
+  let api: Supertest
 
   let authorization: string
   let city_hall_id: string
@@ -18,14 +14,7 @@ describe('Create city-hall (E2E)', () => {
   let newNeighborhoodData: CreateNeighborhoodData
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    api = supertest(app.getHttpServer())
-
-    await app.init()
+    api = await supertest()
 
     const result = await getSubCityHallId(api)
     authorization = result.authorization

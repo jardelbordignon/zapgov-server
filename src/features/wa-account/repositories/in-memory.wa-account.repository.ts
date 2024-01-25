@@ -1,11 +1,7 @@
 import { randomUUID } from 'node:crypto'
 
 import { CreateWaAccountData, UpdateWaAccountData } from 'src/contracts/wa-account'
-import {
-  PaginatedResponse,
-  PaginationParams,
-  inMemoryPaginator,
-} from 'src/infra/providers/pagination'
+import { ListParams, ListResponse, inMemoryList } from 'src/infra/providers/list'
 
 import { WaAccountEntity } from '../wa-account.entity'
 
@@ -50,10 +46,8 @@ export class InMemoryWaAccountRepository implements WaAccountRepository {
     return item || null
   }
 
-  async findAll(
-    params?: PaginationParams
-  ): Promise<PaginatedResponse<WaAccountEntity>> {
-    return inMemoryPaginator(this.waAccounts, params)
+  async findAll(params?: ListParams): Promise<ListResponse<WaAccountEntity>> {
+    return inMemoryList(this.waAccounts, params)
   }
 
   async update(id: string, data: UpdateWaAccountData): Promise<WaAccountEntity> {

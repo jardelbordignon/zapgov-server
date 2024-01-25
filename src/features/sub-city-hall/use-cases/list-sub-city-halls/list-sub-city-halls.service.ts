@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import type { SubCityHall } from '@prisma/client'
 
-import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
+import { ListParams, ListResponse } from 'src/infra/providers/list'
 import {
   FailureOrSuccess,
   success,
@@ -11,14 +11,14 @@ import { SubCityHallRepository } from '../../repositories/sub-city-hall.reposito
 
 type ListSubCityHallsServiceResponse = FailureOrSuccess<
   null,
-  PaginatedResponse<SubCityHall>
+  ListResponse<SubCityHall>
 >
 
 @Injectable()
 export class ListSubCityHallsService {
   constructor(private repository: SubCityHallRepository) {}
 
-  async execute(params?: PaginationParams): Promise<ListSubCityHallsServiceResponse> {
+  async execute(params?: ListParams): Promise<ListSubCityHallsServiceResponse> {
     const result = await this.repository.findAll(params)
 
     return success(result)

@@ -6,11 +6,7 @@ import type {
   CreateSubCityHallData,
   UpdateSubCityHallData,
 } from 'src/contracts/sub-city-halls'
-import {
-  PaginatedResponse,
-  PaginationParams,
-  inMemoryPaginator,
-} from 'src/infra/providers/pagination'
+import { ListParams, ListResponse, inMemoryList } from 'src/infra/providers/list'
 
 import { SubCityHallRepository } from './sub-city-hall.repository'
 
@@ -56,11 +52,11 @@ export class InMemorySubCityHallRepository implements SubCityHallRepository {
     return item
   }
 
-  async findAll(params?: PaginationParams): Promise<PaginatedResponse<SubCityHall>> {
-    return inMemoryPaginator(this.items, params)
+  async findAll(params?: ListParams): Promise<ListResponse<SubCityHall>> {
+    return inMemoryList(this.items, params)
   }
 
-  // private async findSubCityHalls(props: Props): Promise<PaginatedResponse<SubCityHall>> {
+  // private async findSubCityHalls(props: Props): Promise<ListResponse<SubCityHall>> {
   //   let items = this.items.filter(({ deleted_at }) =>
   //     deleted ? deleted_at : !deleted_at
   //   )
@@ -77,7 +73,7 @@ export class InMemorySubCityHallRepository implements SubCityHallRepository {
   //     )
   //   }
 
-  //   return inMemoryPaginator(items, page, perPage)
+  //   return inMemoryList(items, page, perPage)
   // }
 
   // async findAll({
@@ -85,7 +81,7 @@ export class InMemorySubCityHallRepository implements SubCityHallRepository {
   //   page,
   //   perPage,
   //   searchTerm,
-  // }: PaginationParams): Promise<PaginatedResponse<SubCityHall>> {
+  // }: ListParams): Promise<ListResponse<SubCityHall>> {
   //   return this.findSubCityHalls({
   //     cityHallId: undefined,
   //     deleted,

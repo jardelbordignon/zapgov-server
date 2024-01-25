@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import type { Contact } from '@prisma/client'
 
-import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
+import { ListParams, ListResponse } from 'src/infra/providers/list'
 import {
   FailureOrSuccess,
   success,
@@ -9,13 +9,13 @@ import {
 
 import { ContactRepository } from '../../repositories/contact.repository'
 
-type ListContactsServiceResponse = FailureOrSuccess<null, PaginatedResponse<Contact>>
+type ListContactsServiceResponse = FailureOrSuccess<null, ListResponse<Contact>>
 
 @Injectable()
 export class ListContactsService {
   constructor(private repository: ContactRepository) {}
 
-  async execute(params?: PaginationParams): Promise<ListContactsServiceResponse> {
+  async execute(params?: ListParams): Promise<ListContactsServiceResponse> {
     const result = await this.repository.findAll(params)
 
     return success(result)

@@ -2,11 +2,11 @@ import { Controller, Get } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 
 import {
-  ApiPaginatedResponse,
-  PaginatedResponse,
-  PaginationParams,
-  PaginationQuery,
-} from 'src/infra/providers/pagination'
+  ApiListResponse,
+  ListParams,
+  ListQuery,
+  ListResponse,
+} from 'src/infra/providers/list'
 
 import { USERS_URL } from '../../shared/constants'
 import { UserEntity } from '../../user.entity'
@@ -19,16 +19,14 @@ export class ListUsersController {
 
   @ApiTags('User')
   @ApiBearerAuth()
-  @ApiPaginatedResponse(UserEntity, {
+  @ApiListResponse(UserEntity, {
     description: 'A list of users (active or deleted) with omitted password',
   })
   @Get()
-  async handle(
-    @PaginationQuery() params: PaginationParams
-  ): Promise<PaginatedResponse<UserEntity>> {
+  async handle(@ListQuery() params: ListParams): Promise<ListResponse<UserEntity>> {
     const result = await this.listUsersService.execute(params)
 
-    if (!result.value) return new PaginatedResponse()
+    if (!result.value) return new ListResponse()
 
     const formattedResultValue = {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

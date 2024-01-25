@@ -3,11 +3,7 @@ import { randomUUID } from 'node:crypto'
 import type { CityHall, Neighborhood, SubCityHall } from '@prisma/client'
 
 import type { CreateCityHallData, UpdateCityHallData } from 'src/contracts/city-halls'
-import {
-  PaginatedResponse,
-  PaginationParams,
-  inMemoryPaginator,
-} from 'src/infra/providers/pagination'
+import { ListParams, ListResponse, inMemoryList } from 'src/infra/providers/list'
 
 import {
   CityHallInclude,
@@ -90,8 +86,8 @@ export class InMemoryCityHallRepository implements CityHallRepository {
     return this.handleShowCityHall(cityHall, include)
   }
 
-  async findAll(params?: PaginationParams): Promise<PaginatedResponse<CityHall>> {
-    return inMemoryPaginator(this.cityHalls, params)
+  async findAll(params?: ListParams): Promise<ListResponse<CityHall>> {
+    return inMemoryList(this.cityHalls, params)
   }
 
   async update(id: string, data: UpdateCityHallData): Promise<CityHall> {

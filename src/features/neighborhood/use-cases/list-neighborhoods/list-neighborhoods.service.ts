@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import type { Neighborhood } from '@prisma/client'
 
-import { PaginatedResponse, PaginationParams } from 'src/infra/providers/pagination'
+import { ListParams, ListResponse } from 'src/infra/providers/list'
 import {
   FailureOrSuccess,
   success,
@@ -11,14 +11,14 @@ import { NeighborhoodRepository } from '../../repositories/neighborhood.reposito
 
 type ListNeighborhoodsServiceResponse = FailureOrSuccess<
   null,
-  PaginatedResponse<Neighborhood>
+  ListResponse<Neighborhood>
 >
 
 @Injectable()
 export class ListNeighborhoodsService {
   constructor(private repository: NeighborhoodRepository) {}
 
-  async execute(params: PaginationParams): Promise<ListNeighborhoodsServiceResponse> {
+  async execute(params?: ListParams): Promise<ListNeighborhoodsServiceResponse> {
     const result = await this.repository.findAll(params)
 
     return success(result)

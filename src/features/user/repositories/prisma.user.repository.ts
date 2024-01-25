@@ -1,11 +1,7 @@
 import type { User } from '@prisma/client'
 
 import { CreateUserData, UpdateUserData } from 'src/contracts/account'
-import {
-  PaginatedResponse,
-  PaginationParams,
-  prismaPaginator,
-} from 'src/infra/providers/pagination'
+import { ListParams, ListResponse, prismaList } from 'src/infra/providers/list'
 import { PrismaService } from 'src/infra/providers/prisma/prisma.service'
 
 import { UserRepository } from './user.repository'
@@ -20,8 +16,8 @@ export class PrismaUserRepository extends PrismaService implements UserRepositor
     await this.user.delete({ where: { id } })
   }
 
-  async findAll(params?: PaginationParams): Promise<PaginatedResponse<User>> {
-    return prismaPaginator(this.user, params)
+  async findAll(params?: ListParams): Promise<ListResponse<User>> {
+    return prismaList(this.user, params)
   }
 
   async findByEmail(email: string): Promise<User | null> {

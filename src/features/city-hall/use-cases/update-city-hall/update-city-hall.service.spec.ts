@@ -25,7 +25,7 @@ describe('Update user', () => {
   })
 
   afterEach(async () => {
-    const getItems = await repository.findAll({ page: 1, perPage: 100 })
+    const getItems = await repository.findAll()
     for (const item of getItems.data) {
       console.log(item.id)
       //await repository.delete(item.id)

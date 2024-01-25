@@ -43,13 +43,8 @@ describe('Update whatsapp account', () => {
   })
 
   afterEach(async () => {
-    const getItems = await cityHallRepository.findAll({ page: 1, perPage: 100 })
-    const getDeletedItems = await cityHallRepository.findAll({
-      deleted: true,
-      page: 1,
-      perPage: 100,
-    })
-    for (const item of [...getItems.data, ...getDeletedItems.data]) {
+    const getItems = await cityHallRepository.findAll()
+    for (const item of getItems.data) {
       await cityHallRepository.delete(item.id)
     }
   })

@@ -1,3 +1,5 @@
+import { Supertest } from 'test/e2e.helper'
+
 import { CreateCityHallData } from 'src/contracts/city-halls'
 import { getUserAuthorization } from 'src/features/user/shared/test-helper'
 
@@ -13,7 +15,7 @@ export const CREATE_CITY_HALL_DATA: CreateCityHallData = {
 
 export * from './constants'
 
-export const getCityHallId = async (api: any) => {
+export const getCityHallId = async (api: Supertest) => {
   const authorization = await getUserAuthorization(api)
   await api
     .post(CITY_HALLS_URL)

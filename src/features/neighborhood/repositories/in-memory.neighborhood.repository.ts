@@ -6,11 +6,7 @@ import type {
   CreateNeighborhoodData,
   UpdateNeighborhoodData,
 } from 'src/contracts/neighborhoods'
-import {
-  PaginatedResponse,
-  PaginationParams,
-  inMemoryPaginator,
-} from 'src/infra/providers/pagination'
+import { ListParams, ListResponse, inMemoryList } from 'src/infra/providers/list'
 
 import { NeighborhoodRepository } from './neighborhood.repository'
 
@@ -48,8 +44,8 @@ export class InMemoryNeighborhoodRepository implements NeighborhoodRepository {
     return item
   }
 
-  async findAll(params: PaginationParams): Promise<PaginatedResponse<Neighborhood>> {
-    return inMemoryPaginator(this.items, params)
+  async findAll(params?: ListParams): Promise<ListResponse<Neighborhood>> {
+    return inMemoryList(this.items, params)
   }
 
   async update(id: string, data: UpdateNeighborhoodData): Promise<Neighborhood> {

@@ -3,11 +3,7 @@ import { randomUUID } from 'node:crypto'
 import type { Contact } from '@prisma/client'
 
 import type { CreateContactData } from 'src/contracts/contacts'
-import {
-  PaginatedResponse,
-  PaginationParams,
-  inMemoryPaginator,
-} from 'src/infra/providers/pagination'
+import { ListParams, ListResponse, inMemoryList } from 'src/infra/providers/list'
 
 import { ContactRepository } from './contact.repository'
 
@@ -45,8 +41,8 @@ export class InMemoryContactRepository implements ContactRepository {
     return item
   }
 
-  async findAll(params?: PaginationParams): Promise<PaginatedResponse<Contact>> {
-    return inMemoryPaginator(this.items, params)
+  async findAll(params?: ListParams): Promise<ListResponse<Contact>> {
+    return inMemoryList(this.items, params)
   }
 
   // async update(id: string, data: UpdateContactData): Promise<Contact> {

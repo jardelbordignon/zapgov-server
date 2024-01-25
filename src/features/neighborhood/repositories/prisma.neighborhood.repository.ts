@@ -4,11 +4,7 @@ import {
   CreateNeighborhoodData,
   UpdateNeighborhoodData,
 } from 'src/contracts/neighborhoods'
-import {
-  PaginatedResponse,
-  PaginationParams,
-  prismaPaginator,
-} from 'src/infra/providers/pagination'
+import { ListParams, ListResponse, prismaList } from 'src/infra/providers/list'
 import { PrismaService } from 'src/infra/providers/prisma/prisma.service'
 
 import { NeighborhoodRepository } from './neighborhood.repository'
@@ -36,8 +32,8 @@ export class PrismaNeighborhoodRepository
     return this.neighborhood.findFirst({ where: { id } })
   }
 
-  async findAll(params: PaginationParams): Promise<PaginatedResponse<Neighborhood>> {
-    return prismaPaginator(this.neighborhood, params)
+  async findAll(params?: ListParams): Promise<ListResponse<Neighborhood>> {
+    return prismaList(this.neighborhood, params)
   }
 
   async update(id: string, data: UpdateNeighborhoodData): Promise<Neighborhood> {
