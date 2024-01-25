@@ -1,9 +1,9 @@
-import { PaginatedResponse, PaginationParams } from '..'
+import { ListParams, ListResponse } from '..'
 
-export async function inMemoryPaginator<T>(
+export async function inMemoryList<T>(
   items: any[],
-  { deleted, filter, order, page = '1', perPage = '20' }: PaginationParams = {}
-): Promise<PaginatedResponse<T>> {
+  { deleted, filter, order, page = '1', perPage = '20' }: ListParams = {}
+): Promise<ListResponse<T>> {
   const start = (Number(page) - 1) * Number(perPage)
   const end = start + Number(perPage)
 

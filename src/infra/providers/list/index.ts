@@ -12,15 +12,21 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger'
 
-export class PaginationParams {
+export class ListParams {
   @ApiProperty({ example: 'photos,comments' })
   add?: string
+
+  @ApiProperty({ example: 'no' })
+  addDeleted?: 'yes' | 'no' = 'no'
 
   @ApiProperty({ example: 'no' })
   deleted?: 'yes' | 'no' = 'no'
 
   @ApiProperty({ example: 'name,slug=data,data-x,abc' })
   filter?: string
+
+  @ApiProperty({ example: 'name,slug=data,data-x,abc' })
+  filterCondition?: 'AND' | 'OR' = 'OR'
 
   @ApiProperty({ example: 'name.desc' })
   order?: string
@@ -52,7 +58,7 @@ class PaginationMetadata {
   totalPages: number = 0
 }
 
-export class PaginatedResponse<T> {
+export class ListResponse<T> {
   @ApiProperty({ isArray: true })
   data: T[] = []
 
@@ -60,17 +66,17 @@ export class PaginatedResponse<T> {
   meta: PaginationMetadata = new PaginationMetadata()
 }
 
-export const ApiPaginatedResponse = <TModel extends Type<any>>(
+export const ApiListResponse = <TModel extends Type<any>>(
   model: TModel,
   apiResponseOptions?: Omit<ApiResponseOptions, 'isArray' | 'content'>
 ) => {
   return applyDecorators(
-    ApiExtraModels(PaginatedResponse<TModel>),
+    ApiExtraModels(ListResponse<TModel>),
     ApiOkResponse({
       ...apiResponseOptions,
       schema: {
         allOf: [
-          { $ref: getSchemaPath(PaginatedResponse) },
+          { $ref: getSchemaPath(ListResponse) },
           {
             properties: {
               data: {
@@ -86,19 +92,21 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(
   )
 }
 
-export const PaginationQuery = createParamDecorator(
+export const ListQuery = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest()
     return {
       add: request.query.add,
+      addDeleted: request.query.addDeleted,
       deleted: request.query.deleted,
       filter: request.query.filter,
+      filterCondition: request.query.filterCondition,
       order: request.query.order,
       page: request.query.page,
       perPage: request.query.perPage,
-    } as PaginationParams
+    } as ListParams
   }
 )
 
-export * from './pagers/in-memory-paginator'
-export * from './pagers/prisma-paginator'
+export * from './implementations/in-memory-list'
+export * from './implementations/prisma-list'

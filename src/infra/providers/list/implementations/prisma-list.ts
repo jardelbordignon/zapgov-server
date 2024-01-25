@@ -1,11 +1,21 @@
 import { Prisma } from '@prisma/client'
 
-import { PaginatedResponse, PaginationParams } from '..'
+import { ListParams, ListResponse } from '..'
 
-export async function prismaPaginator<T>(
+export async function prismaList<T>(
   model: any, // a prisma model
-  { add, deleted, filter, order, page = '1', perPage = '20' }: PaginationParams = {}
-): Promise<PaginatedResponse<T>> {
+  {
+    add,
+    addDeleted,
+    deleted,
+    filter,
+    filterCondition = 'OR',
+    order,
+    page = '1',
+    perPage = '20',
+  }: ListParams = {}
+): Promise<ListResponse<T>> {
+  filterCondition = filterCondition === 'AND' ? 'AND' : 'OR'
   const take = Number(perPage)
   const skip = (Number(page) - 1) * take
 
@@ -49,7 +59,7 @@ export async function prismaPaginator<T>(
         .split(',')
         .map(value => value.replace(/[^a-zA-Z0-9\-]/g, ''))
 
-      const OR: Record<string, any>[] = []
+      const filterConditions: Record<string, any>[] = []
 
       values.forEach(value => {
         const fieldValuePairs: Record<string, any> = {}
@@ -59,10 +69,10 @@ export async function prismaPaginator<T>(
           }
           // else { throw new Error(`Field ${field} does not exist in the model.`) }
         })
-        OR.push(fieldValuePairs)
+        filterConditions.push(fieldValuePairs)
       })
 
-      Object.assign(where, { OR })
+      Object.assign(where, { [filterCondition]: filterConditions })
     }
   }
 
@@ -76,12 +86,24 @@ export async function prismaPaginator<T>(
     }
   }
 
-  let include: Record<string, true> = {}
+  let include: Record<string, boolean | object> = {}
 
   if (add) {
+    let relationsCondition: boolean | object = true
+
+    if (addDeleted !== undefined) {
+      relationsCondition = {
+        where:
+          addDeleted === 'yes' ? { NOT: { deleted_at: null } } : { deleted_at: null },
+      }
+    }
+
     add.split(',').forEach(field => {
       if (relations.includes(field)) {
-        include = { ...include, [field]: true }
+        include = {
+          ...include,
+          [field]: relationsCondition,
+        }
       }
     })
   }
