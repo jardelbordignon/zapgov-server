@@ -17,6 +17,7 @@ import { uploadConfig } from './upload-config'
     EnvModule,
     ServeStaticModule.forRoot({
       rootPath: uploadConfig.storageFolder,
+      serveRoot: '/files',
     }),
     // MulterModule.register({
     //   dest: './uploads',
