@@ -22,9 +22,12 @@ export class ServerErrorFilter implements ExceptionFilter {
 
       if (process.env.NODE_ENV !== 'production') {
         console.error(exception)
-        Object.assign(responseObject, {
-          stack: exception.stack?.replaceAll('    ', '').split('\n').reverse(),
-        })
+        if (exception.stack) {
+          const splittedStack = exception.stack.replaceAll('    ', '').split('\n')
+          if (splittedStack.length > 1) {
+            Object.assign(responseObject, { stack: splittedStack.reverse() })
+          }
+        }
       }
 
       response.status(500).json(responseObject)
