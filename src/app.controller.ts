@@ -11,6 +11,6 @@ export class AppController {
   @ApiExcludeEndpoint()
   @Get()
   getHello(): string {
-    return '🚀 Server is running'
+    return `🚀 Server is running on <a href="${global['serverUrl']}">${global['serverUrl']}</a>`
   }
 }
