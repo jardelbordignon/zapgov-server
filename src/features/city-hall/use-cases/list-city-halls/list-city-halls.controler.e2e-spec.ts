@@ -34,7 +34,7 @@ describe('List city halls (E2E)', () => {
         .field('phone', createUserData.phone!)
         .field('slug', createUserData.slug)
         .field('txt_color', createUserData.txt_color)
-      //.attach('file', './test/software-testing.jpg')
+      // .attach('file', './test/software-testing.jpg')
     }
   })
 
@@ -70,7 +70,7 @@ describe('List city halls (E2E)', () => {
 
   test(`[GET] ${CITY_HALLS_URL} filter`, async () => {
     const getCityHalls = await api
-      .get(`${CITY_HALLS_URL}?page=1&perPage=3&filter=name=u`)
+      .get(`${CITY_HALLS_URL}?page=1&perPage=3&filter=name:u`)
       .send()
 
     expect(getCityHalls.statusCode).toBe(200)
@@ -87,6 +87,32 @@ describe('List city halls (E2E)', () => {
           hasPrevious: false,
           page: 1,
           perPage: 3,
+          totalItems: 2,
+          totalPages: 1,
+        },
+      })
+    )
+  })
+
+  test(`[GET] ${CITY_HALLS_URL} filter multiple`, async () => {
+    const getCityHalls = await api
+      .get(`${CITY_HALLS_URL}?filter=name:u|phone=u`)
+      .send()
+
+    expect(getCityHalls.statusCode).toBe(200)
+    expect(getCityHalls.body.data.length).toBe(2)
+    expect(getCityHalls.body).toEqual(
+      expect.objectContaining({
+        data: expect.arrayContaining([
+          expect.objectContaining({ name: 'Ciudad de México' }),
+          //expect.objectContaining({ email: 'tangamandapio@email.com' }),
+          expect.objectContaining({ email: 'acapulco@email.com', name: 'Acapulco' }),
+        ]),
+        meta: {
+          hasNext: false,
+          hasPrevious: false,
+          page: 1,
+          perPage: 20,
           totalItems: 2,
           totalPages: 1,
         },

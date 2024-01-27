@@ -88,7 +88,7 @@ describe('List whatsapp account (E2E)', () => {
 
   test(`[GET] ${WA_ACCOUNT_URL} filtered`, async () => {
     const getWaAccounts = await api
-      .get(`${WA_ACCOUNT_URL}?filter=acronym,city_hall_id=a,b,test`)
+      .get(`${WA_ACCOUNT_URL}?filter=acronym:a|acronym:b`)
       .set('Authorization', authorization)
       .send()
 

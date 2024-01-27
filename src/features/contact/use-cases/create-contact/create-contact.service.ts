@@ -49,7 +49,7 @@ export class CreateContactService {
     }
 
     const waAccounts = await this.waAccountRepository.findAll({
-      filter: `city_hall_id=${city_hall_id}`,
+      filter: `city_hall_id:${city_hall_id}`,
     })
 
     if (!waAccounts.data.length) {

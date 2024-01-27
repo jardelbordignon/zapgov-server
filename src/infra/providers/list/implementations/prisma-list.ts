@@ -9,13 +9,11 @@ export async function prismaList<T>(
     addDeleted,
     deleted,
     filter,
-    filterCondition = 'OR',
     order,
     page = '1',
     perPage = '20',
   }: ListParams = {}
 ): Promise<ListResponse<T>> {
-  filterCondition = filterCondition === 'AND' ? 'AND' : 'OR'
   const take = Number(perPage)
   const skip = (Number(page) - 1) * take
 
@@ -49,31 +47,61 @@ export async function prismaList<T>(
     )
   }
 
+  // if (typeof filter === 'string') {
+  //   const [fieldsString, valuesString] = filter.split('=')
+
+  //   if (fieldsString && valuesString) {
+  //     const fields = fieldsString.split(',')
+
+  //     const values = valuesString
+  //       .split(',')
+  //       .map(value => value.replace(/[^a-zA-Z0-9\-]/g, ''))
+
+  //     const filterConditions: Record<string, any>[] = []
+
+  //     values.forEach(value => {
+  //       const fieldValuePairs: Record<string, any> = {}
+  //       fields.forEach(field => {
+  //         if (textFields.includes(field)) {
+  //           fieldValuePairs[field] = { contains: value, mode: 'insensitive' }
+  //         }
+  //         // else { throw new Error(`Field ${field} does not exist in the model.`) }
+  //       })
+  //       filterConditions.push(fieldValuePairs)
+  //     })
+
+  //     Object.assign(where, { [filterCondition]: filterConditions })
+  //   }
+  // }
+
+  // filter=name:abc,slug:def|name:fgh,
   if (typeof filter === 'string') {
-    const [fieldsString, valuesString] = filter.split('=')
+    const conditions = filter.split('|')
 
-    if (fieldsString && valuesString) {
-      const fields = fieldsString.split(',')
+    const filterConditions: Prisma.UserWhereInput[] = []
 
-      const values = valuesString
-        .split(',')
-        .map(value => value.replace(/[^a-zA-Z0-9\-]/g, ''))
+    conditions.forEach(condition => {
+      const pairs = condition.split(',')
 
-      const filterConditions: Record<string, any>[] = []
+      const conditionPairs: Prisma.UserWhereInput = {}
 
-      values.forEach(value => {
-        const fieldValuePairs: Record<string, any> = {}
-        fields.forEach(field => {
-          if (textFields.includes(field)) {
-            fieldValuePairs[field] = { contains: value, mode: 'insensitive' }
+      pairs.forEach(pair => {
+        const [field, value] = pair.split(':')
+
+        if (!value) return
+
+        if (textFields.includes(field)) {
+          conditionPairs[field] = {
+            contains: value.replace(/[^a-zA-Z0-9\-]/g, ''),
+            mode: 'insensitive',
           }
-          // else { throw new Error(`Field ${field} does not exist in the model.`) }
-        })
-        filterConditions.push(fieldValuePairs)
+        }
       })
 
-      Object.assign(where, { [filterCondition]: filterConditions })
-    }
+      filterConditions.push({ AND: conditionPairs })
+    })
+
+    Object.assign(where, { OR: filterConditions })
   }
 
   let orderBy: Record<string, 'asc' | 'desc'> = {}
@@ -108,9 +136,9 @@ export async function prismaList<T>(
     })
   }
 
-  //console.log('\nwhere:\n', JSON.stringify(where, null, 2))
-  //console.log('\norderBy:\n', JSON.stringify(orderBy, null, 2))
-  //console.log('\ninclude:\n', JSON.stringify(include, null, 2))
+  console.log('\nwhere:\n', JSON.stringify(where, null, 2))
+  console.log('\norderBy:\n', JSON.stringify(orderBy, null, 2))
+  console.log('\ninclude:\n', JSON.stringify(include, null, 2))
 
   const [data, totalItems] = await Promise.all([
     model.findMany({ include, orderBy, skip, take, where }),

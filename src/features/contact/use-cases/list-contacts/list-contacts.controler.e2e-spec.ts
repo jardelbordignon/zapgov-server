@@ -61,7 +61,7 @@ describe('List contacts (E2E)', () => {
 
   test(`[GET] ${CONTACTS_URL} filter`, async () => {
     const getContacts = await api
-      .get(`${CONTACTS_URL}?page=1&perPage=3&filter=name=jo`)
+      .get(`${CONTACTS_URL}?page=1&perPage=3&filter=name:jo`)
       .send()
 
     expect(getContacts.statusCode).toBe(200)

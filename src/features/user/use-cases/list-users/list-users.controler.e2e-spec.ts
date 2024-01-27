@@ -88,7 +88,7 @@ describe('List users (E2E)', () => {
 
   test(`[GET] ${USERS_URL} (filtered)`, async () => {
     const getUsers = await api
-      .get(`${USERS_URL}?page=1&perPage=3&filter=name,email=jo`)
+      .get(`${USERS_URL}?page=1&perPage=3&filter=name:jo,email:jo`)
       .set('Authorization', authorization)
       .send()
 

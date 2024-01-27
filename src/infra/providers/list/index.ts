@@ -25,9 +25,6 @@ export class ListParams {
   @ApiProperty({ example: 'name,slug=data,data-x,abc' })
   filter?: string
 
-  @ApiProperty({ example: 'name,slug=data,data-x,abc' })
-  filterCondition?: 'AND' | 'OR' = 'OR'
-
   @ApiProperty({ example: 'name.desc' })
   order?: string
 
@@ -100,7 +97,6 @@ export const ListQuery = createParamDecorator(
       addDeleted: request.query.addDeleted,
       deleted: request.query.deleted,
       filter: request.query.filter,
-      filterCondition: request.query.filterCondition,
       order: request.query.order,
       page: request.query.page,
       perPage: request.query.perPage,
