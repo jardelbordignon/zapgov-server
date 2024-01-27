@@ -1,4 +1,4 @@
-import supertest from 'supertest'
+import { Supertest } from 'test/e2e.helper'
 
 import { CreateSubCityHallData } from 'src/contracts/sub-city-halls'
 import { getCityHallId } from 'src/features/city-hall/shared/test-helper'
@@ -15,7 +15,7 @@ export const CREATE_SUB_CITY_HALL_DATA: CreateSubCityHallData = {
   phone: '54 3333 3333',
 }
 
-export const getSubCityHallId = async (api: supertest.SuperTest<supertest.Test>) => {
+export const getSubCityHallId = async (api: Supertest) => {
   const { authorization, city_hall_id } = await getCityHallId(api)
 
   await api

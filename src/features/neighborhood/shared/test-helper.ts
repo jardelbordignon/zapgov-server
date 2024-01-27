@@ -1,3 +1,5 @@
+import { Supertest } from 'test/e2e.helper'
+
 import { CreateNeighborhoodData } from 'src/contracts/neighborhoods'
 import { getSubCityHallId } from 'src/features/sub-city-hall/shared/test-helper'
 
@@ -14,7 +16,7 @@ export const CREATE_NEIGHBORHOOD_DATA: CreateNeighborhoodData = {
   sub_city_hall_id: '049b03dc-dfff-44c1-bd64-b1b2c381a425',
 }
 
-export const getNeighborhoodId = async (api: any) => {
+export const getNeighborhoodId = async (api: Supertest) => {
   const { authorization, city_hall_id, sub_city_hall_id } =
     await getSubCityHallId(api)
 

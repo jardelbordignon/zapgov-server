@@ -1,3 +1,5 @@
+import { Supertest } from 'test/e2e.helper'
+
 import { CreateUserData } from 'src/contracts/account'
 
 import { AUTH_URL, USERS_URL } from './constants'
@@ -17,7 +19,7 @@ export const CREATE_REGULAR_USER_DATA: CreateUserData = {
   password: 'Pwd@123',
 }
 
-export const getUserAuthorization = async (api: any) => {
+export const getUserAuthorization = async (api: Supertest) => {
   const email = 'userx@email.com'
   const name = 'User X'
   const password = 'Pwd@123'
