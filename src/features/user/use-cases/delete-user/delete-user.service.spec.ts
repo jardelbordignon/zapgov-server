@@ -1,6 +1,6 @@
 import { Role } from '@prisma/client'
 
-import type { UserPayload } from 'src/infra/providers/auth/jwt-strategy'
+import type { UserPayload } from 'src/infra/providers/auth/jwt.strategy'
 import { I18n } from 'src/infra/providers/i18n/i18n'
 
 import { InMemoryUserRepository } from '../../repositories/in-memory.user.repository'

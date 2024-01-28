@@ -7,7 +7,7 @@ import { EnvModule } from '../../env/env.module'
 import { EnvService } from '../../env/env.service'
 
 import { AuthenticationGuard } from './authentication.guard'
-import { JwtStrategy } from './jwt-strategy'
+import { JwtStrategy } from './jwt.strategy'
 
 @Module({
   imports: [
