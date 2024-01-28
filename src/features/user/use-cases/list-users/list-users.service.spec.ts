@@ -51,7 +51,7 @@ describe('List users', () => {
   })
 
   it('should be able to list the filtered users', async () => {
-    const result = await listUsersService.execute({ filter: 'name,email=jo' })
+    const result = await listUsersService.execute({ filter: 'name:jo,email:jo' })
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(2)

@@ -112,7 +112,7 @@ describe('List sub-city-halls', () => {
   })
 
   it('should be able to list the filtered sub-city-halls', async () => {
-    const result = await service.execute({ deleted: 'no', filter: 'name=b' })
+    const result = await service.execute({ deleted: 'no', filter: 'name:b' })
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(1)

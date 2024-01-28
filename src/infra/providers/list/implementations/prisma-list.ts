@@ -47,61 +47,32 @@ export async function prismaList<T>(
     )
   }
 
-  // if (typeof filter === 'string') {
-  //   const [fieldsString, valuesString] = filter.split('=')
-
-  //   if (fieldsString && valuesString) {
-  //     const fields = fieldsString.split(',')
-
-  //     const values = valuesString
-  //       .split(',')
-  //       .map(value => value.replace(/[^a-zA-Z0-9\-]/g, ''))
-
-  //     const filterConditions: Record<string, any>[] = []
-
-  //     values.forEach(value => {
-  //       const fieldValuePairs: Record<string, any> = {}
-  //       fields.forEach(field => {
-  //         if (textFields.includes(field)) {
-  //           fieldValuePairs[field] = { contains: value, mode: 'insensitive' }
-  //         }
-  //         // else { throw new Error(`Field ${field} does not exist in the model.`) }
-  //       })
-  //       filterConditions.push(fieldValuePairs)
-  //     })
-
-  //     Object.assign(where, { [filterCondition]: filterConditions })
-  //   }
-  // }
-
-  // filter=name:abc,slug:def|name:fgh,
+  // filter=name:abc,slug:def|name:!fgh,phone:54
   if (typeof filter === 'string') {
-    const conditions = filter.split('|')
+    const OR: Prisma.UserWhereInput[] = []
 
-    const filterConditions: Prisma.UserWhereInput[] = []
+    filter.split('|').forEach(pairs => {
+      const AND: Prisma.UserWhereInput[] = []
+      const NOT: Prisma.UserWhereInput[] = []
 
-    conditions.forEach(condition => {
-      const pairs = condition.split(',')
+      pairs.split(',').forEach(pair => {
+        const [key, value] = pair.split(':')
 
-      const conditionPairs: Prisma.UserWhereInput = {}
-
-      pairs.forEach(pair => {
-        const [field, value] = pair.split(':')
-
-        if (!value) return
-
-        if (textFields.includes(field)) {
-          conditionPairs[field] = {
-            contains: value.replace(/[^a-zA-Z0-9\-]/g, ''),
-            mode: 'insensitive',
-          }
+        if (value && textFields.includes(key)) {
+          const arr = value.startsWith('!') ? NOT : AND
+          const contains = value.replace(/[^a-zA-Z0-9\-]/g, '')
+          arr.push({ [key]: { contains, mode: 'insensitive' } })
         }
       })
 
-      filterConditions.push({ AND: conditionPairs })
+      if (NOT.length) {
+        AND.push({ NOT })
+      }
+
+      OR.push({ AND })
     })
 
-    Object.assign(where, { OR: filterConditions })
+    Object.assign(where, { OR })
   }
 
   let orderBy: Record<string, 'asc' | 'desc'> = {}
@@ -136,9 +107,9 @@ export async function prismaList<T>(
     })
   }
 
-  console.log('\nwhere:\n', JSON.stringify(where, null, 2))
-  console.log('\norderBy:\n', JSON.stringify(orderBy, null, 2))
-  console.log('\ninclude:\n', JSON.stringify(include, null, 2))
+  // console.log('\nwhere:\n', JSON.stringify(where, null, 2))
+  // console.log('\norderBy:\n', JSON.stringify(orderBy, null, 2))
+  // console.log('\ninclude:\n', JSON.stringify(include, null, 2))
 
   const [data, totalItems] = await Promise.all([
     model.findMany({ include, orderBy, skip, take, where }),

@@ -56,7 +56,7 @@ describe('List contacts', () => {
   })
 
   it('should be able to list the filtered contacts', async () => {
-    const result = await service.execute({ filter: 'name=jo' })
+    const result = await service.execute({ filter: 'name:jo' })
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(2)

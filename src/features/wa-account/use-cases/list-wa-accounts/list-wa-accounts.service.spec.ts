@@ -45,7 +45,7 @@ describe('List city-halls', () => {
   })
 
   it('should be able to list the filtered whatsapp accounts', async () => {
-    const result = await service.execute({ filter: 'acronym=a' })
+    const result = await service.execute({ filter: 'acronym:a' })
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(1)
@@ -69,7 +69,7 @@ describe('List city-halls', () => {
       phone: '54 999999991',
     })
 
-    const result = await service.execute({ filter: `city_hall_id=${city_hall_id}` })
+    const result = await service.execute({ filter: `city_hall_id:${city_hall_id}` })
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(3)

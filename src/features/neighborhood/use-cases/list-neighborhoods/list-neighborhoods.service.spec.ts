@@ -69,7 +69,7 @@ describe('List neighborhoods', () => {
   })
 
   it('should be able to list the filtered neighborhoods', async () => {
-    const result = await service.execute({ filter: 'name=c' })
+    const result = await service.execute({ filter: 'name:c' })
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(1)

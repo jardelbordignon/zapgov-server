@@ -43,7 +43,7 @@ describe('List city-halls', () => {
   })
 
   it('should be able to list the filtered city-halls', async () => {
-    const result = await service.execute({ filter: 'email,name,slug=u' })
+    const result = await service.execute({ filter: 'email:u,name:u' })
 
     expect(result.isSuccess()).toBe(true)
     expect(result.value?.data.length).toBe(2)
@@ -51,6 +51,20 @@ describe('List city-halls', () => {
       expect.arrayContaining([
         //expect.objectContaining({ name: 'Tangamandapio' }),
         expect.objectContaining({ name: 'Acapulco' }),
+        expect.objectContaining({ name: 'Ciudad de México' }),
+      ])
+    )
+  })
+
+  it('should be able to list the filtered with denial conditions city-halls', async () => {
+    const result = await service.execute({ filter: 'name:u,name:!pu' })
+
+    expect(result.isSuccess()).toBe(true)
+    expect(result.value?.data.length).toBe(1)
+    expect(result.value?.data).toEqual(
+      expect.arrayContaining([
+        //expect.objectContaining({ name: 'Tangamandapio' }),
+        //expect.objectContaining({ name: 'Acapulco' }),
         expect.objectContaining({ name: 'Ciudad de México' }),
       ])
     )
