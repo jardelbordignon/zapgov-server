@@ -39,7 +39,5 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(helmet()).forRoutes('*')
     consumer.apply(LangMiddleware).forRoutes('*')
-    // if (env.name !== 'development') return
-    //consumer.apply(LoggerMiddleware).forRoutes('*')
   }
 }

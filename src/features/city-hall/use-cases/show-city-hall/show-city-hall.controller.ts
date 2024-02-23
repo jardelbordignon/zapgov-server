@@ -37,6 +37,7 @@ function ShowCityHallApiDecorators() {
   )
 }
 
+@AllowUnauthenticated()
 @Controller(CITY_HALLS_URL)
 export class ShowCityHallController {
   constructor(private showCityHallService: ShowCityHallService) {}
@@ -56,7 +57,6 @@ export class ShowCityHallController {
     return result.value
   }
 
-  @AllowUnauthenticated()
   @ShowCityHallApiDecorators()
   @Get('/by-slug/:slug')
   async handleBySlug(
@@ -67,7 +67,6 @@ export class ShowCityHallController {
     return this.handleResult(result)
   }
 
-  @ShowCityHallApiDecorators()
   @Get('/:id')
   async handle(
     @Param('id') cityHallId: string,
