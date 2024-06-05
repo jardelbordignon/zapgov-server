@@ -30,11 +30,15 @@ type CreateContactBodySchema = ZodObject<ZodObj<CreateContactInputData>>
 extendZodWithOpenApi(z)
 
 const createContactZodObject = z.object({
+  birth_date: z
+    .string()
+    .transform(date => new Date(date))
+    .openapi({ example: '1990-01-01' }),
   city_hall_id: z.string().uuid(),
   gender: z.string().openapi({ example: 'M' }),
   name: z.string().openapi({ example: 'John Doe' }),
   phone: z.string().openapi({ example: '51 999999999' }),
-}) as CreateContactBodySchema
+}) as unknown as CreateContactBodySchema
 
 const createContactOpenApiSchema = generateSchema(createContactZodObject)
 

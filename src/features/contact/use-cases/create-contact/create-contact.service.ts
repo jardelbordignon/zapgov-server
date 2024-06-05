@@ -9,6 +9,7 @@ import { CityHallNotFoundError } from 'src/features/city-hall/use-cases/errors'
 import { WaAccountRepository } from 'src/features/wa-account/repositories/wa-account.repository'
 import { WaAccountNotFoundError } from 'src/features/wa-account/use-cases/errors'
 import { AddGoogleContactProducer } from 'src/infra/jobs/add-google-contact'
+import { GoogleContactData } from 'src/infra/jobs/add-google-contact/google-contact'
 import { I18n } from 'src/infra/providers/i18n/i18n'
 import {
   FailureOrSuccess,
@@ -63,8 +64,17 @@ export class CreateContactService {
           wa_account_id: waAccount.id,
         }
 
+        const googleContactData: GoogleContactData = {
+          code: `${waAccount.acronym}-${waAccount.contacts_qty.toString().padStart(4, '0')}`,
+          gender: contactData.gender,
+          name: contactData.name,
+          neighborhood: 'neighborhood',
+          phone_number: contactData.phone,
+          year_old: contactData.birth_date.getFullYear().toString(),
+        }
+
         await this.contactRepository.create(contactData).then(async () => {
-          await this.addGoogleContactProducer.send(contactData)
+          await this.addGoogleContactProducer.send(googleContactData)
 
           const contacts_qty = ++waAccount.contacts_qty
 

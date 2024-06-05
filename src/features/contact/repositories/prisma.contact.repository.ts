@@ -11,8 +11,10 @@ export class PrismaContactRepository
   implements ContactRepository
 {
   async create(data: CreateContactData): Promise<Contact> {
-    const { gender, name, phone, wa_account_id } = data
-    return this.contact.create({ data: { gender, name, phone, wa_account_id } })
+    const { birth_date, gender, name, phone, wa_account_id } = data
+    return this.contact.create({
+      data: { birth_date, gender, name, phone, wa_account_id },
+    })
   }
 
   async delete(id: string): Promise<void> {

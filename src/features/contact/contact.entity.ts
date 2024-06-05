@@ -12,6 +12,9 @@ export class ContactEntity implements Contact {
   name!: string
 
   @ApiProperty()
+  birth_date!: Date
+
+  @ApiProperty()
   gender!: string
 
   @ApiProperty()
