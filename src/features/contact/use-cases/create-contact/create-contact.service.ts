@@ -11,6 +11,7 @@ import { WaAccountNotFoundError } from 'src/features/wa-account/use-cases/errors
 import { AddGoogleContactProducer } from 'src/infra/jobs/add-google-contact'
 import { GoogleContactData } from 'src/infra/jobs/add-google-contact/google-contact'
 import { I18n } from 'src/infra/providers/i18n/i18n'
+import { calcAge } from 'src/infra/utils/date-formatters'
 import {
   FailureOrSuccess,
   failure,
@@ -70,7 +71,7 @@ export class CreateContactService {
           name: contactData.name,
           neighborhood: 'neighborhood',
           phone_number: contactData.phone,
-          year_old: contactData.birth_date.getFullYear().toString(),
+          year_old: calcAge(contactData.birth_date).toString(),
         }
 
         await this.contactRepository.create(contactData).then(async () => {

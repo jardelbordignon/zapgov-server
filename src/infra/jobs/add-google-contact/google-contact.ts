@@ -32,6 +32,7 @@ export class GoogleContact {
     phone_number = '',
     year_old = '',
   }: GoogleContactData) {
+    // console.log({ code, gender, name, neighborhood, phone_number, year_old })
     ;(this.code = code),
       (this.name = name),
       (this.year_old = year_old),
